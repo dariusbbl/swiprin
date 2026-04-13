@@ -61,6 +61,7 @@ CREATE TABLE cv_drafts (
     name       VARCHAR(255) NOT NULL,
     file_url   VARCHAR(512),
     is_default BOOLEAN      NOT NULL DEFAULT FALSE,
+    deleted    BOOLEAN      NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP    NOT NULL DEFAULT NOW()
 );
 

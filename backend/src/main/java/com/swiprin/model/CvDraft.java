@@ -32,6 +32,11 @@ public class CvDraft {
     @Column(name = "is_default", nullable = false)
     private Boolean isDefault;
 
+    // Soft delete — CV stays in DB so existing applications keep their reference
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean deleted = false;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
