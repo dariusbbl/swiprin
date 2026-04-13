@@ -31,13 +31,19 @@ public class Company {
     @Column(name = "logo_url")
     private String logoUrl;
 
+    @Column(name = "is_verified", nullable = false)
+    @Builder.Default
+    private Boolean isVerified = false;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Job> jobs = new ArrayList<>();
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @Builder.Default
     private List<User> recruiters = new ArrayList<>();
 
     @PrePersist

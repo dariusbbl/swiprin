@@ -3,12 +3,13 @@
 -- ============================================================
 
 CREATE TABLE companies (
-    id         BIGSERIAL PRIMARY KEY,
-    name       VARCHAR(255) NOT NULL,
-    website    VARCHAR(512),
+    id          BIGSERIAL PRIMARY KEY,
+    name        VARCHAR(255) NOT NULL,
+    website     VARCHAR(512),
     description TEXT,
-    logo_url   VARCHAR(512),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    logo_url    VARCHAR(512),
+    is_verified BOOLEAN   NOT NULL DEFAULT FALSE,
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE users (
