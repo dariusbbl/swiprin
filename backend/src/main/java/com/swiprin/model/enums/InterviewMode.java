@@ -1,6 +1,6 @@
 package com.swiprin.model.enums;
 
-public enum InterviewType {
+public enum InterviewMode {
     ONLINE,
     ONSITE
 }

@@ -87,7 +87,7 @@ CREATE TABLE interview_schedules (
     application_id BIGINT       NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
     title          VARCHAR(255) NOT NULL,
     scheduled_at   TIMESTAMP    NOT NULL,
-    type           VARCHAR(50)  NOT NULL DEFAULT 'ONLINE',  -- ONLINE | ONSITE
+    mode           VARCHAR(50)  NOT NULL DEFAULT 'ONLINE',  -- ONLINE | ONSITE
     location       VARCHAR(255),
     description    TEXT,
     created_at     TIMESTAMP    NOT NULL DEFAULT NOW()
@@ -96,8 +96,9 @@ CREATE TABLE interview_schedules (
 CREATE TABLE notifications (
     id         BIGSERIAL PRIMARY KEY,
     user_id    BIGINT       NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    type       VARCHAR(50)  NOT NULL DEFAULT 'GENERAL',  -- SHORTLIST | STATUS_UPDATE | INTERVIEW_SCHEDULED | INTERVIEW_UPDATED | OFFER | GENERAL
-    message    TEXT         NOT NULL,
+    type         VARCHAR(50)  NOT NULL DEFAULT 'GENERAL',  -- SHORTLIST | STATUS_UPDATE | INTERVIEW_SCHEDULED | INTERVIEW_UPDATED | OFFER | GENERAL
+    message      TEXT         NOT NULL,
+    reference_id BIGINT,
     is_read    BOOLEAN      NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP    NOT NULL DEFAULT NOW()
 );
