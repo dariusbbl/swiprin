@@ -1,6 +1,6 @@
 package com.swiprin.model;
 
-import com.swiprin.model.enums.InterviewType;
+import com.swiprin.model.enums.InterviewMode;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,7 +32,7 @@ public class InterviewSchedule {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private InterviewType type = InterviewType.ONLINE;
+    private InterviewMode mode = InterviewMode.ONLINE;
 
     private String location;
 

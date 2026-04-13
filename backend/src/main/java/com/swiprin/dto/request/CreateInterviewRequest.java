@@ -1,6 +1,6 @@
 package com.swiprin.dto.request;
 
-import com.swiprin.model.enums.InterviewType;
+import com.swiprin.model.enums.InterviewMode;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ public class CreateInterviewRequest {
     private LocalDateTime scheduledAt;
 
     @NotNull
-    private InterviewType type;
+    private InterviewMode type;
 
     private String location;
 
