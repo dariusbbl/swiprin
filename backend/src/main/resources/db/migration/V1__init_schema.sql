@@ -86,7 +86,8 @@ CREATE TABLE interview_schedules (
     application_id BIGINT       NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
     title          VARCHAR(255) NOT NULL,
     scheduled_at   TIMESTAMP    NOT NULL,
-    platform       VARCHAR(100),
+    type           VARCHAR(50)  NOT NULL DEFAULT 'ONLINE',  -- ONLINE | ONSITE
+    location       VARCHAR(255),
     description    TEXT,
     created_at     TIMESTAMP    NOT NULL DEFAULT NOW()
 );

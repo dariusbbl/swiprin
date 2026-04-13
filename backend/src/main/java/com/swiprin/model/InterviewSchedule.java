@@ -1,5 +1,6 @@
 package com.swiprin.model;
 
+import com.swiprin.model.enums.InterviewType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,7 +29,12 @@ public class InterviewSchedule {
     @Column(name = "scheduled_at", nullable = false)
     private LocalDateTime scheduledAt;
 
-    private String platform;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private InterviewType type = InterviewType.ONLINE;
+
+    private String location;
 
     @Column(columnDefinition = "TEXT")
     private String description;
