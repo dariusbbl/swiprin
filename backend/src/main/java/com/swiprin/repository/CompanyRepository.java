@@ -9,5 +9,5 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     Page<Company> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
-    boolean existsByName(String name);
+    boolean existsByNameIgnoreCase(String name);
 }
