@@ -19,7 +19,7 @@ public class CreateInterviewRequest {
     private LocalDateTime scheduledAt;
 
     @NotNull
-    private InterviewMode type;
+    private InterviewMode mode;
 
     private String location;
 

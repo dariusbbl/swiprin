@@ -28,6 +28,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     boolean existsByJobIdAndUserId(Long jobId, Long userId);
 
+    long countByJobId(Long jobId);
+
     // Applications for all jobs of a recruiter, sorted by match percent desc
     @Query("""
             SELECT a FROM Application a

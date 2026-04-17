@@ -1,6 +1,7 @@
 package com.swiprin.model;
 
 import com.swiprin.model.enums.Role;
+import com.swiprin.model.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,6 +36,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private UserStatus status = UserStatus.ACTIVE;
 
     @Column(name = "phone_number")
     private String phoneNumber;

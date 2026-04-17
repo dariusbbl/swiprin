@@ -18,6 +18,7 @@ CREATE TABLE users (
     email        VARCHAR(255) NOT NULL UNIQUE,
     password     VARCHAR(255) NOT NULL,
     role         VARCHAR(50)  NOT NULL,  -- CANDIDATE | RECRUITER | ADMIN
+    status       VARCHAR(50)  NOT NULL DEFAULT 'ACTIVE',  -- ACTIVE | PENDING_APPROVAL | REJECTED
     phone_number VARCHAR(50),
     job_title    VARCHAR(255),
     business_email VARCHAR(255),
@@ -75,7 +76,7 @@ CREATE TABLE applications (
     job_id       BIGINT    NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
     user_id      BIGINT    NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     cv_draft_id  BIGINT    REFERENCES cv_drafts(id) ON DELETE SET NULL,
-    status       VARCHAR(50) NOT NULL DEFAULT 'APPLIED',  -- APPLIED | SCREENING | INTERVIEW | OFFER | REJECTED
+    status       VARCHAR(50) NOT NULL DEFAULT 'APPLIED',  -- APPLIED | SCREENING | INTERVIEW | OFFER | REJECTED | WITHDRAWN
     match_percent INT,
     shortlisted  BOOLEAN   NOT NULL DEFAULT FALSE,
     applied_at   TIMESTAMP NOT NULL DEFAULT NOW(),

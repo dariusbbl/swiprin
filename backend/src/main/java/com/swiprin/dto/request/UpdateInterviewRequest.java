@@ -14,7 +14,7 @@ public class UpdateInterviewRequest {
     @Future
     private LocalDateTime scheduledAt;
 
-    private InterviewMode type;
+    private InterviewMode mode;
 
     private String location;
 

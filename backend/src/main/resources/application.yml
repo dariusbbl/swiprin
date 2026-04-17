@@ -28,8 +28,6 @@ app:
     expiration: ${JWT_EXPIRATION:86400000} # 24 hours in ms
 
 springdoc:
-  api-docs:
-    path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
     operations-sorter: method
