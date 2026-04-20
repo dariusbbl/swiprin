@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/swiprin}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    # Base64-encoded secret, min 256 bits for HS256. Change in production!
+    secret: ${JWT_SECRET:c3dpcHJpbi1qd3Qtc2VjcmV0LWtleS1mb3ItaHMyNTYtYXV0aGVudGljYXRpb24=}
+    expiration: ${JWT_EXPIRATION:86400000} # 24 hours in ms
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method

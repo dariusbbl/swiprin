@@ -1,0 +1,35 @@
+-- ============================================================
+-- V2 - Seed common skills
+-- ============================================================
+
+INSERT INTO skills (name) VALUES
+    ('Java'),
+    ('Spring Boot'),
+    ('Python'),
+    ('JavaScript'),
+    ('TypeScript'),
+    ('React'),
+    ('Node.js'),
+    ('SQL'),
+    ('PostgreSQL'),
+    ('MongoDB'),
+    ('Docker'),
+    ('Kubernetes'),
+    ('AWS'),
+    ('Git'),
+    ('REST APIs'),
+    ('GraphQL'),
+    ('CI/CD'),
+    ('Linux'),
+    ('Agile / Scrum'),
+    ('C++'),
+    ('C#'),
+    ('.NET'),
+    ('Go'),
+    ('Rust'),
+    ('Machine Learning'),
+    ('Data Analysis'),
+    ('Figma'),
+    ('HTML / CSS'),
+    ('Vue.js'),
+    ('Angular');

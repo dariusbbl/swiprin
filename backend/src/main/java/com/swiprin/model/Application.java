@@ -50,6 +50,7 @@ public class Application {
     private LocalDateTime appliedAt;
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
     private java.util.List<InterviewSchedule> interviews = new java.util.ArrayList<>();
 
     @PrePersist
