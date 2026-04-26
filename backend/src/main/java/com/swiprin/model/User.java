@@ -79,6 +79,9 @@ public class User {
     @Builder.Default
     private List<Notification> notifications = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserProfile profile;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

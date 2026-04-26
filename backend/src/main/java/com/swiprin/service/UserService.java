@@ -1,14 +1,18 @@
 package com.swiprin.service;
 
 import com.swiprin.dto.request.UpdateProfileRequest;
+import com.swiprin.dto.request.UpdateUserProfileRequest;
 import com.swiprin.dto.response.PageResponse;
+import com.swiprin.dto.response.UserProfileResponse;
 import com.swiprin.dto.response.UserResponse;
 import com.swiprin.exception.ResourceNotFoundException;
 import com.swiprin.model.Skill;
 import com.swiprin.model.User;
+import com.swiprin.model.UserProfile;
 import com.swiprin.model.enums.Role;
 import com.swiprin.model.enums.UserStatus;
 import com.swiprin.repository.SkillRepository;
+import com.swiprin.repository.UserProfileRepository;
 import com.swiprin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,6 +31,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
     private final CompanyService companyService;
+    private final UserProfileRepository userProfileRepository;
 
     public UserResponse getById(Long id) {
         return toResponse(findOrThrow(id));
@@ -67,6 +72,45 @@ public class UserService {
     @Transactional
     public void delete(Long id) {
         userRepository.delete(findOrThrow(id));
+    }
+
+    public UserProfileResponse getProfile(Long userId) {
+        return userProfileRepository.findByUserId(userId)
+                .map(this::toProfileResponse)
+                .orElse(null);
+    }
+
+    @Transactional
+    public UserProfileResponse upsertProfile(Long userId, UpdateUserProfileRequest req) {
+        UserProfile profile = userProfileRepository.findByUserId(userId)
+                .orElseGet(() -> {
+                    User user = findOrThrow(userId);
+                    return UserProfile.builder().user(user).build();
+                });
+
+        if (req.getBio() != null) profile.setBio(req.getBio().trim());
+        if (req.getCurrentLocation() != null) profile.setCurrentLocation(req.getCurrentLocation().trim());
+        if (req.getEducationLevel() != null) profile.setEducationLevel(req.getEducationLevel());
+        if (req.getFaculty() != null) profile.setFaculty(req.getFaculty().trim());
+        if (req.getGraduationDate() != null) profile.setGraduationDate(req.getGraduationDate());
+        if (req.getLinkedInUrl() != null) profile.setLinkedInUrl(req.getLinkedInUrl().trim());
+        if (req.getGithubUrl() != null) profile.setGithubUrl(req.getGithubUrl().trim());
+
+        return toProfileResponse(userProfileRepository.save(profile));
+    }
+
+    public UserProfileResponse toProfileResponse(UserProfile p) {
+        return UserProfileResponse.builder()
+                .id(p.getId())
+                .bio(p.getBio())
+                .currentLocation(p.getCurrentLocation())
+                .educationLevel(p.getEducationLevel())
+                .faculty(p.getFaculty())
+                .graduationDate(p.getGraduationDate())
+                .linkedInUrl(p.getLinkedInUrl())
+                .githubUrl(p.getGithubUrl())
+                .updatedAt(p.getUpdatedAt())
+                .build();
     }
 
     private Set<Skill> resolveSkills(Set<Long> skillIds) {
