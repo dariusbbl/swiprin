@@ -68,6 +68,7 @@
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/config/SecurityConfig.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/request/UpdateProfileRequest.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/controller/SkillController.java
+/home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/enums/WorkMode.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/response/AuthResponse.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/response/NotificationResponse.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/Application.java

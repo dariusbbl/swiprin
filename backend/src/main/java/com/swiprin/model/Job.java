@@ -1,5 +1,6 @@
 package com.swiprin.model;
 
+import com.swiprin.model.enums.WorkMode;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,8 +31,9 @@ public class Job {
 
     private String location;
 
-    @Column(nullable = false)
-    private Boolean remote;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "work_mode", nullable = false)
+    private WorkMode workMode;
 
     @Column(name = "shortlist_threshold", nullable = false)
     private Integer shortlistThreshold;

@@ -1,5 +1,6 @@
 package com.swiprin.dto.response;
 
+import com.swiprin.model.enums.WorkMode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class JobResponse {
     private String title;
     private String description;
     private String location;
-    private Boolean remote;
+    private WorkMode workMode;
     private CompanyResponse company;
     private List<SkillResponse> skills;
     private Boolean applied;        // true if the authenticated candidate already applied

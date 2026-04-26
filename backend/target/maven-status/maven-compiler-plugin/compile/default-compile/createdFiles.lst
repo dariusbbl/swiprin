@@ -71,6 +71,7 @@ com/swiprin/controller/NotificationController.class
 com/swiprin/exception/ResourceNotFoundException.class
 com/swiprin/model/UserProfile.class
 com/swiprin/dto/request/CreateJobRequest.class
+com/swiprin/model/enums/WorkMode.class
 com/swiprin/dto/response/UserResponse$UserResponseBuilder.class
 com/swiprin/model/Skill$SkillBuilder.class
 com/swiprin/model/CvDraft.class
