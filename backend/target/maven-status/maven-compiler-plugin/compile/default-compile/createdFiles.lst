@@ -8,11 +8,14 @@ com/swiprin/model/Application$ApplicationBuilder.class
 com/swiprin/model/Job$JobBuilder.class
 com/swiprin/repository/ApplicationRepository.class
 com/swiprin/model/enums/ApplicationStatus.class
+com/swiprin/model/enums/EducationLevel.class
+com/swiprin/dto/request/UpdateUserProfileRequest.class
 com/swiprin/controller/CompanyController.class
 com/swiprin/repository/SkillRepository.class
 com/swiprin/exception/ForbiddenException.class
 com/swiprin/dto/request/UpdateInterviewRequest.class
 com/swiprin/model/enums/NotificationType.class
+com/swiprin/dto/response/UserProfileResponse$UserProfileResponseBuilder.class
 com/swiprin/exception/GlobalExceptionHandler$ErrorResponse.class
 com/swiprin/config/OpenApiConfig.class
 com/swiprin/dto/response/PageResponse.class
@@ -27,6 +30,7 @@ com/swiprin/repository/NotificationRepository.class
 com/swiprin/dto/request/LoginRequest.class
 com/swiprin/model/enums/Role.class
 com/swiprin/model/Application.class
+com/swiprin/model/UserProfile$UserProfileBuilder.class
 com/swiprin/dto/response/NotificationResponse$NotificationResponseBuilder.class
 com/swiprin/dto/response/JobResponse$JobResponseBuilder.class
 com/swiprin/dto/response/InterviewResponse$InterviewResponseBuilder.class
@@ -42,6 +46,7 @@ com/swiprin/model/Skill.class
 com/swiprin/model/User$UserBuilder.class
 com/swiprin/repository/JobRepository.class
 com/swiprin/dto/request/UpdateApplicationStatusRequest.class
+com/swiprin/repository/UserProfileRepository.class
 com/swiprin/dto/response/ApplicationResponse.class
 com/swiprin/exception/BadRequestException.class
 com/swiprin/service/NotificationService.class
@@ -64,11 +69,13 @@ com/swiprin/controller/AuthController.class
 com/swiprin/controller/UserController.class
 com/swiprin/controller/NotificationController.class
 com/swiprin/exception/ResourceNotFoundException.class
+com/swiprin/model/UserProfile.class
 com/swiprin/dto/request/CreateJobRequest.class
 com/swiprin/dto/response/UserResponse$UserResponseBuilder.class
 com/swiprin/model/Skill$SkillBuilder.class
 com/swiprin/model/CvDraft.class
 com/swiprin/dto/response/NotificationResponse.class
+com/swiprin/dto/response/UserProfileResponse.class
 com/swiprin/dto/response/ApplicationManagementResponse$ApplicationManagementResponseBuilder.class
 com/swiprin/security/UserPrincipal.class
 com/swiprin/controller/ApplicationController.class

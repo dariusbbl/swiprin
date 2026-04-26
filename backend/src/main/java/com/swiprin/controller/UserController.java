@@ -1,7 +1,9 @@
 package com.swiprin.controller;
 
 import com.swiprin.dto.request.UpdateProfileRequest;
+import com.swiprin.dto.request.UpdateUserProfileRequest;
 import com.swiprin.dto.response.PageResponse;
+import com.swiprin.dto.response.UserProfileResponse;
 import com.swiprin.dto.response.UserResponse;
 import com.swiprin.model.enums.Role;
 import com.swiprin.model.enums.UserStatus;
@@ -18,6 +20,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -26,6 +30,32 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
+    private static final List<String> FACULTIES = List.of(
+            // România
+            "ETTI - Facultatea de Electronică, Telecomunicații și Tehnologia Informației (UPB)",
+            "AC - Facultatea de Automatică și Calculatoare (UPB)",
+            "FMI - Facultatea de Matematică și Informatică (UniBuc)",
+            "CSIE - Facultatea de Cibernetică, Statistică și Informatică Economică (ASE)",
+            "FILS - Facultatea de Inginerie în Limbi Străine (UPB)",
+            "FII - Facultatea de Informatică (UAIC Iași)",
+            "UTCN - Calculatoare și Tehnologia Informației (Cluj)",
+            "UBB - Facultatea de Matematică și Informatică (Cluj)",
+            "UVT - Facultatea de Matematică și Informatică (Timișoara)",
+            // Europa
+            "ETH Zürich - Computer Science",
+            "TU Delft - Computer Science and Engineering",
+            "TU Munich - Informatics",
+            "KTH Stockholm - Computer Science",
+            "Imperial College London - Computing",
+            "University of Edinburgh - Informatics",
+            "TU Berlin - Computer Science",
+            "Politecnico di Milano - Computer Science and Engineering",
+            "EPFL Lausanne - Computer Science",
+            "University of Warsaw - Computer Science",
+            "Czech Technical University - Computer Science",
+            "Alta"
+    );
 
     @GetMapping("/me")
     @Operation(summary = "Get current user profile")
@@ -38,6 +68,27 @@ public class UserController {
     public ResponseEntity<UserResponse> updateMe(@AuthenticationPrincipal UserPrincipal principal,
                                                   @Valid @RequestBody UpdateProfileRequest req) {
         return ResponseEntity.ok(userService.updateProfile(principal.getId(), req));
+    }
+
+    @GetMapping("/me/profile")
+    @Operation(summary = "Get extended profile (bio, location, education, etc.)")
+    public ResponseEntity<UserProfileResponse> getMyProfile(@AuthenticationPrincipal UserPrincipal principal) {
+        UserProfileResponse profile = userService.getProfile(principal.getId());
+        return profile != null ? ResponseEntity.ok(profile) : ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/me/profile")
+    @Operation(summary = "Create or update extended profile")
+    public ResponseEntity<UserProfileResponse> upsertMyProfile(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Valid @RequestBody UpdateUserProfileRequest req) {
+        return ResponseEntity.ok(userService.upsertProfile(principal.getId(), req));
+    }
+
+    @GetMapping("/profile/faculties")
+    @Operation(summary = "Get list of available faculties for profile selection")
+    public ResponseEntity<List<String>> getFaculties() {
+        return ResponseEntity.ok(FACULTIES);
     }
 
     @GetMapping
