@@ -88,7 +88,7 @@ public class JobService {
                 .title(req.getTitle().trim())
                 .description(req.getDescription().trim())
                 .location(req.getLocation() != null ? req.getLocation().trim() : null)
-                .remote(req.getRemote())
+                .workMode(req.getWorkMode())
                 .shortlistThreshold(req.getShortlistThreshold())
                 .active(true)
                 .company(recruiter.getCompany())
@@ -108,7 +108,7 @@ public class JobService {
         if (req.getTitle() != null) job.setTitle(req.getTitle().trim());
         if (req.getDescription() != null) job.setDescription(req.getDescription().trim());
         if (req.getLocation() != null) job.setLocation(req.getLocation().trim());
-        if (req.getRemote() != null) job.setRemote(req.getRemote());
+        if (req.getWorkMode() != null) job.setWorkMode(req.getWorkMode());
         if (req.getActive() != null) job.setActive(req.getActive());
         if (req.getShortlistThreshold() != null) job.setShortlistThreshold(req.getShortlistThreshold());
         if (req.getSkillIds() != null) job.setSkills(resolveSkills(req.getSkillIds()));
@@ -149,7 +149,7 @@ public class JobService {
                 .title(job.getTitle())
                 .description(job.getDescription())
                 .location(job.getLocation())
-                .remote(job.getRemote())
+                .workMode(job.getWorkMode())
                 .company(companyService.toResponse(job.getCompany()))
                 .skills(job.getSkills().stream().map(SkillService::toResponse).toList())
                 .applied(applicationRepository.existsByJobIdAndUserId(job.getId(), userId))
@@ -163,7 +163,7 @@ public class JobService {
                 .title(job.getTitle())
                 .description(job.getDescription())
                 .location(job.getLocation())
-                .remote(job.getRemote())
+                .workMode(job.getWorkMode())
                 .active(job.getActive())
                 .shortlistThreshold(job.getShortlistThreshold())
                 .company(companyService.toResponse(job.getCompany()))
