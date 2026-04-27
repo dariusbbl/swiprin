@@ -1,0 +1,90 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 1.5rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.wide { max-width: 560px; }
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.03em;
+  margin-bottom: 1.2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: .25rem;
+}
+
+.sub { font-size: .875rem; color: var(--text-2); margin-bottom: 1.5rem; }
+
+.alert {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: .65rem 1rem;
+  font-size: .85rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.form { display: flex; flex-direction: column; gap: .9rem; }
+
+.field { display: flex; flex-direction: column; gap: .3rem; }
+.field label { font-size: .8rem; font-weight: 600; color: var(--text-2); }
+
+.submit { margin-top: .4rem; padding: .65rem; font-weight: 700; }
+
+.footer { text-align: center; font-size: .85rem; color: var(--text-2); margin-top: 1.25rem; }
+.footer a { color: var(--accent); font-weight: 600; }
+
+/* Role toggle */
+.toggle {
+  display: flex;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 3px;
+  margin-bottom: 1.25rem;
+}
+
+.toggleBtn, .toggleActive {
+  flex: 1; border: none; border-radius: 8px;
+  padding: .45rem; font-family: inherit;
+  font-size: .875rem; font-weight: 600; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.toggleBtn { background: transparent; color: var(--text-2); }
+.toggleActive { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-sm); }
+
+/* Recruiter section */
+.divider { border: none; border-top: 1px solid var(--border); margin: .4rem 0; }
+.sectionLabel { font-size: .78rem; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; }
+.opt { font-weight: 400; color: var(--text-3); }
+
+.companyChoice { display: flex; gap: .75rem; align-items: center; }
+.orDivider { font-size: .8rem; font-weight: 600; color: var(--text-3); white-space: nowrap; padding-top: 1.4rem; }
+
+.hint {
+  text-align: center; font-size: .8rem; color: var(--text-3);
+  margin-top: .75rem; line-height: 1.5;
+}
