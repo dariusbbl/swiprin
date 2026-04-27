@@ -11,6 +11,7 @@
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/response/UserProfileResponse.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/controller/JobController.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/CvDraft.java
+/home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/SupportTicket.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/Skill.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/repository/InterviewScheduleRepository.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/Company.java
@@ -22,6 +23,7 @@
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/SwiprinApplication.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/service/JobService.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/response/UserResponse.java
+/home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/response/TicketResponse.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/exception/ResourceNotFoundException.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/response/SkillResponse.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/response/InterviewResponse.java
@@ -30,6 +32,7 @@
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/repository/ApplicationRepository.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/response/JobResponse.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/exception/ForbiddenException.java
+/home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/repository/SupportTicketRepository.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/request/RegisterCandidateRequest.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/User.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/Job.java
@@ -37,6 +40,8 @@
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/repository/UserProfileRepository.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/controller/AuthController.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/controller/NotificationController.java
+/home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/enums/TicketStatus.java
+/home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/service/SupportTicketService.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/repository/CvDraftRepository.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/enums/NotificationType.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/service/CompanyService.java
@@ -48,6 +53,7 @@
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/service/ApplicationService.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/request/CreateApplicationRequest.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/controller/ApplicationController.java
+/home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/request/CreateTicketRequest.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/service/CvDraftService.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/repository/NotificationRepository.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/enums/InterviewMode.java
@@ -67,6 +73,7 @@
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/response/ApplicationResponse.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/config/SecurityConfig.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/request/UpdateProfileRequest.java
+/home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/enums/TicketCategory.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/controller/SkillController.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/enums/WorkMode.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/response/AuthResponse.java
@@ -76,5 +83,7 @@
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/request/CreateInterviewRequest.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/dto/request/UpdateCompanyRequest.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/service/UserService.java
+/home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/enums/TicketPriority.java
+/home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/controller/SupportTicketController.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/model/enums/ApplicationStatus.java
 /home/dariusbbl/anul4/licenta/swiprin/backend/src/main/java/com/swiprin/exception/GlobalExceptionHandler.java
