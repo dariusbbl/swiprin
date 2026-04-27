@@ -88,7 +88,3 @@
   text-align: center; font-size: .8rem; color: var(--text-3);
   margin-top: .75rem; line-height: 1.5;
 }
-
-.inputError { border-color: var(--danger) !important; }
-.inputError:focus { box-shadow: 0 0 0 3px rgba(239,68,68,.15) !important; }
-.fieldError { font-size: .75rem; color: var(--danger); font-weight: 500; }
