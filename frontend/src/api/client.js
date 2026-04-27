@@ -1,11 +1,10 @@
 import axios from 'axios';
 
 const client = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: '/api',   // proxied to http://localhost:8080/api by Vite in dev
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Attach token from memory (set by AuthContext)
 client.interceptors.request.use((config) => {
   const token = window.__swiprin_token;
   if (token) config.headers.Authorization = `Bearer ${token}`;
