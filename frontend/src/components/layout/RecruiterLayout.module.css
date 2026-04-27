@@ -1,0 +1,48 @@
+.shell { display: flex; min-height: 100vh; background: var(--bg); }
+
+.sidebar {
+  width: 230px; flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  padding: 1.25rem 0;
+  position: sticky; top: 0; height: 100vh;
+}
+
+.brand {
+  font-size: 1.3rem; font-weight: 800; color: var(--accent);
+  letter-spacing: -0.03em; padding: 0 1.25rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav { flex: 1; display: flex; flex-direction: column; gap: .15rem; padding: 1rem .75rem; }
+.section { font-size: .7rem; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .08em; padding: .25rem .5rem; margin-bottom: .25rem; }
+
+.nav a {
+  display: flex; align-items: center; gap: .65rem;
+  padding: .55rem .75rem; border-radius: 9px;
+  font-size: .875rem; font-weight: 500; color: var(--text-2);
+  text-decoration: none; transition: background .15s, color .15s;
+}
+.nav a span { font-size: 1rem; }
+.nav a:hover { background: var(--surface-2); color: var(--text); }
+.nav a.active { background: var(--accent-50); color: var(--accent); font-weight: 600; }
+
+.footer {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .9rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.info { flex: 1; min-width: 0; }
+.name { display: block; font-size: .82rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.role { font-size: .72rem; color: var(--text-3); }
+
+.logout {
+  background: none; border: none; font-size: 1.1rem;
+  cursor: pointer; color: var(--text-3); padding: .2rem;
+  transition: color .15s;
+}
+.logout:hover { color: var(--danger); }
+
+.main { flex: 1; padding: 2rem; overflow-y: auto; }
