@@ -1,0 +1,16 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .2rem .6rem;
+  border-radius: 99px;
+  font-size: .75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.default { background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); }
+.accent  { background: var(--accent-50); color: var(--accent); }
+.success { background: #d1fae5; color: #065f46; }
+.warn    { background: #fef3c7; color: #92400e; }
+.danger  { background: #fee2e2; color: #991b1b; }

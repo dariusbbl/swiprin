@@ -1,0 +1,19 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .2rem .65rem;
+  border-radius: 99px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.applied    { background: var(--accent-50);  color: var(--accent); }
+.screening  { background: #f3e8ff; color: #7c3aed; }
+.interview  { background: #fef3c7; color: #d97706; }
+.offer      { background: #d1fae5; color: #065f46; }
+.success    { background: #d1fae5; color: #065f46; }
+.danger     { background: #fee2e2; color: #991b1b; }
+.withdrawn  { background: var(--surface-2); color: var(--text-3); border: 1px solid var(--border); }
+.default    { background: var(--surface-2); color: var(--text-2); }
