@@ -15,9 +15,12 @@ const EDU_LEVELS = [
   { value: 'OTHER',      label: 'Other' },
 ];
 
+const CURRENT_YEAR = new Date().getFullYear();
+const YEARS = Array.from({ length: 30 }, (_, i) => CURRENT_YEAR + 5 - i);
+
 const EMPTY = {
   bio: '', currentLocation: '', educationLevel: '',
-  faculty: '', graduationDate: '', linkedInUrl: '', githubUrl: '',
+  faculty: '', graduationYear: '', linkedInUrl: '', githubUrl: '',
 };
 
 export default function ProfilePage() {
@@ -44,7 +47,7 @@ export default function ProfilePage() {
           currentLocation: p.currentLocation ?? '',
           educationLevel: p.educationLevel ?? '',
           faculty:        p.faculty ?? '',
-          graduationDate: p.graduationDate ?? '',
+          graduationYear: p.graduationYear ? String(p.graduationYear) : '',
           linkedInUrl:    p.linkedInUrl ?? '',
           githubUrl:      p.githubUrl ?? '',
         });
@@ -65,7 +68,7 @@ export default function ProfilePage() {
     try {
       const payload = { ...form };
       if (!payload.educationLevel) delete payload.educationLevel;
-      if (!payload.graduationDate) delete payload.graduationDate;
+      payload.graduationYear = payload.graduationYear ? Number(payload.graduationYear) : null;
       await upsertProfile(payload);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -124,9 +127,14 @@ export default function ProfilePage() {
             </div>
 
             <div className={styles.field}>
-              <label>Graduation date</label>
-              <input type="date" name="graduationDate" value={form.graduationDate}
-                onChange={handle} className="form-control" />
+              <label>Graduation year</label>
+              <select name="graduationYear" value={form.graduationYear}
+                onChange={handle} className="form-select">
+                <option value="">— Select year —</option>
+                {YEARS.map(y => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
             </div>
           </div>
 

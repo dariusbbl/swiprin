@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -20,7 +19,7 @@ public class UserProfileResponse {
     private String currentLocation;
     private EducationLevel educationLevel;
     private String faculty;
-    private LocalDate graduationDate;
+    private Integer graduationYear;
     private String linkedInUrl;
     private String githubUrl;
     private LocalDateTime updatedAt;

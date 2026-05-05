@@ -92,9 +92,9 @@ public class UserService {
         if (req.getCurrentLocation() != null) profile.setCurrentLocation(req.getCurrentLocation().trim());
         if (req.getEducationLevel() != null) profile.setEducationLevel(req.getEducationLevel());
         if (req.getFaculty() != null) profile.setFaculty(req.getFaculty().trim());
-        if (req.getGraduationDate() != null) profile.setGraduationDate(req.getGraduationDate());
-        if (req.getLinkedInUrl() != null) profile.setLinkedInUrl(req.getLinkedInUrl().trim());
-        if (req.getGithubUrl() != null) profile.setGithubUrl(req.getGithubUrl().trim());
+        if (req.getGraduationYear() != null) profile.setGraduationYear(req.getGraduationYear());
+        if (req.getLinkedInUrl() != null) profile.setLinkedInUrl(req.getLinkedInUrl().isBlank() ? null : req.getLinkedInUrl().trim());
+        if (req.getGithubUrl() != null) profile.setGithubUrl(req.getGithubUrl().isBlank() ? null : req.getGithubUrl().trim());
 
         return toProfileResponse(userProfileRepository.save(profile));
     }
@@ -106,7 +106,7 @@ public class UserService {
                 .currentLocation(p.getCurrentLocation())
                 .educationLevel(p.getEducationLevel())
                 .faculty(p.getFaculty())
-                .graduationDate(p.getGraduationDate())
+                .graduationYear(p.getGraduationYear())
                 .linkedInUrl(p.getLinkedInUrl())
                 .githubUrl(p.getGithubUrl())
                 .updatedAt(p.getUpdatedAt())
