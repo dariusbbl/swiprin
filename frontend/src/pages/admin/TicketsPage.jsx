@@ -1,4 +1,5 @@
 import { Fragment, useState, useEffect, useCallback } from 'react';
+import { Ticket } from 'lucide-react';
 import { getAllTickets, resolveTicket, inProgressTicket, deleteTicket } from '../../api/tickets';
 import Tag from '../../components/ui/Tag';
 import Badge from '../../components/ui/Badge';
@@ -73,7 +74,7 @@ export default function TicketsPage() {
       {loading && <p className={styles.loading}>Loading…</p>}
 
       {!loading && tickets.length === 0 && (
-        <EmptyState icon="🎫" title="No tickets" description="No tickets match the selected filter." />
+        <EmptyState icon={<Ticket size={44} />} title="No tickets" description="No tickets match the selected filter." />
       )}
 
       {!loading && tickets.length > 0 && (

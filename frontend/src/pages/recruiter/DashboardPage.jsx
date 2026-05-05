@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MapPin } from 'lucide-react';
 import { getMyJobs } from '../../api/jobs';
 import Tag from '../../components/ui/Tag';
 import Button from '../../components/ui/Button';
@@ -64,7 +65,7 @@ export default function DashboardPage() {
               <div key={job.id} className={styles.jobCard}>
                 <div className={styles.jobInfo}>
                   <span className={styles.jobTitle}>{job.title}</span>
-                  {job.location && <span className={styles.jobLoc}>📍 {job.location}</span>}
+                  {job.location && <span className={styles.jobLoc}><MapPin size={12} /> {job.location}</span>}
                 </div>
                 <div className={styles.jobMeta}>
                   <Tag variant={job.active ? 'success' : 'default'}>

@@ -57,7 +57,7 @@
 
 .jobInfo { display: flex; flex-direction: column; gap: .15rem; }
 .jobTitle { font-weight: 600; font-size: .9rem; color: var(--text); }
-.jobLoc   { font-size: .78rem; color: var(--text-3); }
+.jobLoc   { display: flex; align-items: center; gap: .2rem; font-size: .78rem; color: var(--text-3); }
 
 .jobMeta { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
 .appCount { font-size: .8rem; color: var(--text-2); white-space: nowrap; }

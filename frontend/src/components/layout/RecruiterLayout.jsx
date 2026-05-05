@@ -1,4 +1,5 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, Briefcase, MessageSquare, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Avatar from '../ui/Avatar';
 import styles from './RecruiterLayout.module.css';
@@ -16,13 +17,13 @@ export default function RecruiterLayout() {
         <nav className={styles.nav}>
           <p className={styles.section}>Recruiter</p>
           <NavLink to="/recruiter"      end className={({ isActive }) => isActive ? styles.active : ''}>
-            <span>📊</span> Dashboard
+            <LayoutDashboard size={16} /> Dashboard
           </NavLink>
           <NavLink to="/recruiter/jobs"     className={({ isActive }) => isActive ? styles.active : ''}>
-            <span>💼</span> My Jobs
+            <Briefcase size={16} /> My Jobs
           </NavLink>
           <NavLink to="/recruiter/feedback" className={({ isActive }) => isActive ? styles.active : ''}>
-            <span>💬</span> Feedback
+            <MessageSquare size={16} /> Feedback
           </NavLink>
         </nav>
 
@@ -32,7 +33,9 @@ export default function RecruiterLayout() {
             <span className={styles.name}>{user?.fullName}</span>
             <span className={styles.role}>Recruiter</span>
           </div>
-          <button className={styles.logout} onClick={handleLogout} title="Logout">↪</button>
+          <button className={styles.logout} onClick={handleLogout} title="Logout">
+            <LogOut size={16} />
+          </button>
         </div>
       </aside>
 

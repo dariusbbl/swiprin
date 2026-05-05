@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Users } from 'lucide-react';
 import { getJobApplications, updateAppStatus, deleteApplication } from '../../api/applications';
 import Badge from '../../components/ui/Badge';
 import MatchBar from '../../components/ui/MatchBar';
@@ -75,7 +76,7 @@ export default function JobApplicantsPage() {
       {loading && <p className={styles.loading}>Loading…</p>}
 
       {!loading && apps.length === 0 && (
-        <EmptyState icon="📋" title="No applicants"
+        <EmptyState icon={<Users size={44} />} title="No applicants"
           description={statusFilter ? 'No applicants match this status.' : 'No one has applied yet.'} />
       )}
 

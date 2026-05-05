@@ -1,12 +1,13 @@
 import { useState } from 'react';
+import { CheckCircle2 } from 'lucide-react';
 import { submitTicket } from '../../api/tickets';
 import styles from './FeedbackForm.module.css';
 
 const CATEGORIES = [
-  { value: 'BUG_REPORT',      label: '🐛 Bug report' },
-  { value: 'FEATURE_REQUEST', label: '💡 Feature request' },
-  { value: 'ACCOUNT_ISSUE',   label: '🔐 Account issue' },
-  { value: 'OTHER',           label: '💬 Other' },
+  { value: 'BUG_REPORT',      label: 'Bug report' },
+  { value: 'FEATURE_REQUEST', label: 'Feature request' },
+  { value: 'ACCOUNT_ISSUE',   label: 'Account issue' },
+  { value: 'OTHER',           label: 'Other' },
 ];
 
 const PRIORITIES = [
@@ -47,7 +48,7 @@ export default function FeedbackForm() {
     return (
       <div className={styles.page}>
         <div className={styles.successCard}>
-          <div className={styles.successIcon}>✅</div>
+          <div className={styles.successIcon}><CheckCircle2 size={48} /></div>
           <h2>Ticket submitted!</h2>
           <p>Our team will review your feedback. Thank you for helping us improve Swiprin.</p>
           <button className="btn btn-primary" onClick={() => { setSuccess(false); setForm(EMPTY); }}>

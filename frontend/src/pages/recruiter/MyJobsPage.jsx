@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MapPin, X, Briefcase } from 'lucide-react';
 import { getMyJobs, createJob, updateJob, deleteJob, getSkills } from '../../api/jobs';
 import Tag from '../../components/ui/Tag';
 import Pagination from '../../components/ui/Pagination';
@@ -111,14 +112,14 @@ export default function MyJobsPage() {
           onKeyDown={e => e.key === 'Enter' && (setSearch(searchInput), setPage(0))} />
         <Button variant="ghost" onClick={() => { setSearch(searchInput); setPage(0); }}>Search</Button>
         {search && (
-          <Button variant="ghost" size="sm" onClick={() => { setSearch(''); setSearchInput(''); }}>✕ Clear</Button>
+          <Button variant="ghost" size="sm" onClick={() => { setSearch(''); setSearchInput(''); }}><X size={13} /> Clear</Button>
         )}
       </div>
 
       {loading && <p className={styles.loading}>Loading…</p>}
 
       {!loading && displayed.length === 0 && (
-        <EmptyState icon="💼" title="No jobs found"
+        <EmptyState icon={<Briefcase size={44} />} title="No jobs found"
           description={search ? 'Try a different search term.' : 'Create your first job posting to get started.'}
           action={!search && <Button onClick={openCreate}>+ New job</Button>}
         />
@@ -143,7 +144,7 @@ export default function MyJobsPage() {
                   <tr key={job.id}>
                     <td className={styles.titleCell}>
                       <span className={styles.jobTitle}>{job.title}</span>
-                      {job.location && <span className={styles.location}>📍 {job.location}</span>}
+                      {job.location && <span className={styles.location}><MapPin size={12} /> {job.location}</span>}
                     </td>
                     <td><Tag>{WORK_LABEL[job.workMode]}</Tag></td>
                     <td>

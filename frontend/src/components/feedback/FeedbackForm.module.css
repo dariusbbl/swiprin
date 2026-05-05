@@ -57,6 +57,6 @@
   padding: 3rem 2rem; max-width: 460px; width: 100%;
   display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;
 }
-.successIcon { font-size: 3rem; line-height: 1; }
+.successIcon { line-height: 1; color: #16a34a; }
 .successCard h2 { font-size: 1.3rem; font-weight: 800; color: var(--text); }
 .successCard p  { font-size: .9rem; color: var(--text-2); line-height: 1.6; }

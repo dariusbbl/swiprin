@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { FileText } from 'lucide-react';
 import { getMyProfile, upsertProfile, getFaculties } from '../../api/users';
 import { getCvDrafts, createCvDraft, updateCvDraft, uploadCvFile, setDefaultCv, deleteCvDraft } from '../../api/cvDrafts';
 import { useAuth } from '../../context/AuthContext';
@@ -182,7 +183,7 @@ export default function ProfilePage() {
                 {cv.isDefault && <span className={styles.cvDefault}>default</span>}
                 {cv.fileUrl && (
                   <a href={cv.fileUrl} target="_blank" rel="noreferrer" className={styles.cvLink}>
-                    📄 View ↗
+                    <FileText size={13} /> View ↗
                   </a>
                 )}
                 {!cv.fileUrl && (

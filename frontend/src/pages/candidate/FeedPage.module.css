@@ -126,7 +126,7 @@
 }
 .jobTitle { font-size: 1.15rem; font-weight: 800; color: var(--text); margin: 0; }
 .company  { font-size: .85rem; color: var(--text-2); margin: .2rem 0 0; }
-.location { font-size: .8rem; color: var(--text-3); margin: .15rem 0 0; }
+.location { display: flex; align-items: center; gap: .25rem; font-size: .8rem; color: var(--text-3); margin: .15rem 0 0; }
 
 .skills { display: flex; flex-wrap: wrap; gap: .35rem; }
 .skill {

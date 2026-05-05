@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { ClipboardList, Check } from 'lucide-react';
 import { getMyApplications, withdrawApplication } from '../../api/applications';
 import Badge from '../../components/ui/Badge';
 import Pagination from '../../components/ui/Pagination';
@@ -57,7 +58,7 @@ export default function MyApplicationsPage() {
       {loading && <p className={styles.loading}>Loading…</p>}
 
       {!loading && data?.content?.length === 0 && (
-        <EmptyState icon="📋" title="No applications yet"
+        <EmptyState icon={<ClipboardList size={44} />} title="No applications yet"
           description="Start swiping to apply for jobs that match your skills." />
       )}
 
@@ -80,7 +81,7 @@ export default function MyApplicationsPage() {
                   <tr key={app.id}>
                     <td className={styles.jobCell}>
                       <span className={styles.jobTitle}>{app.job.title}</span>
-                      {app.shortlisted && <Tag variant="success">Shortlisted ✓</Tag>}
+                      {app.shortlisted && <Tag variant="success">Shortlisted <Check size={11} /></Tag>}
                     </td>
                     <td>{app.job.company?.name ?? '—'}</td>
                     <td><Tag>{WORK_MODE[app.job.workMode] ?? app.job.workMode}</Tag></td>
