@@ -1,4 +1,4 @@
-.page { display: flex; flex-direction: column; gap: 1.5rem; max-width: 640px; }
+.page { display: flex; flex-direction: column; gap: 1.25rem; }
 
 .avatarRow {
   display: flex; align-items: center; gap: 1rem;
@@ -19,19 +19,30 @@
   padding: .65rem 1rem; font-size: .85rem; font-weight: 500;
 }
 
-.form { display: flex; flex-direction: column; gap: 1.5rem; }
+/* About + My CVs side by side */
+.topRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
 
+@media (max-width: 720px) {
+  .topRow { grid-template-columns: 1fr; }
+}
+
+/* Shared section card */
 .section {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   padding: 1.25rem 1.5rem;
-  display: flex; flex-direction: column; gap: 1rem;
+  display: flex; flex-direction: column; gap: .9rem;
 }
 .sectionTitle {
   font-size: .9rem; font-weight: 700; color: var(--text);
-  margin: 0 0 .25rem; padding-bottom: .5rem;
+  margin: 0 0 .1rem; padding-bottom: .5rem;
   border-bottom: 1px solid var(--border);
 }
 
@@ -40,3 +51,51 @@
 .field label { font-size: .8rem; font-weight: 600; color: var(--text-2); }
 
 .formActions { display: flex; justify-content: flex-end; }
+
+/* CV Drafts */
+.cvHeader {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cvEmpty { font-size: .85rem; color: var(--text-3); margin: 0; }
+
+.cvRow {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .4rem;
+  padding: .55rem .65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.cvInfo    { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; min-width: 0; }
+.cvName    { font-size: .85rem; font-weight: 600; color: var(--text); }
+.cvDefault {
+  font-size: .7rem; font-weight: 700;
+  background: var(--accent-50); color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 99px; padding: .1rem .4rem; white-space: nowrap;
+}
+.cvLink    { font-size: .78rem; color: var(--accent); text-decoration: none; white-space: nowrap; }
+.cvLink:hover { text-decoration: underline; }
+.cvActions { display: flex; gap: .3rem; flex-shrink: 0; }
+
+.cvForm {
+  display: flex; flex-direction: column; gap: .7rem;
+  padding: .9rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.cvFormActions { display: flex; justify-content: flex-end; gap: .5rem; }
+
+.checkboxRow {
+  display: flex; align-items: center; gap: .5rem;
+  font-size: .82rem; color: var(--text-2); cursor: pointer;
+}
+.checkboxRow input { accent-color: var(--accent); }
+
+.existingFile {
+  font-size: .78rem; color: var(--text-3);
+}
+.existingFile a { color: var(--accent); text-decoration: none; }
+.existingFile a:hover { text-decoration: underline; }
+
+.noFile { font-size: .75rem; color: var(--text-3); font-style: italic; }
