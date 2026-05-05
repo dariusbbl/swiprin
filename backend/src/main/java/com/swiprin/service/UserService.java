@@ -133,6 +133,7 @@ public class UserService {
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .status(user.getStatus())
                 .phoneNumber(user.getPhoneNumber())
                 .jobTitle(user.getJobTitle())
                 .businessEmail(user.getBusinessEmail())
