@@ -47,6 +47,7 @@ public class CvDraftService {
         CvDraft draft = CvDraft.builder()
                 .user(user)
                 .name(req.getName().trim())
+                .fileUrl(req.getFileUrl() != null ? req.getFileUrl().trim() : null)
                 .isDefault(Boolean.TRUE.equals(req.getIsDefault()))
                 .deleted(false)
                 .build();
@@ -59,12 +60,20 @@ public class CvDraftService {
         CvDraft draft = findOwnedOrThrow(id, userId);
 
         if (req.getName() != null) draft.setName(req.getName().trim());
+        if (req.getFileUrl() != null) draft.setFileUrl(req.getFileUrl().isBlank() ? null : req.getFileUrl().trim());
 
         if (Boolean.TRUE.equals(req.getIsDefault()) && !Boolean.TRUE.equals(draft.getIsDefault())) {
             cvDraftRepository.clearDefaultForUser(userId);
             draft.setIsDefault(true);
         }
 
+        return toResponse(cvDraftRepository.save(draft));
+    }
+
+    @Transactional
+    public CvDraftResponse setFileUrl(Long id, String fileUrl, Long userId) {
+        CvDraft draft = findOwnedOrThrow(id, userId);
+        draft.setFileUrl(fileUrl);
         return toResponse(cvDraftRepository.save(draft));
     }
 
