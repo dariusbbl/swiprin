@@ -4,7 +4,6 @@ import com.swiprin.model.enums.EducationLevel;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -37,8 +36,8 @@ public class UserProfile {
 
     private String faculty;
 
-    @Column(name = "graduation_date")
-    private LocalDate graduationDate;
+    @Column(name = "graduation_year")
+    private Integer graduationYear;
 
     @Column(name = "linkedin_url")
     private String linkedInUrl;

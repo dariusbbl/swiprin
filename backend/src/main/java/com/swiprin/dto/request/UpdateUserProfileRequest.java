@@ -5,8 +5,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
 public class UpdateUserProfileRequest {
 
@@ -21,13 +19,13 @@ public class UpdateUserProfileRequest {
     @Size(max = 255)
     private String faculty;
 
-    private LocalDate graduationDate;
+    private Integer graduationYear;
 
-    @Pattern(regexp = "^(https?://)?([\\w]+\\.)?linkedin\\.com/.*$",
+    @Pattern(regexp = "^$|^(https?://)?([\\w]+\\.)?linkedin\\.com/.*$",
              message = "Invalid LinkedIn URL")
     private String linkedInUrl;
 
-    @Pattern(regexp = "^(https?://)?github\\.com/.*$",
+    @Pattern(regexp = "^$|^(https?://)?github\\.com/.*$",
              message = "Invalid GitHub URL")
     private String githubUrl;
 }
