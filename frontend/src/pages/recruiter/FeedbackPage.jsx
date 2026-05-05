@@ -1,5 +1,5 @@
 import FeedbackForm from '../../components/feedback/FeedbackForm';
 
-export default function CandidateFeedback() {
+export default function RecruiterFeedback() {
   return <FeedbackForm />;
 }
