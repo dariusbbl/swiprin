@@ -73,7 +73,7 @@
   border: 1px solid var(--accent);
   border-radius: 99px; padding: .1rem .4rem; white-space: nowrap;
 }
-.cvLink    { font-size: .78rem; color: var(--accent); text-decoration: none; white-space: nowrap; }
+.cvLink    { display: inline-flex; align-items: center; gap: .2rem; font-size: .78rem; color: var(--accent); text-decoration: none; white-space: nowrap; }
 .cvLink:hover { text-decoration: underline; }
 .cvActions { display: flex; gap: .3rem; flex-shrink: 0; }
 

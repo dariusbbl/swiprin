@@ -38,7 +38,7 @@
 
 .titleCell { display: flex; flex-direction: column; gap: .2rem; }
 .jobTitle  { font-weight: 600; }
-.location  { font-size: .78rem; color: var(--text-3); }
+.location  { display: flex; align-items: center; gap: .2rem; font-size: .78rem; color: var(--text-3); }
 .center    { text-align: center; }
 
 .appLink {

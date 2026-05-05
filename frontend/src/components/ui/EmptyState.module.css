@@ -2,6 +2,6 @@
   display: flex; flex-direction: column; align-items: center;
   gap: .6rem; padding: 3rem 1rem; text-align: center;
 }
-.icon { font-size: 2.8rem; line-height: 1; }
+.icon { line-height: 1; color: var(--text-3); display: flex; align-items: center; justify-content: center; }
 .title { font-size: 1.05rem; font-weight: 700; color: var(--text); }
 .desc { font-size: .875rem; color: var(--text-2); max-width: 320px; line-height: 1.55; }

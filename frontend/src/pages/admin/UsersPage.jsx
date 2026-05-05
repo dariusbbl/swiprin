@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Users } from 'lucide-react';
 import { getUsers, setUserStatus, deleteUser } from '../../api/users';
 import Tag from '../../components/ui/Tag';
 import Pagination from '../../components/ui/Pagination';
@@ -71,7 +72,7 @@ export default function UsersPage() {
       {loading && <p className={styles.loading}>Loading…</p>}
 
       {!loading && users.length === 0 && (
-        <EmptyState icon="👥" title="No users" description="No users match the selected filter." />
+        <EmptyState icon={<Users size={44} />} title="No users" description="No users match the selected filter." />
       )}
 
       {!loading && users.length > 0 && (

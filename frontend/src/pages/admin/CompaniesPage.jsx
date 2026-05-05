@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Building2 } from 'lucide-react';
 import { getCompanies, createCompany, updateCompany, verifyCompany, deleteCompany } from '../../api/companies';
 import Tag from '../../components/ui/Tag';
 import Pagination from '../../components/ui/Pagination';
@@ -90,7 +91,7 @@ export default function CompaniesPage() {
       {loading && <p className={styles.loading}>Loading…</p>}
 
       {!loading && companies.length === 0 && (
-        <EmptyState icon="🏢" title="No companies" description="No companies registered yet."
+        <EmptyState icon={<Building2 size={44} />} title="No companies" description="No companies registered yet."
           action={<Button onClick={openCreate}>+ New company</Button>} />
       )}
 

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { MapPin, X, Check, Sparkles } from 'lucide-react';
 import { getJobFeed } from '../../api/jobs';
 import { applyToJob } from '../../api/applications';
 import { getCvDrafts } from '../../api/cvDrafts';
@@ -101,7 +102,7 @@ export default function FeedPage() {
   if (done || (!loading && cards.length === 0 && !hasMoreRef.current)) {
     return (
       <div className={styles.page}>
-        <EmptyState icon="🎉" title="You're all caught up!"
+        <EmptyState icon={<Sparkles size={44} />} title="You're all caught up!"
           description="No more new jobs right now. Check back later." />
       </div>
     );
@@ -117,7 +118,7 @@ export default function FeedPage() {
       {applyError && (
         <div className={styles.errorBanner}>
           {applyError}
-          <button className={styles.errorClose} onClick={() => setApplyError('')}>✕</button>
+          <button className={styles.errorClose} onClick={() => setApplyError('')}><X size={14} /></button>
         </div>
       )}
 
@@ -154,7 +155,7 @@ export default function FeedPage() {
               <div>
                 <h3 className={styles.jobTitle}>{top.title}</h3>
                 {top.company?.name && <p className={styles.company}>{top.company.name}</p>}
-                {top.location && <p className={styles.location}>📍 {top.location}</p>}
+                {top.location && <p className={styles.location}><MapPin size={13} /> {top.location}</p>}
               </div>
               <Tag>{WORK_LABEL[top.workMode] ?? top.workMode}</Tag>
             </div>
@@ -172,11 +173,11 @@ export default function FeedPage() {
             <div className={styles.cardActions}>
               <button className={[styles.btn, styles.btnSkip].join(' ')}
                 onClick={() => swipe('left')} disabled={!!swipeDir}>
-                ✕ Skip
+                <X size={15} /> Skip
               </button>
               <button className={[styles.btn, styles.btnApply].join(' ')}
                 onClick={() => swipe('right')} disabled={!!swipeDir}>
-                ✓ Apply
+                <Check size={15} /> Apply
               </button>
             </div>
           </div>
