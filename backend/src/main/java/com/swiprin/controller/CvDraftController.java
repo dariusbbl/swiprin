@@ -80,7 +80,6 @@ public class CvDraftController {
     }
 
     @GetMapping("/files/{userId}/{filename}")
-    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Download a CV file")
     public ResponseEntity<Resource> downloadFile(@PathVariable Long userId,
                                                   @PathVariable String filename,
