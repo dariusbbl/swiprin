@@ -20,6 +20,7 @@ export default function CandidateLayout() {
           <NavLink to="/"            end className={({ isActive }) => isActive ? styles.active : ''}>Discover</NavLink>
           <NavLink to="/applications"    className={({ isActive }) => isActive ? styles.active : ''}>Applications</NavLink>
           <NavLink to="/profile"         className={({ isActive }) => isActive ? styles.active : ''}>Profile</NavLink>
+          <NavLink to="/feedback"        className={({ isActive }) => isActive ? styles.active : ''}>Feedback</NavLink>
         </div>
 
         <div className={styles.user}>

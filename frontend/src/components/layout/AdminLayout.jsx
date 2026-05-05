@@ -21,6 +21,9 @@ export default function AdminLayout() {
           <NavLink to="/admin/companies" className={({ isActive }) => isActive ? styles.active : ''}>
             <span>🏢</span> Companies
           </NavLink>
+          <NavLink to="/admin/tickets"   className={({ isActive }) => isActive ? styles.active : ''}>
+            <span>🎫</span> Tickets
+          </NavLink>
         </nav>
 
         <div className={styles.footer}>

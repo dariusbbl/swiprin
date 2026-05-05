@@ -21,6 +21,9 @@ export default function RecruiterLayout() {
           <NavLink to="/recruiter/jobs"     className={({ isActive }) => isActive ? styles.active : ''}>
             <span>💼</span> My Jobs
           </NavLink>
+          <NavLink to="/recruiter/feedback" className={({ isActive }) => isActive ? styles.active : ''}>
+            <span>💬</span> Feedback
+          </NavLink>
         </nav>
 
         <div className={styles.footer}>

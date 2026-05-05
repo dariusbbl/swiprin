@@ -11,13 +11,16 @@ import AdminLayout      from '../components/layout/AdminLayout';
 import FeedPage         from '../pages/candidate/FeedPage';
 import MyApplications   from '../pages/candidate/MyApplicationsPage';
 import CandidateProfile from '../pages/candidate/ProfilePage';
+import FeedbackPage     from '../pages/candidate/FeedbackPage';
 
 import RecruiterDashboard from '../pages/recruiter/DashboardPage';
 import MyJobsPage         from '../pages/recruiter/MyJobsPage';
 import JobApplicantsPage  from '../pages/recruiter/JobApplicantsPage';
+import RecruiterFeedback  from '../pages/recruiter/FeedbackPage';
 
 import AdminUsersPage     from '../pages/admin/UsersPage';
 import AdminCompaniesPage from '../pages/admin/CompaniesPage';
+import AdminTicketsPage   from '../pages/admin/TicketsPage';
 
 import UnauthorizedPage from '../pages/UnauthorizedPage';
 
@@ -36,9 +39,10 @@ export default function AppRouter() {
             <CandidateLayout />
           </RequireRole>
         }>
-          <Route index element={<FeedPage />} />
+          <Route index             element={<FeedPage />} />
           <Route path="applications" element={<MyApplications />} />
           <Route path="profile"      element={<CandidateProfile />} />
+          <Route path="feedback"     element={<FeedbackPage />} />
         </Route>
 
         {/* Recruiter */}
@@ -48,8 +52,9 @@ export default function AppRouter() {
           </RequireRole>
         }>
           <Route index element={<RecruiterDashboard />} />
-          <Route path="jobs"                element={<MyJobsPage />} />
+          <Route path="jobs"                   element={<MyJobsPage />} />
           <Route path="jobs/:jobId/applicants" element={<JobApplicantsPage />} />
+          <Route path="feedback"               element={<RecruiterFeedback />} />
         </Route>
 
         {/* Admin */}
@@ -61,6 +66,7 @@ export default function AppRouter() {
           <Route index element={<Navigate to="users" replace />} />
           <Route path="users"     element={<AdminUsersPage />} />
           <Route path="companies" element={<AdminCompaniesPage />} />
+          <Route path="tickets"   element={<AdminTicketsPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />

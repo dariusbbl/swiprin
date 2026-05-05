@@ -1,0 +1,62 @@
+.page { display: flex; justify-content: center; padding: 1rem 0 3rem; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  width: 100%; max-width: 580px;
+}
+
+.title { font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: .3rem; }
+.sub   { font-size: .875rem; color: var(--text-2); margin-bottom: 1.5rem; line-height: 1.55; }
+
+.alert {
+  background: #fee2e2; color: #991b1b;
+  border: 1px solid #fecaca; border-radius: 8px;
+  padding: .65rem 1rem; font-size: .85rem; font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.form { display: flex; flex-direction: column; gap: 1.1rem; }
+
+.field { display: flex; flex-direction: column; gap: .35rem; }
+.field label { font-size: .82rem; font-weight: 600; color: var(--text-2); }
+.charHint { font-weight: 400; color: var(--text-3); }
+
+/* Radio cards */
+.radioGroup { display: flex; flex-direction: column; gap: .5rem; }
+
+.radioCard {
+  display: flex; align-items: center; gap: .75rem;
+  padding: .7rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px; cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.radioCard:hover { border-color: var(--accent); background: var(--accent-50); }
+.radioActive { border-color: var(--accent); background: var(--accent-50); }
+
+.radioCard input[type="radio"] { accent-color: var(--accent); flex-shrink: 0; }
+
+.radioLabel { display: block; font-size: .875rem; font-weight: 600; color: var(--text); }
+.radioDesc  { display: block; font-size: .78rem; color: var(--text-3); }
+
+/* Checkbox */
+.checkboxRow {
+  display: flex; align-items: flex-start; gap: .6rem;
+  font-size: .85rem; color: var(--text-2); cursor: pointer; line-height: 1.5;
+}
+.checkboxRow input { margin-top: .15rem; accent-color: var(--accent); flex-shrink: 0; }
+
+/* Success */
+.successCard {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 3rem 2rem; max-width: 460px; width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;
+}
+.successIcon { font-size: 3rem; line-height: 1; }
+.successCard h2 { font-size: 1.3rem; font-weight: 800; color: var(--text); }
+.successCard p  { font-size: .9rem; color: var(--text-2); line-height: 1.6; }
