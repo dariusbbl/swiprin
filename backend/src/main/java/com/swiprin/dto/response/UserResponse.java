@@ -1,6 +1,7 @@
 package com.swiprin.dto.response;
 
 import com.swiprin.model.enums.Role;
+import com.swiprin.model.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class UserResponse {
     private String fullName;
     private String email;
     private Role role;
+    private UserStatus status;
     private String phoneNumber;
     private String jobTitle;
     private String businessEmail;

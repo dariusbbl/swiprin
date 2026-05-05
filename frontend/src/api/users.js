@@ -1,7 +1,7 @@
 import client from './client';
 
 export const getUsers        = (page = 0, role)  => client.get(`/users?page=${page}&size=20${role ? `&role=${role}` : ''}`);
-export const toggleUserStatus = (id, enabled)    => client.put(`/users/${id}/status`, { enabled });
+export const setUserStatus    = (id, status)     => client.put(`/users/${id}/status`, null, { params: { status } });
 export const deleteUser       = (id)             => client.delete(`/users/${id}`);
 
 export const getMyProfile     = ()               => client.get('/users/me/profile');
