@@ -34,7 +34,8 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/v3/api-docs/**",
-            "/api/skills/**"    // candidates can browse the full skill list without logging in
+            "/api/skills/**",
+            "/api/cv-drafts/files/**"   // UUID filenames act as unguessable access tokens
     };
 
     @Bean
