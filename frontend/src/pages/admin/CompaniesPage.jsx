@@ -101,6 +101,7 @@ export default function CompaniesPage() {
             <table className={styles.table}>
               <thead>
                 <tr>
+                  <th className={styles.center}>ID</th>
                   <th>Company</th>
                   <th>Website</th>
                   <th>Verified</th>
@@ -112,6 +113,9 @@ export default function CompaniesPage() {
               <tbody>
                 {companies.map(c => (
                   <tr key={c.id}>
+                    <td className={styles.center}>
+                      <span className={styles.idBadge}>{c.id}</span>
+                    </td>
                     <td>
                       <div className={styles.companyCell}>
                         <CompanyLogo name={c.name} size={32} />

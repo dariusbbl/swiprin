@@ -89,6 +89,159 @@
   margin-top: .75rem; line-height: 1.5;
 }
 
+/* Confirmation screen */
+.confirmIcon {
+  display: flex; justify-content: center;
+  margin-bottom: 1.1rem;
+}
+.confirmIcon svg { color: var(--accent); }
+.confirmTitle {
+  font-size: 1.35rem; font-weight: 800; color: var(--text);
+  text-align: center; margin: 0 0 .65rem;
+}
+.confirmMsg {
+  font-size: .875rem; color: var(--text-2); line-height: 1.65;
+  text-align: center; margin: 0 0 1.5rem;
+}
+
+.authRow2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 500px) { .authRow2 { grid-template-columns: 1fr; } }
+
 .inputError { border-color: var(--danger) !important; }
 .inputError:focus { box-shadow: 0 0 0 3px rgba(239,68,68,.15) !important; }
 .fieldError { font-size: .75rem; color: var(--danger); font-weight: 500; }
+
+/* ─────────────────────────────────────────
+   Split layout  (Login page only)
+───────────────────────────────────────── */
+.splitPage {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Left — form */
+.formPanel {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  padding: 3rem 2rem;
+}
+.formInner { width: 100%; max-width: 380px; }
+
+.brand {
+  display: flex; align-items: center; gap: .5rem;
+  margin-bottom: 2rem;
+}
+.brandIcon {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 8px;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: .95rem; flex-shrink: 0;
+}
+.brandName { font-size: 1.1rem; font-weight: 800; color: var(--text); letter-spacing: -.02em; }
+
+.splitTitle { font-size: 1.9rem; font-weight: 800; color: var(--text); margin: 0 0 .35rem; }
+.splitSub   { font-size: .9rem; color: var(--text-2); margin: 0 0 1.75rem; }
+
+.rememberRow {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: .825rem;
+}
+.checkLabel { display: flex; align-items: center; gap: .4rem; color: var(--text-2); cursor: pointer; }
+.checkLabel input { accent-color: var(--accent); }
+.forgotLink { color: var(--accent); font-weight: 600; cursor: pointer; }
+
+/* Right — hero */
+.heroPanel {
+  flex: 1;
+  background: linear-gradient(145deg, #2f4acb 0%, #4263eb 55%, #5c7cfa 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem 3rem 3rem;
+  overflow: hidden;
+}
+
+.heroTag {
+  display: inline-flex; align-items: center; gap: .4rem;
+  background: rgba(255,255,255,.18);
+  color: rgba(255,255,255,.9);
+  font-size: .78rem; font-weight: 600;
+  padding: .35rem .8rem; border-radius: 99px;
+  width: fit-content;
+}
+
+.heroCardStack {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 2rem 0;
+}
+
+/* shadow card behind */
+.heroCardBg {
+  position: absolute;
+  width: 82%;
+  height: 140px;
+  background: rgba(255,255,255,.22);
+  border-radius: 20px;
+  transform: translateY(22px) scale(.94);
+  backdrop-filter: blur(2px);
+}
+
+/* main card */
+.heroCard {
+  position: relative;
+  background: #fff;
+  border-radius: 20px;
+  padding: 1.5rem 1.5rem 1.35rem;
+  width: 82%;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  box-shadow: 0 24px 64px rgba(0,0,0,.22);
+}
+
+.heroAv {
+  width: 46px; height: 46px;
+  border-radius: 12px;
+  background: #e03131;
+  color: #fff;
+  font-weight: 800; font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.heroCardBody { flex: 1; min-width: 0; }
+.heroJobTitle   { font-size: .95rem; font-weight: 700; color: #111; margin: 0 0 .15rem; }
+.heroJobCompany { font-size: .8rem; color: #777; margin: 0 0 .65rem; }
+
+.heroTags { display: flex; flex-wrap: wrap; gap: .3rem; }
+.heroTags span {
+  font-size: .72rem; font-weight: 500;
+  background: #f1f3f5; color: #495057;
+  border-radius: 6px; padding: .2rem .5rem;
+}
+
+.heroMatch { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+.heroMatchPct { font-size: 1.6rem; font-weight: 800; color: #3b5bdb; line-height: 1; }
+.heroMatchLbl { font-size: .62rem; font-weight: 700; color: #3b5bdb; letter-spacing: .08em; }
+
+.heroCopy {
+  font-size: 1.6rem; font-weight: 800;
+  color: #fff; line-height: 1.25;
+  margin: 0 0 .5rem;
+}
+.heroStats { font-size: .875rem; color: rgba(255,255,255,.6); margin: 0; }
+
+@media (max-width: 800px) {
+  .splitPage  { display: block; }
+  .formPanel  { width: 100%; min-height: 100vh; }
+  .heroPanel  { display: none; }
+}
