@@ -137,16 +137,16 @@ export default function UsersPage() {
                     <td className={styles.date}>{fmt(u.createdAt)}</td>
                     <td>
                       <div className={styles.actions}>
-                        {u.status !== 'ACTIVE' && (
+                        {u.status === 'PENDING_APPROVAL' && (<>
                           <Button size="sm" variant="success-soft"
                             onClick={() => handleStatus(u.id, 'ACTIVE')}>Approve</Button>
-                        )}
-                        {u.status === 'ACTIVE' && (
                           <Button size="sm" variant="ghost"
                             onClick={() => handleStatus(u.id, 'REJECTED')}>Reject</Button>
+                        </>)}
+                        {u.role !== 'ADMIN' && (
+                          <Button size="sm" variant="danger-soft"
+                            onClick={() => setDeleteId(u.id)}>Delete</Button>
                         )}
-                        <Button size="sm" variant="danger-soft"
-                          onClick={() => setDeleteId(u.id)}>Delete</Button>
                       </div>
                     </td>
                   </tr>

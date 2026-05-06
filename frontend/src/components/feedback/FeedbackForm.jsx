@@ -68,7 +68,6 @@ export default function FeedbackForm() {
         {error && <div className={styles.alert}>{error}</div>}
 
         <form onSubmit={submit} className={styles.form}>
-          {/* SELECT */}
           <div className={styles.field}>
             <label htmlFor="category">Category *</label>
             <select id="category" name="category" value={form.category}
@@ -80,7 +79,6 @@ export default function FeedbackForm() {
             </select>
           </div>
 
-          {/* RADIO */}
           <div className={styles.field}>
             <label>Priority *</label>
             <div className={styles.radioGroup}>
@@ -98,7 +96,6 @@ export default function FeedbackForm() {
             </div>
           </div>
 
-          {/* TEXTAREA */}
           <div className={styles.field}>
             <label htmlFor="message">
               Message * <span className={styles.charHint}>({form.message.length}/2000)</span>
@@ -108,7 +105,6 @@ export default function FeedbackForm() {
               placeholder="Describe the issue or suggestion in detail…" />
           </div>
 
-          {/* CHECKBOX */}
           <label className={styles.checkboxRow}>
             <input type="checkbox" name="contactConsent" checked={form.contactConsent} onChange={handle} />
             <span>I allow the Swiprin team to use my account details to investigate this ticket</span>

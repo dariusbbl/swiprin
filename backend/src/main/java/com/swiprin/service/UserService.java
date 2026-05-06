@@ -76,7 +76,11 @@ public class UserService {
 
     @Transactional
     public void delete(Long id) {
-        userRepository.delete(findOrThrow(id));
+        User user = findOrThrow(id);
+        if (user.getRole() == Role.ADMIN) {
+            throw new com.swiprin.exception.BadRequestException("Admin accounts cannot be deleted");
+        }
+        userRepository.delete(user);
     }
 
     public UserProfileResponse getProfile(Long userId) {
