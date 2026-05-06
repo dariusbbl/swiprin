@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { FileText } from 'lucide-react';
-import { getMyProfile, upsertProfile, getFaculties } from '../../api/users';
+import { getMyProfile, upsertProfile, getFaculties, updateMe } from '../../api/users';
 import { getCvDrafts, createCvDraft, updateCvDraft, uploadCvFile, setDefaultCv, deleteCvDraft } from '../../api/cvDrafts';
+import { getSkills } from '../../api/skills';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
 import Avatar from '../../components/ui/Avatar';
@@ -27,10 +28,13 @@ const EMPTY_PROFILE = {
 const EMPTY_CV = { name: '', isDefault: false };
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
 
   const [form, setForm]           = useState(EMPTY_PROFILE);
   const [faculties, setFaculties] = useState([]);
+  const [skills, setSkills]       = useState([]);
+  const [selectedSkillIds, setSelectedSkillIds] = useState([]);
+  const [skillSearch, setSkillSearch] = useState('');
   const [loading, setLoading]     = useState(true);
   const [saving, setSaving]       = useState(false);
   const [success, setSuccess]     = useState(false);
@@ -51,7 +55,8 @@ export default function ProfilePage() {
       getMyProfile().catch(() => null),
       getFaculties().catch(() => ({ data: [] })),
       getCvDrafts().catch(() => ({ data: [] })),
-    ]).then(([profileRes, facRes, cvRes]) => {
+      getSkills().catch(() => ({ data: { content: [] } })),
+    ]).then(([profileRes, facRes, cvRes, skillRes]) => {
       if (profileRes?.data) {
         const p = profileRes.data;
         setForm({
@@ -66,12 +71,21 @@ export default function ProfilePage() {
       }
       setFaculties(facRes?.data ?? []);
       setCvDrafts(cvRes?.data ?? []);
+      setSkills(skillRes?.data?.content ?? skillRes?.data ?? []);
+      setSelectedSkillIds((user?.skills ?? []).map(s => s.id));
     }).finally(() => setLoading(false));
-  }, []);
+  }, [user?.skills]);
 
   const loadCvs = () => getCvDrafts().then(r => setCvDrafts(r.data ?? []));
 
   const handle = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  const addSkill = (id) => {
+    setSelectedSkillIds(prev => prev.includes(id) ? prev : [...prev, id]);
+    setSkillSearch('');
+  };
+  const removeSkill = (id) => {
+    setSelectedSkillIds(prev => prev.filter(skillId => skillId !== id));
+  };
 
   const handleSave = async () => {
     setSaving(true); setError(''); setSuccess(false);
@@ -79,7 +93,11 @@ export default function ProfilePage() {
       const payload = { ...form };
       if (!payload.educationLevel) delete payload.educationLevel;
       payload.graduationYear = payload.graduationYear ? Number(payload.graduationYear) : null;
-      await upsertProfile(payload);
+      await Promise.all([
+        upsertProfile(payload),
+        updateMe({ skillIds: selectedSkillIds }),
+      ]);
+      await refreshUser();
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
@@ -130,6 +148,20 @@ export default function ProfilePage() {
   };
 
   if (loading) return <p style={{ color: 'var(--text-3)' }}>Loading…</p>;
+
+  const selectedSkills = selectedSkillIds
+    .map(id => skills.find(skill => skill.id === id))
+    .filter(Boolean);
+
+  const skillQuery = skillSearch.trim().toLowerCase();
+  const skillSuggestions = skillQuery
+    ? skills
+        .filter(skill =>
+          !selectedSkillIds.includes(skill.id) &&
+          skill.name.toLowerCase().includes(skillQuery)
+        )
+        .slice(0, 8)
+    : [];
 
   return (
     <div className={styles.page}>
@@ -271,6 +303,61 @@ export default function ProfilePage() {
             {faculties.map(f => <option key={f} value={f}>{f}</option>)}
           </select>
         </div>
+      </section>
+
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>Skills</h3>
+
+        {selectedSkills.length > 0 && (
+          <div className={styles.selectedSkillGrid}>
+            {selectedSkills.map(skill => (
+              <button
+                key={skill.id}
+                type="button"
+                className={[styles.skillChip, styles.skillActive].join(' ')}
+                onClick={() => removeSkill(skill.id)}
+                title="Remove skill"
+              >
+                {skill.name}
+                <span className={styles.removeSkill}>x</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {skills.length > 0 && (
+          <div className={styles.skillSearchWrap}>
+            <input
+              className="form-control"
+              value={skillSearch}
+              onChange={e => setSkillSearch(e.target.value)}
+              placeholder="Search skills..."
+            />
+
+            {skillSuggestions.length > 0 && (
+              <div className={styles.skillSuggestions}>
+                {skillSuggestions.map(skill => (
+                  <button
+                    key={skill.id}
+                    type="button"
+                    className={styles.skillSuggestion}
+                    onClick={() => addSkill(skill.id)}
+                  >
+                    {skill.name}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {skillQuery && skillSuggestions.length === 0 && (
+              <p className={styles.noSkillMatches}>No matching skills found.</p>
+            )}
+          </div>
+        )}
+
+        {skills.length === 0 && (
+          <p className={styles.cvEmpty}>No skills available yet.</p>
+        )}
       </section>
 
       {/* Links — full width */}

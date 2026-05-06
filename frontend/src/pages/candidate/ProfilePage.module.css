@@ -52,6 +52,101 @@
 
 .formActions { display: flex; justify-content: flex-end; }
 
+.skillGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.selectedSkillGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.skillChip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-height: 32px;
+  padding: .35rem .7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+
+.skillChip[type="button"] {
+  font-family: inherit;
+}
+
+.skillChip input { display: none; }
+
+.skillChip:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.skillActive {
+  background: var(--accent-50);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.removeSkill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, .12);
+  font-size: .72rem;
+  line-height: 1;
+}
+
+.skillSearchWrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+
+.skillSuggestions {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.skillSuggestion {
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: .86rem;
+  text-align: left;
+  padding: .55rem .75rem;
+  cursor: pointer;
+}
+
+.skillSuggestion:last-child { border-bottom: 0; }
+.skillSuggestion:hover { background: var(--surface-2); }
+
+.noSkillMatches {
+  margin: 0;
+  color: var(--text-3);
+  font-size: .82rem;
+}
+
 /* CV Drafts */
 .cvHeader {
   display: flex; align-items: center; justify-content: space-between;
