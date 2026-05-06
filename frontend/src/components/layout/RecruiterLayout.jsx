@@ -1,12 +1,20 @@
+import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { getMe } from '../../api/users';
 import Avatar from '../ui/Avatar';
 import styles from './RecruiterLayout.module.css';
 
 export default function RecruiterLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [company, setCompany] = useState(null);
+
+  useEffect(() => {
+    getMe().then(r => setCompany(r.data?.company ?? null)).catch(() => {});
+  }, []);
+
   const handleLogout = () => { logout(); navigate('/login'); };
 
   return (
@@ -39,9 +47,19 @@ export default function RecruiterLayout() {
         </div>
       </aside>
 
-      <main className={styles.main}>
-        <Outlet />
-      </main>
+      <div className={styles.mainWrap}>
+        <div className={styles.topBar}>
+          {company && (
+            <div className={styles.companyBadge}>
+              <span className={styles.companyBadgeName}>{company.name}</span>
+              <span className={styles.companyBadgeId}>#{company.id}</span>
+            </div>
+          )}
+        </div>
+        <main className={styles.main}>
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

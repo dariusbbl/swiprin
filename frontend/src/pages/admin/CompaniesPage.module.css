@@ -45,6 +45,16 @@
 .link:hover { text-decoration: underline; }
 .muted  { color: var(--text-3); }
 .center { text-align: center; }
+.idBadge {
+  display: inline-block;
+  font-size: .75rem; font-weight: 700;
+  color: var(--text-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: .15rem .45rem;
+  font-variant-numeric: tabular-nums;
+}
 .date   { color: var(--text-2); white-space: nowrap; }
 
 .actions { display: flex; gap: .35rem; flex-wrap: wrap; }
