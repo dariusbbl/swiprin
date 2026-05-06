@@ -96,9 +96,10 @@ public class UserController {
     @Operation(summary = "List all users (ADMIN only, filterable by role)")
     public ResponseEntity<PageResponse<UserResponse>> getAll(
             @RequestParam(required = false) Role role,
+            @RequestParam(required = false) String companyName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(userService.getAllByRole(role, PageRequest.of(page, size)));
+        return ResponseEntity.ok(userService.getAllByRole(role, companyName, PageRequest.of(page, size)));
     }
 
     @GetMapping("/{id}")

@@ -18,6 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findAllByRole(Role role, Pageable pageable);
 
+    Page<User> findByRoleAndCompanyNameContainingIgnoreCase(Role role, String companyName, Pageable pageable);
+
     @Query("SELECT u FROM User u WHERE u.company.id = :companyId AND u.role = 'RECRUITER'")
     Page<User> findRecruitersByCompanyId(@Param("companyId") Long companyId, Pageable pageable);
 }

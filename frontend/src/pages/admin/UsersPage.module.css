@@ -46,3 +46,5 @@
 .muted    { color: var(--text-3); }
 
 .actions { display: flex; gap: .35rem; flex-wrap: wrap; }
+
+.companyBar { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-top: -.5rem; }
