@@ -19,26 +19,35 @@ function fmt(dt) {
 }
 
 export default function UsersPage() {
-  const [data, setData]       = useState(null);
-  const [page, setPage]       = useState(0);
-  const [role, setRole]       = useState('');
-  const [loading, setLoading] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
-  const [deleting, setDeleting] = useState(false);
+  const [data, setData]           = useState(null);
+  const [page, setPage]           = useState(0);
+  const [role, setRole]           = useState('');
+  const [companySearch, setCompanySearch] = useState('');
+  const [companyInput,  setCompanyInput]  = useState('');
+  const [loading, setLoading]     = useState(false);
+  const [deleteId, setDeleteId]   = useState(null);
+  const [deleting, setDeleting]   = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getUsers(page, role || undefined);
+      const res = await getUsers(page, role || undefined, companySearch || undefined);
       setData(res.data);
     } finally {
       setLoading(false);
     }
-  }, [page, role]);
+  }, [page, role, companySearch]);
 
   useEffect(() => { load(); }, [load]);
 
-  const handleRole = (val) => { setRole(val); setPage(0); };
+  const handleRole = (val) => {
+    setRole(val);
+    setPage(0);
+    if (val !== 'RECRUITER') { setCompanySearch(''); setCompanyInput(''); }
+  };
+
+  const applyCompanySearch = () => { setCompanySearch(companyInput); setPage(0); };
+  const clearCompanySearch = () => { setCompanySearch(''); setCompanyInput(''); setPage(0); };
 
   const handleStatus = async (id, status) => {
     await setUserStatus(id, status);
@@ -68,6 +77,23 @@ export default function UsersPage() {
           ))}
         </select>
       </div>
+
+      {role === 'RECRUITER' && (
+        <div className={styles.companyBar}>
+          <input
+            className="form-control"
+            placeholder="Search by company name…"
+            value={companyInput}
+            onChange={e => setCompanyInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && applyCompanySearch()}
+            style={{ maxWidth: 280 }}
+          />
+          <Button variant="ghost" onClick={applyCompanySearch}>Search</Button>
+          {companySearch && (
+            <Button variant="ghost" size="sm" onClick={clearCompanySearch}>Clear</Button>
+          )}
+        </div>
+      )}
 
       {loading && <p className={styles.loading}>Loading…</p>}
 

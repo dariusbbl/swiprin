@@ -43,10 +43,15 @@ public class UserService {
         return toResponse(user);
     }
 
-    public PageResponse<UserResponse> getAllByRole(Role role, Pageable pageable) {
-        Page<User> page = (role != null)
-                ? userRepository.findAllByRole(role, pageable)
-                : userRepository.findAll(pageable);
+    public PageResponse<UserResponse> getAllByRole(Role role, String companyName, Pageable pageable) {
+        Page<User> page;
+        if (role == Role.RECRUITER && companyName != null && !companyName.isBlank()) {
+            page = userRepository.findByRoleAndCompanyNameContainingIgnoreCase(Role.RECRUITER, companyName.trim(), pageable);
+        } else if (role != null) {
+            page = userRepository.findAllByRole(role, pageable);
+        } else {
+            page = userRepository.findAll(pageable);
+        }
         return toPageResponse(page);
     }
 
