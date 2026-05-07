@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, X, Briefcase } from 'lucide-react';
-import { getMyJobs, createJob, updateJob, deleteJob, getSkills } from '../../api/jobs';
+import { getMyJobs, createJob, updateJob, deleteJob } from '../../api/jobs';
+import { getSkills } from '../../api/skills';
 import Tag from '../../components/ui/Tag';
 import Pagination from '../../components/ui/Pagination';
 import EmptyState from '../../components/ui/EmptyState';
@@ -23,11 +24,13 @@ export default function MyJobsPage() {
   const [loading, setLoading]   = useState(false);
   const [skills, setSkills]     = useState([]);
 
-  const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing]   = useState(null);
-  const [form, setForm]         = useState(EMPTY_FORM);
-  const [saving, setSaving]     = useState(false);
-  const [formError, setFormError] = useState('');
+  const [formOpen, setFormOpen]       = useState(false);
+  const [editing, setEditing]         = useState(null);
+  const [form, setForm]               = useState(EMPTY_FORM);
+  const [noThreshold, setNoThreshold] = useState(false);
+  const [skillSearch, setSkillSearch] = useState('');
+  const [saving, setSaving]           = useState(false);
+  const [formError, setFormError]     = useState('');
 
   const [deleteId, setDeleteId] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -51,24 +54,25 @@ export default function MyJobsPage() {
     j.company?.name?.toLowerCase().includes(search.toLowerCase())
   ) ?? [];
 
-  const openCreate = () => { setEditing(null); setForm(EMPTY_FORM); setFormError(''); setFormOpen(true); };
+  const openCreate = () => { setEditing(null); setForm(EMPTY_FORM); setNoThreshold(false); setSkillSearch(''); setFormError(''); setFormOpen(true); };
   const openEdit   = (job) => {
+    const isNoThreshold = job.shortlistThreshold === 0;
     setEditing(job);
+    setNoThreshold(isNoThreshold);
     setForm({
       title: job.title, description: job.description,
       location: job.location ?? '', workMode: job.workMode,
-      shortlistThreshold: job.shortlistThreshold,
+      shortlistThreshold: isNoThreshold ? 70 : job.shortlistThreshold,
       skillIds: job.skills?.map(s => s.id) ?? [],
     });
+    setSkillSearch('');
     setFormError('');
     setFormOpen(true);
   };
 
-  const handleField  = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
-  const toggleSkill  = (id) => setForm(f => ({
-    ...f,
-    skillIds: f.skillIds.includes(id) ? f.skillIds.filter(s => s !== id) : [...f.skillIds, id],
-  }));
+  const handleField = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  const addSkill    = (id) => { setForm(f => ({ ...f, skillIds: f.skillIds.includes(id) ? f.skillIds : [...f.skillIds, id] })); setSkillSearch(''); };
+  const removeSkill = (id) => setForm(f => ({ ...f, skillIds: f.skillIds.filter(s => s !== id) }));
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -76,8 +80,8 @@ export default function MyJobsPage() {
     try {
       const payload = {
         ...form,
-        shortlistThreshold: Number(form.shortlistThreshold),
-        skillIds: [...new Set(form.skillIds)],   // array fără duplicate, serializabil în JSON
+        shortlistThreshold: noThreshold ? 0 : Number(form.shortlistThreshold),
+        skillIds: [...new Set(form.skillIds)],
       };
       if (editing) await updateJob(editing.id, payload);
       else          await createJob(payload);
@@ -152,7 +156,9 @@ export default function MyJobsPage() {
                         {job.active ? 'Active' : 'Closed'}
                       </Tag>
                     </td>
-                    <td className={styles.center}>{job.shortlistThreshold}%</td>
+                    <td className={styles.center}>
+                      {job.shortlistThreshold === 0 ? <span style={{ color: 'var(--text-3)' }}>All</span> : `${job.shortlistThreshold}%`}
+                    </td>
                     <td className={styles.center}>
                       <button className={styles.appLink}
                         onClick={() => navigate(`/recruiter/jobs/${job.id}/applicants`)}>
@@ -196,7 +202,8 @@ export default function MyJobsPage() {
           <div className={styles.field}>
             <label>Description *</label>
             <textarea name="description" value={form.description} onChange={handleField}
-              required rows={4} className="form-control"
+              required rows={8} className="form-control"
+              style={{ resize: 'vertical', minHeight: '120px' }}
               placeholder="Describe the role, requirements and responsibilities…" />
           </div>
 
@@ -210,20 +217,53 @@ export default function MyJobsPage() {
             <div className={styles.field}>
               <label>Shortlist threshold (%)</label>
               <input type="number" name="shortlistThreshold" value={form.shortlistThreshold}
-                onChange={handleField} min={0} max={100} className="form-control" />
+                onChange={handleField} min={1} max={100} className="form-control"
+                disabled={noThreshold} />
+              <label className={styles.checkRow}>
+                <input type="checkbox" checked={noThreshold}
+                  onChange={e => setNoThreshold(e.target.checked)} />
+                <span>No threshold — show all applicants</span>
+              </label>
             </div>
           </div>
 
           <div className={styles.field}>
             <label>Skills</label>
-            <div className={styles.skillGrid}>
-              {skills.map(s => (
-                <label key={s.id} className={[styles.skillChip, form.skillIds.includes(s.id) ? styles.skillActive : ''].join(' ')}>
-                  <input type="checkbox" checked={form.skillIds.includes(s.id)}
-                    onChange={() => toggleSkill(s.id)} style={{ display: 'none' }} />
-                  {s.name}
-                </label>
-              ))}
+
+            {form.skillIds.length > 0 && (
+              <div className={styles.selectedSkillGrid}>
+                {form.skillIds.map(id => {
+                  const skill = skills.find(s => s.id === id);
+                  if (!skill) return null;
+                  return (
+                    <button key={id} type="button"
+                      className={[styles.skillChip, styles.skillActive].join(' ')}
+                      onClick={() => removeSkill(id)} title="Remove">
+                      {skill.name} <span className={styles.removeSkill}>×</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className={styles.skillSearchWrap}>
+              <input className="form-control" value={skillSearch}
+                onChange={e => setSkillSearch(e.target.value)}
+                placeholder="Search skills…" />
+              {skillSearch.trim() && (() => {
+                const q = skillSearch.trim().toLowerCase();
+                const suggestions = skills.filter(s => !form.skillIds.includes(s.id) && s.name.toLowerCase().includes(q));
+                return suggestions.length > 0 ? (
+                  <div className={styles.skillSuggestions}>
+                    {suggestions.map(s => (
+                      <button key={s.id} type="button" className={styles.skillSuggestion}
+                        onClick={() => addSkill(s.id)}>{s.name}</button>
+                    ))}
+                  </div>
+                ) : (
+                  <p className={styles.noSkillMatches}>No matching skills.</p>
+                );
+              })()}
             </div>
           </div>
 
