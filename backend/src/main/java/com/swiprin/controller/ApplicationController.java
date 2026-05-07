@@ -135,10 +135,19 @@ public class ApplicationController {
 
     @GetMapping("/{id}/interviews")
     @PreAuthorize("hasRole('RECRUITER')")
-    @Operation(summary = "Get all interviews for an application")
+    @Operation(summary = "Get all interviews for an application (recruiter)")
     public ResponseEntity<List<InterviewResponse>> getInterviewsForApplication(
             @PathVariable Long id,
             @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(applicationService.getInterviewsForApplication(id, principal.getId()));
+    }
+
+    @GetMapping("/{id}/my-interviews")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    @Operation(summary = "Get interviews for candidate's own application")
+    public ResponseEntity<List<InterviewResponse>> getMyInterviewsForApplication(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(applicationService.getInterviewsForOwnApplication(id, principal.getId()));
     }
 }

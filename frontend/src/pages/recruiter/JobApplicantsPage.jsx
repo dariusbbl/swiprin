@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Users, FileText } from 'lucide-react';
+import { Users, FileText, CalendarPlus } from 'lucide-react';
 import { getJobApplications, updateAppStatus, deleteApplication } from '../../api/applications';
 import Badge from '../../components/ui/Badge';
 import MatchBar from '../../components/ui/MatchBar';
@@ -9,6 +9,7 @@ import EmptyState from '../../components/ui/EmptyState';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import Button from '../../components/ui/Button';
 import Avatar from '../../components/ui/Avatar';
+import InterviewModal from '../../components/recruiter/InterviewModal';
 import styles from './JobApplicantsPage.module.css';
 
 const STATUSES = ['APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN'];
@@ -28,6 +29,7 @@ export default function JobApplicantsPage() {
   const [loading, setLoading]         = useState(false);
   const [deleteId, setDeleteId]       = useState(null);
   const [deleting, setDeleting]       = useState(false);
+  const [interviewApp, setInterviewApp] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -41,8 +43,12 @@ export default function JobApplicantsPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const handleStatusChange = async (appId, status) => {
-    await updateAppStatus(appId, status);
+  const handleStatusChange = async (app, newStatus) => {
+    if (newStatus === 'INTERVIEW') {
+      setInterviewApp(app);
+      return;
+    }
+    await updateAppStatus(app.id, newStatus);
     load();
   };
 
@@ -115,7 +121,7 @@ export default function JobApplicantsPage() {
                     <td>
                       <select className="form-select form-select-sm" style={{ minWidth: 130 }}
                         value={app.status}
-                        onChange={e => handleStatusChange(app.id, e.target.value)}>
+                        onChange={e => handleStatusChange(app, e.target.value)}>
                         {STATUSES.map(s => (
                           <option key={s} value={s}>{s.charAt(0) + s.slice(1).toLowerCase()}</option>
                         ))}
@@ -137,9 +143,17 @@ export default function JobApplicantsPage() {
                       )}
                     </td>
                     <td>
-                      <Button size="sm" variant="danger-soft" onClick={() => setDeleteId(app.id)}>
-                        Remove
-                      </Button>
+                      <div className={styles.actionsCell}>
+                        {app.status === 'INTERVIEW' && (
+                          <Button size="sm" variant="ghost" onClick={() => setInterviewApp(app)}
+                            title="Schedule interview">
+                            <CalendarPlus size={14} />
+                          </Button>
+                        )}
+                        <Button size="sm" variant="danger-soft" onClick={() => setDeleteId(app.id)}>
+                          Remove
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -149,6 +163,13 @@ export default function JobApplicantsPage() {
           <Pagination page={page} totalPages={data.totalPages} onChange={setPage} />
         </>
       )}
+
+      <InterviewModal
+        open={!!interviewApp}
+        app={interviewApp}
+        onClose={() => setInterviewApp(null)}
+        onDone={() => { setInterviewApp(null); load(); }}
+      />
 
       <ConfirmModal
         open={!!deleteId} onClose={() => setDeleteId(null)}

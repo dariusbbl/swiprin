@@ -56,3 +56,14 @@
   white-space: nowrap;
 }
 .withdrawBtn:hover { border-color: var(--danger); color: var(--danger); }
+
+.actionsCell { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+
+.ivBtn {
+  display: inline-flex; align-items: center; gap: .3rem;
+  background: var(--accent-50); border: 1.5px solid var(--accent);
+  border-radius: 7px; padding: .25rem .65rem;
+  font-size: .78rem; font-weight: 600; color: var(--accent);
+  cursor: pointer; transition: background .15s; white-space: nowrap;
+}
+.ivBtn:hover { background: var(--accent); color: #fff; }

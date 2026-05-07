@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, LogOut } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, LogOut, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getMe } from '../../api/users';
 import Avatar from '../ui/Avatar';
@@ -9,10 +9,20 @@ import styles from './RecruiterLayout.module.css';
 export default function RecruiterLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [company, setCompany] = useState(null);
+  const [company, setCompany]   = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const footerRef = useRef(null);
 
   useEffect(() => {
     getMe().then(r => setCompany(r.data?.company ?? null)).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (footerRef.current && !footerRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const handleLogout = () => { logout(); navigate('/login'); };
@@ -35,14 +45,22 @@ export default function RecruiterLayout() {
           </NavLink>
         </nav>
 
-        <div className={styles.footer}>
+        <div className={styles.footer} ref={footerRef}>
+          {menuOpen && (
+            <div className={styles.userMenu}>
+              <button className={styles.logoutBtn} onClick={handleLogout}>
+                <LogOut size={15} /> Logout
+              </button>
+            </div>
+          )}
           <Avatar name={user?.fullName} size={34} />
           <div className={styles.info}>
             <span className={styles.name}>{user?.fullName}</span>
-            <span className={styles.role}>Recruiter</span>
+            <span className={styles.role}>{company?.name ?? 'Recruiter'}</span>
           </div>
-          <button className={styles.logout} onClick={handleLogout} title="Logout">
-            <LogOut size={16} />
+          <button className={[styles.chevron, menuOpen ? styles.chevronOpen : ''].join(' ')}
+            onClick={() => setMenuOpen(m => !m)}>
+            <ChevronRight size={16} />
           </button>
         </div>
       </aside>

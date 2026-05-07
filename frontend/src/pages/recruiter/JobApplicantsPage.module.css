@@ -54,6 +54,8 @@
 
 .cvCell { display: flex; flex-direction: column; gap: .15rem; }
 .cvName { font-size: .82rem; font-weight: 500; color: var(--text); }
+.actionsCell { display: flex; align-items: center; gap: .35rem; }
+
 .cvLink {
   display: inline-flex; align-items: center; gap: .2rem;
   font-size: .78rem; color: var(--accent); text-decoration: none; white-space: nowrap;

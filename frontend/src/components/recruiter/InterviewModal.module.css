@@ -1,0 +1,43 @@
+.form { display: flex; flex-direction: column; gap: 1.1rem; }
+
+.hero { margin-bottom: .25rem; }
+.heroTitle { font-size: 1.15rem; font-weight: 800; color: var(--text); margin: 0 0 .2rem; }
+.heroSub   { font-size: .82rem; color: var(--text-2); margin: 0; }
+
+.alert {
+  background: #fee2e2; color: #991b1b;
+  border: 1px solid #fecaca; border-radius: 8px;
+  padding: .6rem .9rem; font-size: .85rem; font-weight: 500;
+}
+
+.field { display: flex; flex-direction: column; gap: .3rem; }
+.field label { font-size: .82rem; font-weight: 600; color: var(--text-2); }
+.opt { font-weight: 400; color: var(--text-3); }
+
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+
+/* Mode radio cards */
+.modeRow { display: flex; gap: .6rem; }
+
+.modeCard {
+  flex: 1; display: flex; align-items: center; gap: .65rem;
+  padding: .75rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px; cursor: pointer;
+  transition: border-color .15s, background .15s;
+  color: var(--text-2);
+}
+.modeCard input { display: none; }
+.modeCard:hover { border-color: var(--accent); }
+
+.modeActive {
+  border-color: var(--accent);
+  background: var(--accent-50);
+  color: var(--accent);
+}
+
+.modeLabel { display: block; font-size: .875rem; font-weight: 600; }
+.modeSub   { display: block; font-size: .75rem; color: var(--text-3); }
+.modeActive .modeSub { color: var(--accent); opacity: .75; }
+
+.actions { display: flex; justify-content: flex-end; gap: .6rem; padding-top: .4rem; }
