@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Users } from 'lucide-react';
+import { Users, FileText } from 'lucide-react';
 import { getJobApplications, updateAppStatus, deleteApplication } from '../../api/applications';
 import Badge from '../../components/ui/Badge';
 import MatchBar from '../../components/ui/MatchBar';
@@ -91,6 +91,7 @@ export default function JobApplicantsPage() {
                   <th>Status</th>
                   <th>Applied</th>
                   <th>Change status</th>
+                  <th>CV</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -119,6 +120,21 @@ export default function JobApplicantsPage() {
                           <option key={s} value={s}>{s.charAt(0) + s.slice(1).toLowerCase()}</option>
                         ))}
                       </select>
+                    </td>
+                    <td>
+                      {app.cvDraft ? (
+                        <div className={styles.cvCell}>
+                          <span className={styles.cvName}>{app.cvDraft.name}</span>
+                          {app.cvDraft.fileUrl && (
+                            <a href={app.cvDraft.fileUrl} target="_blank" rel="noreferrer"
+                              className={styles.cvLink}>
+                              <FileText size={13} /> View ↗
+                            </a>
+                          )}
+                        </div>
+                      ) : (
+                        <span className={styles.noCV}>—</span>
+                      )}
                     </td>
                     <td>
                       <Button size="sm" variant="danger-soft" onClick={() => setDeleteId(app.id)}>

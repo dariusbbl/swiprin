@@ -37,7 +37,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       if (role === 'CANDIDATE') {
-        await registerCandidate({ fullName: form.fullName, email: form.email, password: form.password });
+        await registerCandidate({ fullName: form.fullName, email: form.email, password: form.password, confirmPassword: form.confirmPassword });
         setDone(true);
       } else {
         if (companyMode === 'existing' && !form.existingCompanyId) {

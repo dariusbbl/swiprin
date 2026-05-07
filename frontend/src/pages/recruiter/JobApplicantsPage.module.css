@@ -51,3 +51,12 @@
 
 .matchCell { min-width: 120px; }
 .date { color: var(--text-2); white-space: nowrap; }
+
+.cvCell { display: flex; flex-direction: column; gap: .15rem; }
+.cvName { font-size: .82rem; font-weight: 500; color: var(--text); }
+.cvLink {
+  display: inline-flex; align-items: center; gap: .2rem;
+  font-size: .78rem; color: var(--accent); text-decoration: none; white-space: nowrap;
+}
+.cvLink:hover { text-decoration: underline; }
+.noCV { color: var(--text-3); }
