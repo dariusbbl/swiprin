@@ -237,6 +237,16 @@ public class ApplicationService {
                 .stream().map(this::toInterviewResponse).toList();
     }
 
+    public List<InterviewResponse> getInterviewsForOwnApplication(Long applicationId, Long candidateId) {
+        Application application = findOrThrow(applicationId);
+        if (!application.getUser().getId().equals(candidateId)) {
+            throw new ForbiddenException("This is not your application");
+        }
+        return interviewScheduleRepository
+                .findAllByApplicationIdOrderByScheduledAtAsc(applicationId)
+                .stream().map(this::toInterviewResponse).toList();
+    }
+
     // Resolves the CV to use — throws if none found
     private CvDraft resolveCvDraft(Long cvDraftId, Long userId) {
         if (cvDraftId != null) {

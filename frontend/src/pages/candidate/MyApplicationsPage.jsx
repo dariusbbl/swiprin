@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ClipboardList, Check } from 'lucide-react';
+import { ClipboardList, Check, CalendarDays } from 'lucide-react';
 import { getMyApplications, withdrawApplication } from '../../api/applications';
 import Badge from '../../components/ui/Badge';
 import Pagination from '../../components/ui/Pagination';
 import EmptyState from '../../components/ui/EmptyState';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import Tag from '../../components/ui/Tag';
+import InterviewDetailsModal from '../../components/candidate/InterviewDetailsModal';
 import styles from './MyApplicationsPage.module.css';
 
 const STATUSES = ['', 'APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN'];
@@ -16,8 +17,9 @@ export default function MyApplicationsPage() {
   const [page, setPage]             = useState(0);
   const [statusFilter, setStatus]   = useState('');
   const [loading, setLoading]       = useState(false);
-  const [withdrawId, setWithdrawId] = useState(null);
+  const [withdrawId, setWithdrawId]   = useState(null);
   const [withdrawing, setWithdrawing] = useState(false);
+  const [ivApp, setIvApp]             = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -90,11 +92,19 @@ export default function MyApplicationsPage() {
                       {new Date(app.appliedAt).toLocaleDateString('ro-RO')}
                     </td>
                     <td>
-                      {!['WITHDRAWN','OFFER','REJECTED'].includes(app.status) && (
-                        <button className={styles.withdrawBtn} onClick={() => setWithdrawId(app.id)}>
-                          Withdraw
-                        </button>
-                      )}
+                      <div className={styles.actionsCell}>
+                        {!['WITHDRAWN','OFFER','REJECTED'].includes(app.status) && (
+                          <button className={styles.withdrawBtn} onClick={() => setWithdrawId(app.id)}>
+                            Withdraw
+                          </button>
+                        )}
+                        {app.status === 'INTERVIEW' && (
+                          <button className={styles.ivBtn} onClick={() => setIvApp(app)}
+                            title="View interview details">
+                            <CalendarDays size={14} /> Interview details
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -104,6 +114,13 @@ export default function MyApplicationsPage() {
           <Pagination page={page} totalPages={data.totalPages} onChange={setPage} />
         </>
       )}
+
+      <InterviewDetailsModal
+        open={!!ivApp}
+        appId={ivApp?.id}
+        jobTitle={ivApp?.job?.title}
+        onClose={() => setIvApp(null)}
+      />
 
       <ConfirmModal
         open={!!withdrawId} onClose={() => setWithdrawId(null)}
