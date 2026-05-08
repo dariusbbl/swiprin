@@ -22,4 +22,8 @@ public class InterviewResponse {
     private String location;
     private String description;
     private LocalDateTime createdAt;
+
+    private Long jobId;
+    private String jobTitle;
+    private String candidateName;
 }
