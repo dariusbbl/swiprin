@@ -18,7 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +85,15 @@ public class ApplicationService {
         }
 
         return toCandidateResponse(saved);
+    }
+
+    public Map<String, Long> getStatusCountsForCandidate(Long userId) {
+        Map<String, Long> counts = new LinkedHashMap<>();
+        counts.put("ALL", applicationRepository.countByUserId(userId));
+        Arrays.stream(ApplicationStatus.values()).forEach(s ->
+            counts.put(s.name(), applicationRepository.countByUserIdAndStatus(userId, s))
+        );
+        return counts;
     }
 
     public PageResponse<ApplicationResponse> getForCandidate(Long userId, ApplicationStatus status, Pageable pageable) {

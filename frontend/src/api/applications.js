@@ -1,6 +1,7 @@
 import client from './client';
 
-export const getMyApplications   = (page = 0, status) => client.get(`/applications/me?page=${page}&size=10${status ? `&status=${status}` : ''}`);
+export const getMyApplications      = (page = 0, status) => client.get(`/applications/me?page=${page}&size=10${status ? `&status=${status}` : ''}`);
+export const getMyApplicationCounts = ()                 => client.get('/applications/me/counts');
 export const getJobApplications  = (jobId, page = 0, status) => client.get(`/applications/job/${jobId}?page=${page}&size=10${status ? `&status=${status}` : ''}`);
 export const applyToJob          = (data)              => client.post('/applications', data);
 export const withdrawApplication = (id)               => client.put(`/applications/${id}/withdraw`);

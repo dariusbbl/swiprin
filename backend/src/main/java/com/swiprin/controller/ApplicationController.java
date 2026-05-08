@@ -22,6 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/applications")
@@ -42,6 +43,14 @@ public class ApplicationController {
             @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(applicationService.apply(req, principal.getId()));
+    }
+
+    @GetMapping("/me/counts")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    @Operation(summary = "Get application counts grouped by status for the current candidate")
+    public ResponseEntity<Map<String, Long>> getMyApplicationCounts(
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(applicationService.getStatusCountsForCandidate(principal.getId()));
     }
 
     @GetMapping("/me")
