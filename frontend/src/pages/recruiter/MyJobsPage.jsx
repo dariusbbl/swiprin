@@ -9,6 +9,7 @@ import EmptyState from '../../components/ui/EmptyState';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import Modal from '../../components/ui/Modal';
 import Button from '../../components/ui/Button';
+import LocationPicker from '../../components/ui/LocationPicker';
 import styles from './MyJobsPage.module.css';
 
 const WORK_MODES = ['ON_SITE', 'REMOTE', 'HYBRID'];
@@ -218,8 +219,11 @@ export default function MyJobsPage() {
             </div>
             <div className={styles.field}>
               <label>Location</label>
-              <input name="location" value={form.location} onChange={handleField}
-                className="form-control" placeholder="e.g. Bucharest" />
+              <LocationPicker
+                value={form.location}
+                onChange={val => setForm(f => ({ ...f, location: val }))}
+                placeholder="e.g. Bucharest, Romania"
+              />
             </div>
           </div>
 

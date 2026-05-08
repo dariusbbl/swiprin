@@ -5,6 +5,7 @@ import { applyToJob } from '../../api/applications';
 import { getCvDrafts } from '../../api/cvDrafts';
 import Tag from '../../components/ui/Tag';
 import EmptyState from '../../components/ui/EmptyState';
+import LocationPicker from '../../components/ui/LocationPicker';
 import styles from './FeedPage.module.css';
 
 const WORK_LABEL = { ON_SITE: 'On-site', REMOTE: 'Remote', HYBRID: 'Hybrid' };
@@ -86,18 +87,20 @@ export default function FeedPage() {
   const [selectedCvId, setSelectedCvId] = useState(null);
 
   const [seniority, setSeniority] = useState(null);
+  const [location, setLocation]   = useState('');
 
   const pageRef      = useRef(0);
   const hasMoreRef   = useRef(true);
   const loadingRef   = useRef(false);
   const seniorityRef = useRef(null);
+  const locationRef  = useRef('');
 
   const loadMore = useCallback(async () => {
     if (loadingRef.current || !hasMoreRef.current) return;
     loadingRef.current = true;
     setLoading(true);
     try {
-      const res   = await getJobFeed(pageRef.current, seniorityRef.current);
+      const res   = await getJobFeed(pageRef.current, seniorityRef.current, locationRef.current);
       const pd    = res.data;
       const fresh = (pd.content ?? []).filter(j => !j.applied);
       setCards(prev => [...prev, ...fresh]);
@@ -111,6 +114,7 @@ export default function FeedPage() {
 
   useEffect(() => {
     seniorityRef.current = seniority;
+    locationRef.current  = location;
     pageRef.current    = 0;
     hasMoreRef.current = true;
     loadingRef.current = false;
@@ -118,7 +122,7 @@ export default function FeedPage() {
     setDone(false);
     setApplyError('');
     loadMore();
-  }, [seniority, loadMore]);
+  }, [seniority, location, loadMore]);
 
   useEffect(() => {
     getCvDrafts().then(r => {
@@ -178,16 +182,25 @@ export default function FeedPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.seniorityFilter}>
-        {SENIORITY_OPTS.map(opt => (
-          <button
-            key={String(opt.value)}
-            className={[styles.senChip, seniority === opt.value ? styles.senChipActive : ''].join(' ')}
-            onClick={() => setSeniority(opt.value)}
-          >
-            {opt.label}
-          </button>
-        ))}
+      <div className={styles.topBar}>
+        <div className={styles.seniorityFilter}>
+          {SENIORITY_OPTS.map(opt => (
+            <button
+              key={String(opt.value)}
+              className={[styles.senChip, seniority === opt.value ? styles.senChipActive : ''].join(' ')}
+              onClick={() => setSeniority(opt.value)}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+        <div className={styles.locationFilter}>
+          <LocationPicker
+            value={location}
+            onChange={setLocation}
+            placeholder="City or country…"
+          />
+        </div>
       </div>
 
       {isEmpty ? (
