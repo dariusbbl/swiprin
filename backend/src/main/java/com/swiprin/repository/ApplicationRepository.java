@@ -30,6 +30,10 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     long countByJobId(Long jobId);
 
+    long countByUserId(Long userId);
+
+    long countByUserIdAndStatus(Long userId, ApplicationStatus status);
+
     // Applications for all jobs of a recruiter, sorted by match percent desc
     @Query("""
             SELECT a FROM Application a

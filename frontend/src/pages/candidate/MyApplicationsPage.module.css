@@ -8,6 +8,52 @@
 .sub   { font-size: .875rem; color: var(--text-2); margin-top: .2rem; }
 .loading { color: var(--text-3); }
 
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .35rem .75rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color .15s, color .15s, background .15s;
+  white-space: nowrap;
+}
+.tab:hover { border-color: var(--accent); color: var(--accent); }
+
+.tabActive {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.tabActive:hover { background: var(--accent); color: #fff; }
+
+.tabCount {
+  background: var(--surface-2);
+  color: var(--text-3);
+  font-size: .7rem;
+  font-weight: 700;
+  padding: .05rem .4rem;
+  border-radius: 99px;
+  min-width: 18px;
+  text-align: center;
+}
+.tabCountActive {
+  background: rgba(255,255,255,.25);
+  color: #fff;
+}
+
 .tableWrap {
   background: var(--surface);
   border: 1px solid var(--border);

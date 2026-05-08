@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ClipboardList, Check, CalendarDays } from 'lucide-react';
-import { getMyApplications, withdrawApplication } from '../../api/applications';
+import { getMyApplications, getMyApplicationCounts, withdrawApplication } from '../../api/applications';
 import Badge from '../../components/ui/Badge';
 import Pagination from '../../components/ui/Pagination';
 import EmptyState from '../../components/ui/EmptyState';
@@ -9,7 +9,16 @@ import Tag from '../../components/ui/Tag';
 import InterviewDetailsModal from '../../components/candidate/InterviewDetailsModal';
 import styles from './MyApplicationsPage.module.css';
 
-const STATUSES = ['', 'APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN'];
+const STATUS_TABS = [
+  { key: '',           label: 'All' },
+  { key: 'APPLIED',    label: 'Applied' },
+  { key: 'SCREENING',  label: 'Screening' },
+  { key: 'INTERVIEW',  label: 'Interview' },
+  { key: 'OFFER',      label: 'Offer' },
+  { key: 'REJECTED',   label: 'Rejected' },
+  { key: 'WITHDRAWN',  label: 'Withdrawn' },
+];
+
 const WORK_MODE = { ON_SITE: 'On-site', REMOTE: 'Remote', HYBRID: 'Hybrid' };
 
 export default function MyApplicationsPage() {
@@ -17,9 +26,14 @@ export default function MyApplicationsPage() {
   const [page, setPage]             = useState(0);
   const [statusFilter, setStatus]   = useState('');
   const [loading, setLoading]       = useState(false);
+  const [counts, setCounts]         = useState({});
   const [withdrawId, setWithdrawId]   = useState(null);
   const [withdrawing, setWithdrawing] = useState(false);
   const [ivApp, setIvApp]             = useState(null);
+
+  const loadCounts = useCallback(() => {
+    getMyApplicationCounts().then(r => setCounts(r.data ?? {})).catch(() => {});
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -31,6 +45,7 @@ export default function MyApplicationsPage() {
     }
   }, [page, statusFilter]);
 
+  useEffect(() => { loadCounts(); }, [loadCounts]);
   useEffect(() => { load(); }, [load]);
 
   const handleWithdraw = async () => {
@@ -39,10 +54,13 @@ export default function MyApplicationsPage() {
       await withdrawApplication(withdrawId);
       setWithdrawId(null);
       load();
+      loadCounts();
     } finally {
       setWithdrawing(false);
     }
   };
+
+  const selectStatus = (key) => { setStatus(key); setPage(0); };
 
   return (
     <div className={styles.page}>
@@ -51,10 +69,23 @@ export default function MyApplicationsPage() {
           <h2 className={styles.title}>My Applications</h2>
           <p className={styles.sub}>Track the status of your job applications</p>
         </div>
-        <select className="form-select" style={{ width: 'auto' }}
-          value={statusFilter} onChange={e => { setStatus(e.target.value); setPage(0); }}>
-          {STATUSES.map(s => <option key={s} value={s}>{s || 'All statuses'}</option>)}
-        </select>
+      </div>
+
+      <div className={styles.tabs}>
+        {STATUS_TABS.map(tab => {
+          const count = tab.key === '' ? counts.ALL : counts[tab.key];
+          const active = statusFilter === tab.key;
+          return (
+            <button
+              key={tab.key}
+              className={[styles.tab, active ? styles.tabActive : ''].join(' ')}
+              onClick={() => selectStatus(tab.key)}
+            >
+              {tab.label}
+              {count > 0 && <span className={[styles.tabCount, active ? styles.tabCountActive : ''].join(' ')}>{count}</span>}
+            </button>
+          );
+        })}
       </div>
 
       {loading && <p className={styles.loading}>Loading…</p>}
