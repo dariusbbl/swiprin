@@ -13,7 +13,15 @@ import styles from './MyJobsPage.module.css';
 
 const WORK_MODES = ['ON_SITE', 'REMOTE', 'HYBRID'];
 const WORK_LABEL = { ON_SITE: 'On-site', REMOTE: 'Remote', HYBRID: 'Hybrid' };
-const EMPTY_FORM = { title: '', description: '', location: '', workMode: 'ON_SITE', shortlistThreshold: 70, paid: true, skillIds: [] };
+const SENIORITY_OPTS = [
+  { value: 'INTERNSHIP', label: 'Internship' },
+  { value: 'JUNIOR',     label: 'Junior' },
+  { value: 'MID',        label: 'Mid' },
+  { value: 'SENIOR',     label: 'Senior' },
+];
+const SENIORITY_LABEL = Object.fromEntries(SENIORITY_OPTS.map(o => [o.value, o.label]));
+
+const EMPTY_FORM = { title: '', description: '', location: '', workMode: 'ON_SITE', shortlistThreshold: 70, paid: true, seniority: null, skillIds: [] };
 
 export default function MyJobsPage() {
   const navigate = useNavigate();
@@ -64,6 +72,7 @@ export default function MyJobsPage() {
       location: job.location ?? '', workMode: job.workMode,
       shortlistThreshold: isNoThreshold ? 70 : job.shortlistThreshold,
       paid: job.paid ?? true,
+      seniority: job.seniority ?? null,
       skillIds: job.skills?.map(s => s.id) ?? [],
     });
     setSkillSearch('');
@@ -138,6 +147,7 @@ export default function MyJobsPage() {
                 <tr>
                   <th>Title</th>
                   <th>Work mode</th>
+                  <th>Seniority</th>
                   <th>Pay</th>
                   <th>Status</th>
                   <th>Threshold</th>
@@ -153,6 +163,11 @@ export default function MyJobsPage() {
                       {job.location && <span className={styles.location}><MapPin size={12} /> {job.location}</span>}
                     </td>
                     <td><Tag>{WORK_LABEL[job.workMode]}</Tag></td>
+                    <td>
+                      {job.seniority
+                        ? <Tag>{SENIORITY_LABEL[job.seniority] ?? job.seniority}</Tag>
+                        : <span style={{ color: 'var(--text-3)' }}>—</span>}
+                    </td>
                     <td>
                       {job.paid != null && (
                         <Tag variant={job.paid ? 'success' : 'default'}>
@@ -252,6 +267,29 @@ export default function MyJobsPage() {
                 <span className={styles.payLabel}>Unpaid</span>
               </label>
             </div>
+          </div>
+
+          <div className={styles.field}>
+            <label>Seniority level</label>
+            <div className={styles.payRow}>
+              {SENIORITY_OPTS.map(opt => (
+                <label
+                  key={opt.value}
+                  className={[styles.payCard, form.seniority === opt.value ? styles.senActive : ''].join(' ')}
+                >
+                  <input type="radio" name="seniority" value={opt.value}
+                    checked={form.seniority === opt.value}
+                    onChange={() => setForm(f => ({ ...f, seniority: opt.value }))} />
+                  <span className={styles.payLabel}>{opt.label}</span>
+                </label>
+              ))}
+            </div>
+            {form.seniority && (
+              <button type="button" className={styles.clearSeniority}
+                onClick={() => setForm(f => ({ ...f, seniority: null }))}>
+                Clear selection
+              </button>
+            )}
           </div>
 
           <div className={styles.field}>

@@ -1,5 +1,6 @@
 package com.swiprin.dto.request;
 
+import com.swiprin.model.enums.Seniority;
 import com.swiprin.model.enums.WorkMode;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -28,6 +29,8 @@ public class CreateJobRequest {
 
     @NotNull
     private Boolean paid = true;
+
+    private Seniority seniority;
 
     private Set<Long> skillIds;
 }

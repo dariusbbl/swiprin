@@ -11,7 +11,7 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
-  max-width: 420px;
+  max-width: 500px;
   font-size: .8rem;
   font-weight: 600;
 }
@@ -21,7 +21,7 @@
 /* Error banner */
 .errorBanner {
   width: 100%;
-  max-width: 420px;
+  max-width: 500px;
   background: #fee2e2;
   color: #991b1b;
   border: 1px solid #fecaca;
@@ -48,8 +48,8 @@
 .stack {
   position: relative;
   width: 100%;
-  max-width: 420px;
-  height: 520px;
+  max-width: 500px;
+  height: 600px;
 }
 
 /* Background depth cards */
@@ -129,15 +129,63 @@
 .company  { font-size: .85rem; color: var(--text-2); margin: .2rem 0 0; }
 .location { display: flex; align-items: center; gap: .25rem; font-size: .8rem; color: var(--text-3); margin: .15rem 0 0; }
 
+.skillsSection { display: flex; flex-direction: column; gap: .35rem; }
+.skillsRow { display: flex; flex-direction: column; gap: .3rem; }
+.skillsLabel {
+  display: flex; align-items: center; gap: .25rem;
+  font-size: .7rem; font-weight: 700; color: var(--success);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+
 .skills { display: flex; flex-wrap: wrap; gap: .35rem; }
 .skill {
   font-size: .75rem; font-weight: 500;
   padding: .2rem .6rem;
   border-radius: 99px;
-  background: var(--accent-50);
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  background: var(--surface-2);
+  color: var(--text-2);
+  border: 1px solid var(--border);
 }
+.skillMatch {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+  font-weight: 600;
+}
+
+.viewAllBtn {
+  background: none; border: none; cursor: pointer; font-family: inherit;
+  font-size: .75rem; color: var(--accent); font-weight: 600;
+  padding: 0; text-align: left;
+}
+.viewAllBtn:hover { text-decoration: underline; }
+
+/* Skills popup */
+.skillPopupOverlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.35);
+  display: flex; align-items: center; justify-content: center;
+}
+.skillPopup {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 1rem;
+  width: min(360px, 90vw);
+  display: flex; flex-direction: column; gap: .75rem;
+}
+.skillPopupHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: .9rem; font-weight: 700; color: var(--text);
+}
+.skillPopupClose {
+  background: none; border: none; cursor: pointer; color: var(--text-3);
+  display: flex; align-items: center; padding: .1rem;
+}
+.skillPopupClose:hover { color: var(--text); }
+.skillPopupGroup { display: flex; flex-direction: column; gap: .4rem; }
+.skillPopupGroupLabel { font-size: .7rem; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; margin: 0; }
 
 .desc {
   font-size: .875rem;
@@ -182,7 +230,8 @@
   align-items: center;
   gap: .6rem;
   width: 100%;
-  max-width: 420px;
+  max-width: 500px;
+  margin-top: 1rem;
 }
 .cvLabel {
   font-size: .8rem;
@@ -194,7 +243,7 @@
 .noCvWarning {
   font-size: .8rem;
   color: var(--warn);
-  max-width: 420px;
+  max-width: 500px;
   text-align: center;
   margin: 0;
 }
@@ -205,3 +254,18 @@
   color: var(--text-3);
   margin: 0;
 }
+
+.seniorityFilter {
+  display: flex; gap: .4rem; flex-wrap: wrap; justify-content: center;
+}
+.senChip {
+  padding: .3rem .8rem;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  font-size: .78rem; font-weight: 500; color: var(--text-2);
+  cursor: pointer; transition: border-color .15s, background .15s, color .15s;
+  font-family: inherit;
+}
+.senChip:hover    { border-color: var(--accent); color: var(--accent); }
+.senChipActive    { border-color: var(--accent); background: var(--accent-50); color: var(--accent); font-weight: 700; }

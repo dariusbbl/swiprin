@@ -1,5 +1,6 @@
 package com.swiprin.dto.request;
 
+import com.swiprin.model.enums.Seniority;
 import com.swiprin.model.enums.WorkMode;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -24,6 +25,7 @@ public class UpdateJobRequest {
     private Integer shortlistThreshold;
 
     private Boolean paid;
+    private Seniority seniority;
 
     private Set<Long> skillIds;
 }

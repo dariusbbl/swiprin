@@ -1,5 +1,6 @@
 package com.swiprin.model;
 
+import com.swiprin.model.enums.Seniority;
 import com.swiprin.model.enums.WorkMode;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,6 +44,10 @@ public class Job {
 
     @Column(nullable = true)
     private Boolean paid;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private Seniority seniority;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)

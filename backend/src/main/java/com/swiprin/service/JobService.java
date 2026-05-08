@@ -9,6 +9,7 @@ import com.swiprin.exception.ResourceNotFoundException;
 import com.swiprin.model.Job;
 import com.swiprin.model.Skill;
 import com.swiprin.model.User;
+import com.swiprin.model.enums.Seniority;
 import com.swiprin.model.enums.UserStatus;
 import com.swiprin.repository.ApplicationRepository;
 import com.swiprin.repository.JobRepository;
@@ -36,10 +37,15 @@ public class JobService {
     private final UserService userService;
 
     // Candidate feed — sorted by skill match, includes applied flag
-    public PageResponse<JobResponse> getFeedForCandidate(Long userId, Pageable pageable) {
-        Page<Job> page = jobRepository.findActiveJobsSortedBySkillMatch(userId, pageable);
+    public PageResponse<JobResponse> getFeedForCandidate(Long userId, Seniority seniority, Pageable pageable) {
+        Set<Long> candidateSkillIds = userRepository.findById(userId)
+                .map(u -> u.getSkills().stream().map(Skill::getId).collect(java.util.stream.Collectors.toSet()))
+                .orElse(Set.of());
+        Page<Job> page = (seniority != null)
+                ? jobRepository.findActiveJobsSortedBySkillMatchAndSeniority(userId, seniority, pageable)
+                : jobRepository.findActiveJobsSortedBySkillMatch(userId, pageable);
         return PageResponse.<JobResponse>builder()
-                .content(page.getContent().stream().map(j -> toJobResponse(j, userId)).toList())
+                .content(page.getContent().stream().map(j -> toJobResponse(j, userId, candidateSkillIds)).toList())
                 .page(page.getNumber())
                 .size(page.getSize())
                 .totalElements(page.getTotalElements())
@@ -91,6 +97,7 @@ public class JobService {
                 .workMode(req.getWorkMode())
                 .shortlistThreshold(req.getShortlistThreshold())
                 .paid(req.getPaid())
+                .seniority(req.getSeniority())
                 .active(true)
                 .company(recruiter.getCompany())
                 .recruiter(recruiter)
@@ -113,6 +120,7 @@ public class JobService {
         if (req.getActive() != null) job.setActive(req.getActive());
         if (req.getShortlistThreshold() != null) job.setShortlistThreshold(req.getShortlistThreshold());
         if (req.getPaid() != null) job.setPaid(req.getPaid());
+        if (req.getSeniority() != null) job.setSeniority(req.getSeniority());
         if (req.getSkillIds() != null) job.setSkills(resolveSkills(req.getSkillIds()));
         return toManagementResponse(jobRepository.save(job));
     }
@@ -146,15 +154,27 @@ public class JobService {
     }
 
     private JobResponse toJobResponse(Job job, Long userId) {
+        return toJobResponse(job, userId, Set.of());
+    }
+
+    private JobResponse toJobResponse(Job job, Long userId, Set<Long> candidateSkillIds) {
+        List<SkillResponse> allSkills = job.getSkills().stream().map(SkillService::toResponse).toList();
+        List<SkillResponse> matchedSkills = candidateSkillIds.isEmpty() ? List.of()
+                : job.getSkills().stream()
+                        .filter(s -> candidateSkillIds.contains(s.getId()))
+                        .map(SkillService::toResponse)
+                        .toList();
         return JobResponse.builder()
                 .id(job.getId())
                 .title(job.getTitle())
                 .description(job.getDescription())
                 .location(job.getLocation())
                 .workMode(job.getWorkMode())
+                .seniority(job.getSeniority())
                 .paid(job.getPaid())
                 .company(companyService.toResponse(job.getCompany()))
-                .skills(job.getSkills().stream().map(SkillService::toResponse).toList())
+                .skills(allSkills)
+                .matchedSkills(matchedSkills)
                 .applied(applicationRepository.existsByJobIdAndUserId(job.getId(), userId))
                 .createdAt(job.getCreatedAt())
                 .build();
@@ -167,6 +187,7 @@ public class JobService {
                 .description(job.getDescription())
                 .location(job.getLocation())
                 .workMode(job.getWorkMode())
+                .seniority(job.getSeniority())
                 .active(job.getActive())
                 .paid(job.getPaid())
                 .shortlistThreshold(job.getShortlistThreshold())
