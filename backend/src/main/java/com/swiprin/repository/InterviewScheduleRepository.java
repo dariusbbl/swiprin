@@ -23,4 +23,27 @@ public interface InterviewScheduleRepository extends JpaRepository<InterviewSche
     Page<InterviewSchedule> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
 
     boolean existsByIdAndApplicationJobRecruiterId(Long id, Long recruiterId);
+
+    @Query("""
+            SELECT i FROM InterviewSchedule i
+            JOIN i.application a
+            JOIN a.job j
+            WHERE j.company.id = :companyId
+            ORDER BY i.scheduledAt ASC
+            """)
+    Page<InterviewSchedule> findByCompanyId(
+            @Param("companyId") Long companyId,
+            Pageable pageable);
+
+    @Query("""
+            SELECT i FROM InterviewSchedule i
+            JOIN i.application a
+            JOIN a.job j
+            WHERE j.company.id = :companyId AND j.id = :jobId
+            ORDER BY i.scheduledAt ASC
+            """)
+    Page<InterviewSchedule> findByCompanyIdAndJobId(
+            @Param("companyId") Long companyId,
+            @Param("jobId") Long jobId,
+            Pageable pageable);
 }

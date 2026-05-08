@@ -17,6 +17,7 @@ import RecruiterDashboard from '../pages/recruiter/DashboardPage';
 import MyJobsPage         from '../pages/recruiter/MyJobsPage';
 import JobApplicantsPage  from '../pages/recruiter/JobApplicantsPage';
 import RecruiterFeedback  from '../pages/recruiter/FeedbackPage';
+import InterviewsPage     from '../pages/recruiter/InterviewsPage';
 
 import AdminUsersPage     from '../pages/admin/UsersPage';
 import AdminCompaniesPage from '../pages/admin/CompaniesPage';
@@ -54,6 +55,7 @@ export default function AppRouter() {
           <Route index element={<RecruiterDashboard />} />
           <Route path="jobs"                   element={<MyJobsPage />} />
           <Route path="jobs/:jobId/applicants" element={<JobApplicantsPage />} />
+          <Route path="interviews"             element={<InterviewsPage />} />
           <Route path="feedback"               element={<RecruiterFeedback />} />
         </Route>
 

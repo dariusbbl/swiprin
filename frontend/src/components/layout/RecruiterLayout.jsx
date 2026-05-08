@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, LogOut, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Briefcase, CalendarCheck, MessageSquare, LogOut, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getMe } from '../../api/users';
 import Avatar from '../ui/Avatar';
@@ -37,10 +37,13 @@ export default function RecruiterLayout() {
           <NavLink to="/recruiter"      end className={({ isActive }) => isActive ? styles.active : ''}>
             <LayoutDashboard size={16} /> Dashboard
           </NavLink>
-          <NavLink to="/recruiter/jobs"     className={({ isActive }) => isActive ? styles.active : ''}>
+          <NavLink to="/recruiter/jobs"        className={({ isActive }) => isActive ? styles.active : ''}>
             <Briefcase size={16} /> My Jobs
           </NavLink>
-          <NavLink to="/recruiter/feedback" className={({ isActive }) => isActive ? styles.active : ''}>
+          <NavLink to="/recruiter/interviews"  className={({ isActive }) => isActive ? styles.active : ''}>
+            <CalendarCheck size={16} /> Interviews
+          </NavLink>
+          <NavLink to="/recruiter/feedback"    className={({ isActive }) => isActive ? styles.active : ''}>
             <MessageSquare size={16} /> Feedback
           </NavLink>
         </nav>

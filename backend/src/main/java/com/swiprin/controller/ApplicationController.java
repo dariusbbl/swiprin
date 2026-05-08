@@ -133,6 +133,19 @@ public class ApplicationController {
         return ResponseEntity.ok(applicationService.updateInterview(interviewId, req, principal.getId()));
     }
 
+    @GetMapping("/interviews/company")
+    @PreAuthorize("hasRole('RECRUITER')")
+    @Operation(summary = "Get all interviews for the recruiter's company (optional job filter)")
+    public ResponseEntity<PageResponse<InterviewResponse>> getCompanyInterviews(
+            @RequestParam(required = false) Long jobId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(applicationService.getInterviewsForCompany(
+                principal.getId(), jobId,
+                PageRequest.of(page, size, Sort.by("scheduledAt").ascending())));
+    }
+
     @GetMapping("/{id}/interviews")
     @PreAuthorize("hasRole('RECRUITER')")
     @Operation(summary = "Get all interviews for an application (recruiter)")

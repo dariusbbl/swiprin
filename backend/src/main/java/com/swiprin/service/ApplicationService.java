@@ -237,6 +237,26 @@ public class ApplicationService {
                 .stream().map(this::toInterviewResponse).toList();
     }
 
+    @Transactional(readOnly = true)
+    public PageResponse<InterviewResponse> getInterviewsForCompany(Long recruiterId, Long jobId, Pageable pageable) {
+        User recruiter = userRepository.findById(recruiterId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (recruiter.getCompany() == null) {
+            return PageResponse.<InterviewResponse>builder()
+                    .content(List.of()).page(0).size(pageable.getPageSize())
+                    .totalElements(0L).totalPages(0).last(true).build();
+        }
+        Long companyId = recruiter.getCompany().getId();
+        Page<InterviewSchedule> page = (jobId != null)
+                ? interviewScheduleRepository.findByCompanyIdAndJobId(companyId, jobId, pageable)
+                : interviewScheduleRepository.findByCompanyId(companyId, pageable);
+        return PageResponse.<InterviewResponse>builder()
+                .content(page.getContent().stream().map(this::toInterviewResponseFull).toList())
+                .page(page.getNumber()).size(page.getSize())
+                .totalElements(page.getTotalElements()).totalPages(page.getTotalPages())
+                .last(page.isLast()).build();
+    }
+
     public List<InterviewResponse> getInterviewsForOwnApplication(Long applicationId, Long candidateId) {
         Application application = findOrThrow(applicationId);
         if (!application.getUser().getId().equals(candidateId)) {
@@ -319,6 +339,23 @@ public class ApplicationService {
                 .location(i.getLocation())
                 .description(i.getDescription())
                 .createdAt(i.getCreatedAt())
+                .build();
+    }
+
+    private InterviewResponse toInterviewResponseFull(InterviewSchedule i) {
+        Application app = i.getApplication();
+        return InterviewResponse.builder()
+                .id(i.getId())
+                .applicationId(app.getId())
+                .title(i.getTitle())
+                .scheduledAt(i.getScheduledAt())
+                .mode(i.getMode())
+                .location(i.getLocation())
+                .description(i.getDescription())
+                .createdAt(i.getCreatedAt())
+                .jobId(app.getJob().getId())
+                .jobTitle(app.getJob().getTitle())
+                .candidateName(app.getUser().getFullName())
                 .build();
     }
 }
