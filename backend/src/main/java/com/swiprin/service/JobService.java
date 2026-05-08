@@ -37,13 +37,22 @@ public class JobService {
     private final UserService userService;
 
     // Candidate feed — sorted by skill match, includes applied flag
-    public PageResponse<JobResponse> getFeedForCandidate(Long userId, Seniority seniority, Pageable pageable) {
+    public PageResponse<JobResponse> getFeedForCandidate(Long userId, Seniority seniority, String location, Pageable pageable) {
         Set<Long> candidateSkillIds = userRepository.findById(userId)
                 .map(u -> u.getSkills().stream().map(Skill::getId).collect(java.util.stream.Collectors.toSet()))
                 .orElse(Set.of());
-        Page<Job> page = (seniority != null)
-                ? jobRepository.findActiveJobsSortedBySkillMatchAndSeniority(userId, seniority, pageable)
-                : jobRepository.findActiveJobsSortedBySkillMatch(userId, pageable);
+        boolean hasSeniority = seniority != null;
+        boolean hasLocation  = location != null && !location.isBlank();
+        Page<Job> page;
+        if (hasSeniority && hasLocation) {
+            page = jobRepository.findActiveJobsSortedBySkillMatchAndSeniorityAndLocation(userId, seniority, location, pageable);
+        } else if (hasSeniority) {
+            page = jobRepository.findActiveJobsSortedBySkillMatchAndSeniority(userId, seniority, pageable);
+        } else if (hasLocation) {
+            page = jobRepository.findActiveJobsSortedBySkillMatchAndLocation(userId, location, pageable);
+        } else {
+            page = jobRepository.findActiveJobsSortedBySkillMatch(userId, pageable);
+        }
         return PageResponse.<JobResponse>builder()
                 .content(page.getContent().stream().map(j -> toJobResponse(j, userId, candidateSkillIds)).toList())
                 .page(page.getNumber())

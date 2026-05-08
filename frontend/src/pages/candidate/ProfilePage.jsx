@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
 import Avatar from '../../components/ui/Avatar';
 import ConfirmModal from '../../components/ui/ConfirmModal';
+import LocationPicker from '../../components/ui/LocationPicker';
 import styles from './ProfilePage.module.css';
 
 const EDU_LEVELS = [
@@ -190,8 +191,11 @@ export default function ProfilePage() {
           </div>
           <div className={styles.field}>
             <label>Current location</label>
-            <input name="currentLocation" value={form.currentLocation} onChange={handle}
-              className="form-control" placeholder="e.g. Bucharest, Romania" />
+            <LocationPicker
+              value={form.currentLocation}
+              onChange={val => setForm(f => ({ ...f, currentLocation: val }))}
+              placeholder="e.g. Bucharest, Romania"
+            />
           </div>
         </section>
 

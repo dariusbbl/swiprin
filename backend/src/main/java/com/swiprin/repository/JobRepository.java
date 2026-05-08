@@ -25,7 +25,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
            "LOWER(j.description) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     Page<Job> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
-    // Jobs sorted by skill overlap — no seniority filter
+    // Jobs sorted by skill overlap — no seniority, no location filter
     @Query("""
             SELECT j FROM Job j
             LEFT JOIN j.skills js ON js.id IN (
@@ -50,5 +50,37 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     Page<Job> findActiveJobsSortedBySkillMatchAndSeniority(
             @Param("userId") Long userId,
             @Param("seniority") Seniority seniority,
+            Pageable pageable);
+
+    // Jobs sorted by skill overlap — with location filter (city or country substring)
+    @Query("""
+            SELECT j FROM Job j
+            LEFT JOIN j.skills js ON js.id IN (
+                SELECT s.id FROM User u JOIN u.skills s WHERE u.id = :userId
+            )
+            WHERE j.active = true AND LOWER(j.location) LIKE LOWER(CONCAT('%', :location, '%'))
+            GROUP BY j
+            ORDER BY COUNT(js) DESC
+            """)
+    Page<Job> findActiveJobsSortedBySkillMatchAndLocation(
+            @Param("userId") Long userId,
+            @Param("location") String location,
+            Pageable pageable);
+
+    // Jobs sorted by skill overlap — with seniority + location filter
+    @Query("""
+            SELECT j FROM Job j
+            LEFT JOIN j.skills js ON js.id IN (
+                SELECT s.id FROM User u JOIN u.skills s WHERE u.id = :userId
+            )
+            WHERE j.active = true AND j.seniority = :seniority
+              AND LOWER(j.location) LIKE LOWER(CONCAT('%', :location, '%'))
+            GROUP BY j
+            ORDER BY COUNT(js) DESC
+            """)
+    Page<Job> findActiveJobsSortedBySkillMatchAndSeniorityAndLocation(
+            @Param("userId") Long userId,
+            @Param("seniority") Seniority seniority,
+            @Param("location") String location,
             Pageable pageable);
 }

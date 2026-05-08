@@ -37,8 +37,9 @@ public class JobController {
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) Seniority seniority) {
-        return ResponseEntity.ok(jobService.getFeedForCandidate(principal.getId(), seniority, PageRequest.of(page, size)));
+            @RequestParam(required = false) Seniority seniority,
+            @RequestParam(required = false) String location) {
+        return ResponseEntity.ok(jobService.getFeedForCandidate(principal.getId(), seniority, location, PageRequest.of(page, size)));
     }
 
     // Candidate: get single job

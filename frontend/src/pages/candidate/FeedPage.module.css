@@ -4,6 +4,11 @@
   align-items: center;
   gap: 1.25rem;
   padding: 1rem 0 3rem;
+  position: relative;
+}
+
+.page > .topBar {
+  align-self: stretch;
 }
 
 /* Skip / Apply hint row */
@@ -255,17 +260,31 @@
   margin: 0;
 }
 
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+}
+
+.locationFilter {
+  flex: 0 0 210px;
+  min-width: 0;
+}
+
 .seniorityFilter {
-  display: flex; gap: .4rem; flex-wrap: wrap; justify-content: center;
+  display: flex; gap: .35rem; flex-wrap: wrap;
 }
 .senChip {
-  padding: .3rem .8rem;
+  padding: .3rem .7rem;
   border: 1.5px solid var(--border);
   border-radius: 20px;
   background: var(--surface);
   font-size: .78rem; font-weight: 500; color: var(--text-2);
   cursor: pointer; transition: border-color .15s, background .15s, color .15s;
   font-family: inherit;
+  white-space: nowrap;
 }
 .senChip:hover    { border-color: var(--accent); color: var(--accent); }
 .senChipActive    { border-color: var(--accent); background: var(--accent-50); color: var(--accent); font-weight: 700; }
