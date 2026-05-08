@@ -1,5 +1,6 @@
 package com.swiprin.dto.response;
 
+import com.swiprin.model.enums.Seniority;
 import com.swiprin.model.enums.WorkMode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ public class JobManagementResponse {
     private String description;
     private String location;
     private WorkMode workMode;
+    private Seniority seniority;
     private Boolean active;
     private Boolean paid;
     private Integer shortlistThreshold;

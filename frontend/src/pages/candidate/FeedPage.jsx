@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { MapPin, X, Check, Sparkles } from 'lucide-react';
+import { MapPin, X, Check, Sparkles, CheckCircle2 } from 'lucide-react';
 import { getJobFeed } from '../../api/jobs';
 import { applyToJob } from '../../api/applications';
 import { getCvDrafts } from '../../api/cvDrafts';
@@ -8,6 +8,72 @@ import EmptyState from '../../components/ui/EmptyState';
 import styles from './FeedPage.module.css';
 
 const WORK_LABEL = { ON_SITE: 'On-site', REMOTE: 'Remote', HYBRID: 'Hybrid' };
+const SENIORITY_OPTS = [
+  { value: null,          label: 'All' },
+  { value: 'INTERNSHIP',  label: 'Internship' },
+  { value: 'JUNIOR',      label: 'Junior' },
+  { value: 'MID',         label: 'Mid' },
+  { value: 'SENIOR',      label: 'Senior' },
+];
+
+function SkillsSection({ skills = [], matchedSkills = [] }) {
+  const [showAll, setShowAll] = useState(false);
+  const matchedIds = new Set(matchedSkills.map(s => s.id));
+  const unmatched  = skills.filter(s => !matchedIds.has(s.id));
+  const hasMore    = unmatched.length > 0;
+
+  if (skills.length === 0) return null;
+
+  return (
+    <div className={styles.skillsSection}>
+      {matchedSkills.length > 0 && (
+        <div className={styles.skillsRow}>
+          <span className={styles.skillsLabel}><CheckCircle2 size={12} /> Your skills</span>
+          <div className={styles.skills}>
+            {matchedSkills.map(s => (
+              <span key={s.id} className={[styles.skill, styles.skillMatch].join(' ')}>{s.name}</span>
+            ))}
+          </div>
+        </div>
+      )}
+      {hasMore && (
+        <button type="button" className={styles.viewAllBtn} onClick={() => setShowAll(true)}>
+          View all {skills.length} skills →
+        </button>
+      )}
+      {showAll && (
+        <div className={styles.skillPopupOverlay} onClick={() => setShowAll(false)}>
+          <div className={styles.skillPopup} onClick={e => e.stopPropagation()}>
+            <div className={styles.skillPopupHeader}>
+              <span>All required skills</span>
+              <button className={styles.skillPopupClose} onClick={() => setShowAll(false)}><X size={14} /></button>
+            </div>
+            {matchedSkills.length > 0 && (
+              <div className={styles.skillPopupGroup}>
+                <p className={styles.skillPopupGroupLabel}>Your skills</p>
+                <div className={styles.skills}>
+                  {matchedSkills.map(s => (
+                    <span key={s.id} className={[styles.skill, styles.skillMatch].join(' ')}>{s.name}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {unmatched.length > 0 && (
+              <div className={styles.skillPopupGroup}>
+                {matchedSkills.length > 0 && <p className={styles.skillPopupGroupLabel}>Other required skills</p>}
+                <div className={styles.skills}>
+                  {unmatched.map(s => (
+                    <span key={s.id} className={styles.skill}>{s.name}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function FeedPage() {
   const [cards, setCards]       = useState([]);
@@ -19,17 +85,19 @@ export default function FeedPage() {
   const [cvDrafts, setCvDrafts]       = useState([]);
   const [selectedCvId, setSelectedCvId] = useState(null);
 
-  // Use refs for pagination state so loadMore stays stable (no deps)
-  const pageRef    = useRef(0);
-  const hasMoreRef = useRef(true);
-  const loadingRef = useRef(false);
+  const [seniority, setSeniority] = useState(null);
+
+  const pageRef      = useRef(0);
+  const hasMoreRef   = useRef(true);
+  const loadingRef   = useRef(false);
+  const seniorityRef = useRef(null);
 
   const loadMore = useCallback(async () => {
     if (loadingRef.current || !hasMoreRef.current) return;
     loadingRef.current = true;
     setLoading(true);
     try {
-      const res   = await getJobFeed(pageRef.current);
+      const res   = await getJobFeed(pageRef.current, seniorityRef.current);
       const pd    = res.data;
       const fresh = (pd.content ?? []).filter(j => !j.applied);
       setCards(prev => [...prev, ...fresh]);
@@ -39,11 +107,19 @@ export default function FeedPage() {
       loadingRef.current = false;
       setLoading(false);
     }
-  }, []); // stable — reads pagination via refs
+  }, []);
 
-  useEffect(() => { loadMore(); }, [loadMore]);
+  useEffect(() => {
+    seniorityRef.current = seniority;
+    pageRef.current    = 0;
+    hasMoreRef.current = true;
+    loadingRef.current = false;
+    setCards([]);
+    setDone(false);
+    setApplyError('');
+    loadMore();
+  }, [seniority, loadMore]);
 
-  // Load candidate's CV drafts once; auto-select default or only one
   useEffect(() => {
     getCvDrafts().then(r => {
       const drafts = r.data ?? [];
@@ -54,7 +130,6 @@ export default function FeedPage() {
     }).catch(() => {});
   }, []);
 
-  // Preload when only 2 cards remain
   useEffect(() => {
     if (cards.length <= 2 && hasMoreRef.current && !loadingRef.current) loadMore();
   }, [cards.length, loadMore]);
@@ -83,7 +158,7 @@ export default function FeedPage() {
       } catch (err) {
         const msg = err.response?.data?.message ?? 'Failed to apply. Please try again.';
         setApplyError(msg);
-        return; // keep the card — do not remove it
+        return;
       }
     }
 
@@ -99,17 +174,27 @@ export default function FeedPage() {
     return () => window.removeEventListener('keydown', onKey);
   }, [swipe]);
 
-  if (done || (!loading && cards.length === 0 && !hasMoreRef.current)) {
-    return (
-      <div className={styles.page}>
-        <EmptyState icon={<Sparkles size={44} />} title="You're all caught up!"
-          description="No more new jobs right now. Check back later." />
-      </div>
-    );
-  }
+  const isEmpty = (done || (!loading && cards.length === 0 && !hasMoreRef.current));
 
   return (
     <div className={styles.page}>
+      <div className={styles.seniorityFilter}>
+        {SENIORITY_OPTS.map(opt => (
+          <button
+            key={String(opt.value)}
+            className={[styles.senChip, seniority === opt.value ? styles.senChipActive : ''].join(' ')}
+            onClick={() => setSeniority(opt.value)}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      {isEmpty ? (
+        <EmptyState icon={<Sparkles size={44} />} title="You're all caught up!"
+          description="No more new jobs right now. Check back later." />
+      ) : (
+      <>
       <div className={styles.hint}>
         <span className={styles.hintSkip}>← Skip</span>
         <span className={styles.hintApply}>Apply →</span>
@@ -167,13 +252,7 @@ export default function FeedPage() {
               </div>
             </div>
 
-            {top.skills?.length > 0 && (
-              <div className={styles.skills}>
-                {top.skills.map(s => (
-                  <span key={s.id} className={styles.skill}>{s.name}</span>
-                ))}
-              </div>
-            )}
+            <SkillsSection skills={top.skills ?? []} matchedSkills={top.matchedSkills ?? []} />
 
             <p className={styles.desc}>{top.description}</p>
 
@@ -215,6 +294,8 @@ export default function FeedPage() {
       )}
 
       <p className={styles.keyHint}>Use ← → arrow keys to swipe</p>
+      </>
+      )}
     </div>
   );
 }

@@ -5,6 +5,7 @@ import com.swiprin.dto.request.UpdateJobRequest;
 import com.swiprin.dto.response.JobManagementResponse;
 import com.swiprin.dto.response.JobResponse;
 import com.swiprin.dto.response.PageResponse;
+import com.swiprin.model.enums.Seniority;
 import com.swiprin.security.UserPrincipal;
 import com.swiprin.service.JobService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,8 +36,9 @@ public class JobController {
     public ResponseEntity<PageResponse<JobResponse>> getFeed(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(jobService.getFeedForCandidate(principal.getId(), PageRequest.of(page, size)));
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Seniority seniority) {
+        return ResponseEntity.ok(jobService.getFeedForCandidate(principal.getId(), seniority, PageRequest.of(page, size)));
     }
 
     // Candidate: get single job

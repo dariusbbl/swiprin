@@ -1,5 +1,6 @@
 package com.swiprin.dto.response;
 
+import com.swiprin.model.enums.Seniority;
 import com.swiprin.model.enums.WorkMode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +22,10 @@ public class JobResponse {
     private String description;
     private String location;
     private WorkMode workMode;
+    private Seniority seniority;
     private CompanyResponse company;
     private List<SkillResponse> skills;
+    private List<SkillResponse> matchedSkills;
     private Boolean paid;
     private Boolean applied;        // true if the authenticated candidate already applied
     private LocalDateTime createdAt;

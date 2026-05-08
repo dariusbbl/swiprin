@@ -1,6 +1,7 @@
 package com.swiprin.repository;
 
 import com.swiprin.model.Job;
+import com.swiprin.model.enums.Seniority;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,7 +25,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
            "LOWER(j.description) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     Page<Job> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
-    // Jobs sorted by skill overlap with the candidate — includes jobs with 0 matching skills (pushed to the end)
+    // Jobs sorted by skill overlap — no seniority filter
     @Query("""
             SELECT j FROM Job j
             LEFT JOIN j.skills js ON js.id IN (
@@ -35,4 +36,19 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             ORDER BY COUNT(js) DESC
             """)
     Page<Job> findActiveJobsSortedBySkillMatch(@Param("userId") Long userId, Pageable pageable);
+
+    // Jobs sorted by skill overlap — with seniority filter
+    @Query("""
+            SELECT j FROM Job j
+            LEFT JOIN j.skills js ON js.id IN (
+                SELECT s.id FROM User u JOIN u.skills s WHERE u.id = :userId
+            )
+            WHERE j.active = true AND j.seniority = :seniority
+            GROUP BY j
+            ORDER BY COUNT(js) DESC
+            """)
+    Page<Job> findActiveJobsSortedBySkillMatchAndSeniority(
+            @Param("userId") Long userId,
+            @Param("seniority") Seniority seniority,
+            Pageable pageable);
 }
