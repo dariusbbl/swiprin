@@ -23,6 +23,7 @@ public class JobResponse {
     private WorkMode workMode;
     private CompanyResponse company;
     private List<SkillResponse> skills;
+    private Boolean paid;
     private Boolean applied;        // true if the authenticated candidate already applied
     private LocalDateTime createdAt;
 }

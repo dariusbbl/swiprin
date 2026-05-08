@@ -23,5 +23,7 @@ public class UpdateJobRequest {
     @Min(0) @Max(100)
     private Integer shortlistThreshold;
 
+    private Boolean paid;
+
     private Set<Long> skillIds;
 }

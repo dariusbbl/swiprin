@@ -112,3 +112,18 @@
   font-size: .8rem; color: var(--text-2); cursor: pointer; margin-top: .25rem;
 }
 .checkRow input { accent-color: var(--accent); }
+
+/* Pay type toggle */
+.payRow { display: flex; gap: .6rem; }
+.payCard {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: .55rem 1rem;
+  border: 1.5px solid var(--border); border-radius: 9px; cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+  color: var(--text-2);
+}
+.payCard input { display: none; }
+.payCard:hover { border-color: var(--accent); }
+.payLabel { font-size: .875rem; font-weight: 600; }
+.payActive        { border-color: #16a34a; background: #f0fdf4; color: #16a34a; }
+.payUnpaidActive  { border-color: var(--text-3); background: var(--surface-2); color: var(--text); }
