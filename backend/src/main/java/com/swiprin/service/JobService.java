@@ -90,6 +90,7 @@ public class JobService {
                 .location(req.getLocation() != null ? req.getLocation().trim() : null)
                 .workMode(req.getWorkMode())
                 .shortlistThreshold(req.getShortlistThreshold())
+                .paid(req.getPaid())
                 .active(true)
                 .company(recruiter.getCompany())
                 .recruiter(recruiter)
@@ -111,6 +112,7 @@ public class JobService {
         if (req.getWorkMode() != null) job.setWorkMode(req.getWorkMode());
         if (req.getActive() != null) job.setActive(req.getActive());
         if (req.getShortlistThreshold() != null) job.setShortlistThreshold(req.getShortlistThreshold());
+        if (req.getPaid() != null) job.setPaid(req.getPaid());
         if (req.getSkillIds() != null) job.setSkills(resolveSkills(req.getSkillIds()));
         return toManagementResponse(jobRepository.save(job));
     }
@@ -150,6 +152,7 @@ public class JobService {
                 .description(job.getDescription())
                 .location(job.getLocation())
                 .workMode(job.getWorkMode())
+                .paid(job.getPaid())
                 .company(companyService.toResponse(job.getCompany()))
                 .skills(job.getSkills().stream().map(SkillService::toResponse).toList())
                 .applied(applicationRepository.existsByJobIdAndUserId(job.getId(), userId))
@@ -165,6 +168,7 @@ public class JobService {
                 .location(job.getLocation())
                 .workMode(job.getWorkMode())
                 .active(job.getActive())
+                .paid(job.getPaid())
                 .shortlistThreshold(job.getShortlistThreshold())
                 .company(companyService.toResponse(job.getCompany()))
                 .recruiter(userService.toResponse(job.getRecruiter()))

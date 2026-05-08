@@ -26,5 +26,8 @@ public class CreateJobRequest {
     @Min(0) @Max(100)
     private int shortlistThreshold = 70;
 
+    @NotNull
+    private Boolean paid = true;
+
     private Set<Long> skillIds;
 }

@@ -13,7 +13,7 @@ import styles from './MyJobsPage.module.css';
 
 const WORK_MODES = ['ON_SITE', 'REMOTE', 'HYBRID'];
 const WORK_LABEL = { ON_SITE: 'On-site', REMOTE: 'Remote', HYBRID: 'Hybrid' };
-const EMPTY_FORM = { title: '', description: '', location: '', workMode: 'ON_SITE', shortlistThreshold: 70, skillIds: [] };
+const EMPTY_FORM = { title: '', description: '', location: '', workMode: 'ON_SITE', shortlistThreshold: 70, paid: true, skillIds: [] };
 
 export default function MyJobsPage() {
   const navigate = useNavigate();
@@ -63,6 +63,7 @@ export default function MyJobsPage() {
       title: job.title, description: job.description,
       location: job.location ?? '', workMode: job.workMode,
       shortlistThreshold: isNoThreshold ? 70 : job.shortlistThreshold,
+      paid: job.paid ?? true,
       skillIds: job.skills?.map(s => s.id) ?? [],
     });
     setSkillSearch('');
@@ -137,6 +138,7 @@ export default function MyJobsPage() {
                 <tr>
                   <th>Title</th>
                   <th>Work mode</th>
+                  <th>Pay</th>
                   <th>Status</th>
                   <th>Threshold</th>
                   <th>Applications</th>
@@ -151,6 +153,13 @@ export default function MyJobsPage() {
                       {job.location && <span className={styles.location}><MapPin size={12} /> {job.location}</span>}
                     </td>
                     <td><Tag>{WORK_LABEL[job.workMode]}</Tag></td>
+                    <td>
+                      {job.paid != null && (
+                        <Tag variant={job.paid ? 'success' : 'default'}>
+                          {job.paid ? 'Paid' : 'Unpaid'}
+                        </Tag>
+                      )}
+                    </td>
                     <td>
                       <Tag variant={job.active ? 'success' : 'default'}>
                         {job.active ? 'Active' : 'Closed'}
@@ -223,6 +232,24 @@ export default function MyJobsPage() {
                 <input type="checkbox" checked={noThreshold}
                   onChange={e => setNoThreshold(e.target.checked)} />
                 <span>No threshold — show all applicants</span>
+              </label>
+            </div>
+          </div>
+
+          <div className={styles.field}>
+            <label>Pay type</label>
+            <div className={styles.payRow}>
+              <label className={[styles.payCard, form.paid === true ? styles.payActive : ''].join(' ')}>
+                <input type="radio" name="paid" value="true"
+                  checked={form.paid === true}
+                  onChange={() => setForm(f => ({ ...f, paid: true }))} />
+                <span className={styles.payLabel}>Paid</span>
+              </label>
+              <label className={[styles.payCard, form.paid === false ? styles.payUnpaidActive : ''].join(' ')}>
+                <input type="radio" name="paid" value="false"
+                  checked={form.paid === false}
+                  onChange={() => setForm(f => ({ ...f, paid: false }))} />
+                <span className={styles.payLabel}>Unpaid</span>
               </label>
             </div>
           </div>

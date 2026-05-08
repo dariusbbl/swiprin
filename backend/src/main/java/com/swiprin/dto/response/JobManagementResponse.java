@@ -22,6 +22,7 @@ public class JobManagementResponse {
     private String location;
     private WorkMode workMode;
     private Boolean active;
+    private Boolean paid;
     private Integer shortlistThreshold;
     private CompanyResponse company;
     private UserResponse recruiter;

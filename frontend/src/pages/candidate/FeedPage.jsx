@@ -157,7 +157,14 @@ export default function FeedPage() {
                 {top.company?.name && <p className={styles.company}>{top.company.name}</p>}
                 {top.location && <p className={styles.location}><MapPin size={13} /> {top.location}</p>}
               </div>
-              <Tag>{WORK_LABEL[top.workMode] ?? top.workMode}</Tag>
+              <div className={styles.tagGroup}>
+                <Tag>{WORK_LABEL[top.workMode] ?? top.workMode}</Tag>
+                {top.paid != null && (
+                  <Tag variant={top.paid ? 'success' : 'default'}>
+                    {top.paid ? 'Paid' : 'Unpaid'}
+                  </Tag>
+                )}
+              </div>
             </div>
 
             {top.skills?.length > 0 && (

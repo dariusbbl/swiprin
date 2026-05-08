@@ -41,6 +41,9 @@ public class Job {
     @Column(nullable = false)
     private Boolean active;
 
+    @Column(nullable = true)
+    private Boolean paid;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
