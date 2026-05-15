@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class CompanyResponse {
 
     private Long id;
+    private String companyCode;
     private String name;
     private String website;
     private String description;

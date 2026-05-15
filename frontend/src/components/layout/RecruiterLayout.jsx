@@ -73,7 +73,7 @@ export default function RecruiterLayout() {
           {company && (
             <div className={styles.companyBadge}>
               <span className={styles.companyBadgeName}>{company.name}</span>
-              <span className={styles.companyBadgeId}>#{company.id}</span>
+              {company.companyCode && <span className={styles.companyBadgeId}>#{company.companyCode}</span>}
             </div>
           )}
         </div>

@@ -19,6 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -27,6 +29,14 @@ public class AuthService {
     private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+
+    private String generateUniqueCode() {
+        String code;
+        do {
+            code = String.format("%06d", ThreadLocalRandom.current().nextInt(100000, 1000000));
+        } while (companyRepository.existsByCompanyCode(code));
+        return code;
+    }
 
     @Transactional
     public AuthResponse registerCandidate(RegisterCandidateRequest req) {
@@ -58,7 +68,7 @@ public class AuthService {
             throw new BadRequestException("Passwords do not match");
         }
 
-        boolean hasExistingCompany = req.getExistingCompanyId() != null;
+        boolean hasExistingCompany = req.getExistingCompanyCode() != null && !req.getExistingCompanyCode().isBlank();
         boolean hasNewCompany = req.getNewCompanyName() != null && !req.getNewCompanyName().isBlank();
 
         if (hasExistingCompany == hasNewCompany) {
@@ -67,13 +77,14 @@ public class AuthService {
 
         Company company;
         if (hasExistingCompany) {
-            company = companyRepository.findById(req.getExistingCompanyId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Company not found"));
+            company = companyRepository.findByCompanyCode(req.getExistingCompanyCode().trim())
+                    .orElseThrow(() -> new ResourceNotFoundException("No company found with code " + req.getExistingCompanyCode()));
         } else {
             company = Company.builder()
                     .name(req.getNewCompanyName())
                     .website(req.getNewCompanyWebsite())
                     .description(req.getNewCompanyDescription())
+                    .companyCode(generateUniqueCode())
                     .isVerified(false)
                     .build();
             companyRepository.save(company);

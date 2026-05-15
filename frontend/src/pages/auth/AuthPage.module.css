@@ -245,3 +245,5 @@
   .formPanel  { width: 100%; min-height: 100vh; }
   .heroPanel  { display: none; }
 }
+
+.fieldHint { font-size: .75rem; color: var(--text-3); margin-top: .25rem; }
