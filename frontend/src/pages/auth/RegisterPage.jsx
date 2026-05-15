@@ -15,7 +15,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     fullName: '', email: '', password: '', confirmPassword: '',
     phoneNumber: '', businessEmail: '', jobTitle: '',
-    existingCompanyName: '', existingCompanyId: '',
+    existingCompanyCode: '',
     newCompanyName: '', newCompanyWebsite: '', newCompanyDescription: '',
   });
 
@@ -40,8 +40,11 @@ export default function RegisterPage() {
         await registerCandidate({ fullName: form.fullName, email: form.email, password: form.password, confirmPassword: form.confirmPassword });
         setDone(true);
       } else {
-        if (companyMode === 'existing' && !form.existingCompanyId) {
-          setError('Please enter the company ID.'); setLoading(false); return;
+        if (companyMode === 'existing' && !form.existingCompanyCode.trim()) {
+          setError('Please enter the 6-digit company code.'); setLoading(false); return;
+        }
+        if (companyMode === 'existing' && !/^\d{6}$/.test(form.existingCompanyCode.trim())) {
+          setError('Company code must be exactly 6 digits.'); setLoading(false); return;
         }
         if (companyMode === 'new' && !form.newCompanyName.trim()) {
           setError('Please enter the new company name.'); setLoading(false); return;
@@ -55,8 +58,8 @@ export default function RegisterPage() {
           phoneNumber:     form.phoneNumber,
           businessEmail:   form.businessEmail,
           jobTitle:        form.jobTitle,
-          existingCompanyId:     companyMode === 'existing' ? Number(form.existingCompanyId) : undefined,
-          newCompanyName:        companyMode === 'new' ? form.newCompanyName.trim()        : undefined,
+          existingCompanyCode:   companyMode === 'existing' ? form.existingCompanyCode.trim() : undefined,
+          newCompanyName:        companyMode === 'new' ? form.newCompanyName.trim()           : undefined,
           newCompanyWebsite:     companyMode === 'new' && form.newCompanyWebsite     ? form.newCompanyWebsite.trim()     : undefined,
           newCompanyDescription: companyMode === 'new' && form.newCompanyDescription ? form.newCompanyDescription.trim() : undefined,
         });
@@ -184,17 +187,14 @@ export default function RegisterPage() {
               </div>
 
               {companyMode === 'existing' && (
-                <div className={styles.authRow2}>
-                  <div className={styles.field}>
-                    <label>Company name</label>
-                    <input type="text" name="existingCompanyName" value={form.existingCompanyName}
-                      onChange={handle} className="form-control" placeholder="e.g. Acme Corp" />
-                  </div>
-                  <div className={styles.field}>
-                    <label>Company ID *</label>
-                    <input type="number" name="existingCompanyId" value={form.existingCompanyId}
-                      onChange={handle} required className="form-control" placeholder="e.g. 3" min="1" />
-                  </div>
+                <div className={styles.field}>
+                  <label>Company code *</label>
+                  <input type="text" name="existingCompanyCode" value={form.existingCompanyCode}
+                    onChange={handle} required className="form-control"
+                    placeholder="6-digit code, e.g. 482917"
+                    maxLength={6} inputMode="numeric"
+                    pattern="\d{6}" />
+                  <span className={styles.fieldHint}>Ask your company admin for the 6-digit code shown in their account.</span>
                 </div>
               )}
 

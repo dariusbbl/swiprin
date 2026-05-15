@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @Service
 @RequiredArgsConstructor
 public class CompanyService {
@@ -43,6 +45,7 @@ public class CompanyService {
                 .name(name)
                 .website(req.getWebsite())
                 .description(req.getDescription())
+                .companyCode(generateUniqueCode())
                 .isVerified(false)
                 .build();
         return toResponse(companyRepository.save(company));
@@ -76,6 +79,14 @@ public class CompanyService {
         companyRepository.delete(findOrThrow(id));
     }
 
+    private String generateUniqueCode() {
+        String code;
+        do {
+            code = String.format("%06d", ThreadLocalRandom.current().nextInt(100000, 1000000));
+        } while (companyRepository.existsByCompanyCode(code));
+        return code;
+    }
+
     private Company findOrThrow(Long id) {
         return companyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Company not found: " + id));
@@ -84,6 +95,7 @@ public class CompanyService {
     public CompanyResponse toResponse(Company company) {
         return CompanyResponse.builder()
                 .id(company.getId())
+                .companyCode(company.getCompanyCode())
                 .name(company.getName())
                 .website(company.getWebsite())
                 .description(company.getDescription())

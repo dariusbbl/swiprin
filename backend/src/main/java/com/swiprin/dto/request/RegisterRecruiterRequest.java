@@ -33,7 +33,7 @@ public class RegisterRecruiterRequest {
     private String businessEmail;
 
     // Company data — either link to existing or register new
-    private Long existingCompanyId;       // set if linking to an existing company
+    private String existingCompanyCode;   // 6-digit code if linking to an existing company
 
     private String newCompanyName;        // set if registering a new company
     private String newCompanyWebsite;

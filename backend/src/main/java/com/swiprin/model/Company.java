@@ -31,6 +31,9 @@ public class Company {
     @Column(name = "logo_url")
     private String logoUrl;
 
+    @Column(name = "company_code", nullable = false, unique = true, length = 6)
+    private String companyCode;
+
     @Column(name = "is_verified", nullable = false)
     @Builder.Default
     private Boolean isVerified = false;
