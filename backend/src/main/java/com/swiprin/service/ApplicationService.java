@@ -79,7 +79,7 @@ public class ApplicationService {
                     userId,
                     NotificationType.SHORTLIST,
                     "You have been shortlisted for " + job.getTitle()
-                            + " at " + job.getCompany().getName(),
+                            + " at <strong>" + job.getCompany().getName() + "</strong>",
                     saved.getId()
             );
         }
@@ -135,7 +135,7 @@ public class ApplicationService {
                     application.getUser().getId(),
                     NotificationType.STATUS_UPDATE,
                     "Your application for " + application.getJob().getTitle()
-                            + " at " + application.getJob().getCompany().getName()
+                            + " at <strong>" + application.getJob().getCompany().getName() + "</strong>"
                             + " status updated to: " + req.getStatus().name(),
                     saved.getId()
             );
@@ -194,7 +194,7 @@ public class ApplicationService {
                 application.getUser().getId(),
                 NotificationType.INTERVIEW_SCHEDULED,
                 "Interview scheduled for " + application.getJob().getTitle()
-                        + " at " + application.getJob().getCompany().getName()
+                        + " at <strong>" + application.getJob().getCompany().getName() + "</strong>"
                         + ": " + req.getTitle(),
                 saved.getId()
         );
@@ -222,7 +222,7 @@ public class ApplicationService {
                 interview.getApplication().getUser().getId(),
                 NotificationType.INTERVIEW_UPDATED,
                 "Interview updated for " + interview.getApplication().getJob().getTitle()
-                        + " at " + interview.getApplication().getJob().getCompany().getName()
+                        + " at <strong>" + interview.getApplication().getJob().getCompany().getName() + "</strong>"
                         + ": " + saved.getTitle(),
                 saved.getId()
         );
