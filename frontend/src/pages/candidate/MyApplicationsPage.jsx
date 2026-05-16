@@ -112,9 +112,11 @@ export default function MyApplicationsPage() {
               <tbody>
                 {data.content.map(app => (
                   <tr key={app.id}>
-                    <td className={styles.jobCell}>
-                      <span className={styles.jobTitle}>{app.job.title}</span>
-                      {app.shortlisted && <Tag variant="success">Shortlisted <Check size={11} /></Tag>}
+                    <td>
+                      <div className={styles.jobCell}>
+                        <span className={styles.jobTitle}>{app.job.title}</span>
+                        {app.shortlisted && <Tag variant="success">Shortlisted <Check size={11} /></Tag>}
+                      </div>
                     </td>
                     <td>{app.job.company?.name ?? '—'}</td>
                     <td><Tag>{WORK_MODE[app.job.workMode] ?? app.job.workMode}</Tag></td>

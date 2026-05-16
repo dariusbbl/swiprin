@@ -38,3 +38,110 @@
 .logout:hover { border-color: var(--danger); color: var(--danger); }
 
 .main { flex: 1; padding: 2rem; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+/* ── Bell / Notifications ── */
+.bellWrap { position: relative; }
+
+.bellBtn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: .35rem;
+  border-radius: 8px;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  transition: background .15s, color .15s;
+}
+.bellBtn:hover { background: var(--surface-2); color: var(--text); }
+
+.badge {
+  position: absolute;
+  top: 0; right: 0;
+  background: var(--danger);
+  color: #fff;
+  font-size: .6rem;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  line-height: 1;
+  transform: translate(25%, -25%);
+  pointer-events: none;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 340px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  z-index: 200;
+  overflow: hidden;
+}
+
+.dropdownHeader {
+  padding: .75rem 1rem;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.markAllBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: .72rem;
+  font-weight: 500;
+  color: var(--accent);
+  padding: 0;
+  transition: opacity .15s;
+}
+.markAllBtn:hover { opacity: .7; }
+
+.dropdownEmpty {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-size: .8rem;
+  color: var(--text-3);
+}
+
+.notifList { list-style: none; margin: 0; padding: 0; max-height: 380px; overflow-y: auto; }
+
+.notifItem {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  transition: background .1s;
+}
+.notifItem:last-child { border-bottom: none; }
+.notifItem:hover { background: var(--surface-2); }
+
+.notifUnread { background: var(--accent-50); cursor: pointer; }
+.notifRead   { background: var(--surface); cursor: default; }
+
+.notifMsg {
+  font-size: .8rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.notifTime {
+  font-size: .7rem;
+  color: var(--text-3);
+}
