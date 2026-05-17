@@ -28,6 +28,8 @@ export default function JobApplicantsPage() {
   const [jobTitle, setJobTitle]       = useState('');
   const [page, setPage]               = useState(0);
   const [statusFilter, setStatusFilter] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch]           = useState('');
   const [loading, setLoading]         = useState(false);
   const [deleteId, setDeleteId]       = useState(null);
   const [deleting, setDeleting]       = useState(false);
@@ -64,7 +66,9 @@ export default function JobApplicantsPage() {
     finally { setDeleting(false); }
   };
 
-  const apps = data?.content ?? [];
+  const displayed = (data?.content ?? []).filter(app =>
+    !search || app.candidate?.fullName?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className={styles.page}>
@@ -87,14 +91,28 @@ export default function JobApplicantsPage() {
         </select>
       </div>
 
+      <div className={styles.searchBar}>
+        <input
+          className="form-control"
+          placeholder="Search by name..."
+          value={searchInput}
+          onChange={e => setSearchInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && (setSearch(searchInput))}
+        />
+        <button className={styles.searchBtn} onClick={() => setSearch(searchInput)}>Search</button>
+        {search && (
+          <button className={styles.clearBtn} onClick={() => { setSearch(''); setSearchInput(''); }}>✕ Clear</button>
+        )}
+      </div>
+
       {loading && <p className={styles.loading}>Loading…</p>}
 
-      {!loading && apps.length === 0 && (
+      {!loading && displayed.length === 0 && (
         <EmptyState icon={<Users size={44} />} title="No applicants"
-          description={statusFilter ? 'No applicants match this status.' : 'No one has applied yet.'} />
+          description={search ? 'No applicants match this name.' : statusFilter ? 'No applicants match this status.' : 'No one has applied yet.'} />
       )}
 
-      {!loading && apps.length > 0 && (
+      {!loading && displayed.length > 0 && (
         <>
           <div className={styles.tableWrap}>
             <table className={styles.table}>
@@ -110,7 +128,7 @@ export default function JobApplicantsPage() {
                 </tr>
               </thead>
               <tbody>
-                {apps.map(app => (
+                {displayed.map(app => (
                   <tr key={app.id}>
                     <td>
                       <div className={styles.candidateCell}>
@@ -176,7 +194,7 @@ export default function JobApplicantsPage() {
         open={!!interviewApp}
         app={interviewApp}
         onClose={() => setInterviewApp(null)}
-        onDone={() => { setInterviewApp(null); load(); }}
+        onDone={() => { setInterviewApp(null); refresh(); }}
       />
 
       <ConfirmModal

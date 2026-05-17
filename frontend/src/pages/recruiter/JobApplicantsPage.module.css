@@ -12,6 +12,41 @@
 .back:hover { color: var(--accent); }
 .title { font-size: 1.5rem; font-weight: 800; color: var(--text); }
 .jobTitleLabel { font-weight: 400; color: var(--text-2); }
+.searchBar {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+
+.searchBtn {
+  flex-shrink: 0;
+  padding: .45rem 1.1rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: calc(var(--radius) / 2);
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.searchBtn:hover { background: var(--accent-600); }
+
+.clearBtn {
+  flex-shrink: 0;
+  padding: .45rem .8rem;
+  background: none;
+  color: var(--text-2);
+  border: 1.5px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .15s, color .15s;
+}
+.clearBtn:hover { border-color: var(--danger); color: var(--danger); }
 .sub   { font-size: .875rem; color: var(--text-2); margin-top: .2rem; }
 .loading { color: var(--text-3); }
 

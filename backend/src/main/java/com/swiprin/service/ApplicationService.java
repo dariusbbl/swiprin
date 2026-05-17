@@ -104,15 +104,24 @@ public class ApplicationService {
     }
 
     public PageResponse<ApplicationManagementResponse> getForJob(Long jobId, Long recruiterId,
-                                                                   ApplicationStatus status, Pageable pageable) {
+                                                                   ApplicationStatus status, String search,
+                                                                   Pageable pageable) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
         if (!job.getRecruiter().getId().equals(recruiterId)) {
             throw new ForbiddenException("You do not own this job");
         }
-        Page<Application> page = (status != null)
-                ? applicationRepository.findAllByJobIdAndStatus(jobId, status, pageable)
-                : applicationRepository.findAllByJobId(jobId, pageable);
+        boolean hasSearch = search != null && !search.isBlank();
+        String s = hasSearch ? search.trim() : null;
+        Page<Application> page;
+        if (hasSearch && status != null)
+            page = applicationRepository.findAllByJobIdAndStatusAndCandidateName(jobId, status, s, pageable);
+        else if (hasSearch)
+            page = applicationRepository.findAllByJobIdAndCandidateName(jobId, s, pageable);
+        else if (status != null)
+            page = applicationRepository.findAllByJobIdAndStatus(jobId, status, pageable);
+        else
+            page = applicationRepository.findAllByJobId(jobId, pageable);
         return toPageResponse(page, this::toManagementResponse);
     }
 
