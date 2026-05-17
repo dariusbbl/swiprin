@@ -35,12 +35,12 @@ export default function UsersPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getUsers(page, role || undefined, companySearch || undefined);
+      const res = await getUsers(name ? 0 : page, role || undefined, companySearch || undefined, name ? 1000 : 10);
       setData(res.data);
     } finally {
       setLoading(false);
     }
-  }, [page, role, companySearch]);
+  }, [page, role, companySearch, name]);
 
   useEffect(() => { load(); }, [load]);
 

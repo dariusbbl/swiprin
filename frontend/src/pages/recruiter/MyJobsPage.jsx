@@ -47,12 +47,12 @@ export default function MyJobsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getMyJobs(page);
+      const res = await getMyJobs(search ? 0 : page, undefined, search ? 1000 : 10);
       setData(res.data);
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [page, search]);
 
   useEffect(() => { load(); }, [load]);
   useEffect(() => { getSkills().then(r => setSkills(r.data?.content ?? r.data ?? [])); }, []);
