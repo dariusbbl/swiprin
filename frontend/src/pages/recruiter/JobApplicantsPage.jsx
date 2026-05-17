@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Users, FileText, CalendarPlus } from 'lucide-react';
+import { Users, FileText, CalendarPlus, ArrowLeft } from 'lucide-react';
 import { getJobApplications, updateAppStatus, deleteApplication } from '../../api/applications';
 import { getMyJobById } from '../../api/jobs';
 import Badge from '../../components/ui/Badge';
@@ -74,7 +74,9 @@ export default function JobApplicantsPage() {
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <button className={styles.back} onClick={() => navigate('/recruiter/jobs')}>← Back to jobs</button>
+          <button className={styles.back} onClick={() => navigate('/recruiter/jobs')}>
+            <ArrowLeft size={14} strokeWidth={2.5} /> Back to jobs
+          </button>
           <h2 className={styles.title}>
             Applicants{jobTitle && <span className={styles.jobTitleLabel}> — {jobTitle}</span>}
           </h2>

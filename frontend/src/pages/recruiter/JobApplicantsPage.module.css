@@ -5,11 +5,21 @@
   flex-wrap: wrap; gap: 1rem;
 }
 .back {
-  background: none; border: none; padding: 0;
-  color: var(--text-2); font-size: .82rem; cursor: pointer;
-  margin-bottom: .35rem; display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  background: none;
+  border: none;
+  padding: .3rem .6rem .3rem .3rem;
+  border-radius: 7px;
+  color: var(--text-2);
+  font-size: .82rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: .35rem;
+  transition: background .15s, color .15s;
 }
-.back:hover { color: var(--accent); }
+.back:hover { background: var(--surface-2); color: var(--accent); }
 .title { font-size: 1.5rem; font-weight: 800; color: var(--text); }
 .jobTitleLabel { font-weight: 400; color: var(--text-2); }
 .searchBar {
