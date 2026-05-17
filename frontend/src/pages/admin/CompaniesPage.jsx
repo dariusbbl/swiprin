@@ -18,9 +18,11 @@ function fmt(dt) {
 }
 
 export default function CompaniesPage() {
-  const [data, setData]       = useState(null);
-  const [page, setPage]       = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [data, setData]           = useState(null);
+  const [page, setPage]           = useState(0);
+  const [nameInput, setNameInput] = useState('');
+  const [name, setName]           = useState('');
+  const [loading, setLoading]     = useState(false);
 
   const [formOpen, setFormOpen]   = useState(false);
   const [editing, setEditing]     = useState(null);
@@ -34,12 +36,12 @@ export default function CompaniesPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getCompanies(page);
+      const res = await getCompanies(name ? 0 : page, name ? 1000 : 10);
       setData(res.data);
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [page, name]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -76,7 +78,9 @@ export default function CompaniesPage() {
     finally { setDeleting(false); }
   };
 
-  const companies = data?.content ?? [];
+  const displayed = (data?.content ?? []).filter(c =>
+    !name || c.name?.toLowerCase().includes(name.toLowerCase())
+  );
 
   return (
     <div className={styles.page}>
@@ -88,14 +92,25 @@ export default function CompaniesPage() {
         <Button onClick={openCreate}>+ New company</Button>
       </div>
 
+      <div className={styles.searchRow}>
+        <input className="form-control" placeholder="Search by name…"
+          value={nameInput} onChange={e => setNameInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && (setName(nameInput), setPage(0))} />
+        <button className={styles.searchBtn} onClick={() => { setName(nameInput); setPage(0); }}>Search</button>
+        {name && (
+          <button className={styles.clearBtn} onClick={() => { setName(''); setNameInput(''); }}>✕ Clear</button>
+        )}
+      </div>
+
       {loading && <p className={styles.loading}>Loading…</p>}
 
-      {!loading && companies.length === 0 && (
-        <EmptyState icon={<Building2 size={44} />} title="No companies" description="No companies registered yet."
-          action={<Button onClick={openCreate}>+ New company</Button>} />
+      {!loading && displayed.length === 0 && (
+        <EmptyState icon={<Building2 size={44} />} title="No companies"
+          description={name ? 'No companies match this name.' : 'No companies registered yet.'}
+          action={!name && <Button onClick={openCreate}>+ New company</Button>} />
       )}
 
-      {!loading && companies.length > 0 && (
+      {!loading && displayed.length > 0 && (
         <>
           <div className={styles.tableWrap}>
             <table className={styles.table}>
@@ -111,7 +126,7 @@ export default function CompaniesPage() {
                 </tr>
               </thead>
               <tbody>
-                {companies.map(c => (
+                {displayed.map(c => (
                   <tr key={c.id}>
                     <td className={styles.center}>
                       <span className={styles.idBadge}>{c.id}</span>
