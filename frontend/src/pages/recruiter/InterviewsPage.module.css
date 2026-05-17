@@ -1,11 +1,9 @@
 .page { display: flex; flex-direction: column; gap: 1.5rem; }
 
-/* ── Header ─────────────────────────────────────────────────────────── */
 .pageHeader { display: flex; align-items: flex-start; justify-content: space-between; }
 .title { font-size: 1.6rem; font-weight: 800; color: var(--text); margin: 0 0 .2rem; letter-spacing: -.03em; }
 .sub   { font-size: .85rem; color: var(--text-3); margin: 0; }
 
-/* ── Stats row ───────────────────────────────────────────────────────── */
 .stats { display: flex; gap: 1rem; }
 
 .statCard {
@@ -22,7 +20,6 @@
 .green   { color: #16a34a; }
 .neutral { color: var(--text); }
 
-/* ── Filters ─────────────────────────────────────────────────────────── */
 .filters { display: flex; flex-wrap: wrap; gap: .5rem; }
 
 .chip {
@@ -37,7 +34,6 @@
 .chip:hover    { border-color: var(--accent); color: var(--accent); }
 .chipActive    { border-color: var(--accent); background: var(--accent-50); color: var(--accent); font-weight: 600; }
 
-/* ── Empty / loading ─────────────────────────────────────────────────── */
 .loading { color: var(--text-3); font-size: .875rem; }
 .errMsg  { color: #991b1b; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px; padding: .6rem .9rem; font-size: .85rem; }
 .empty   {
@@ -46,7 +42,6 @@
   color: var(--text-3); font-size: .9rem;
 }
 
-/* ── Interview list ──────────────────────────────────────────────────── */
 .list { display: flex; flex-direction: column; gap: .75rem; }
 
 .card {

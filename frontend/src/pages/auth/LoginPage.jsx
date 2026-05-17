@@ -31,7 +31,7 @@ export default function LoginPage() {
   return (
     <div className={styles.splitPage}>
 
-      {/* ── Left: form ── */}
+
       <div className={styles.formPanel}>
         <div className={styles.formInner}>
 
@@ -78,7 +78,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ── Right: hero panel ── */}
+
       <div className={styles.heroPanel}>
         <div className={styles.heroTag}>
           <MonitorSmartphone size={13} />

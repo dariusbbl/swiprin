@@ -117,7 +117,7 @@ export default function RegisterPage() {
 
         <form onSubmit={submit} className={styles.form}>
 
-          {/* ── Common fields ── */}
+
           <div className={styles.field}>
             <label>Full name</label>
             <input type="text" name="fullName" value={form.fullName} onChange={handle}
@@ -142,7 +142,7 @@ export default function RegisterPage() {
             {passwordMismatch && <span className={styles.fieldError}>Passwords don't match</span>}
           </div>
 
-          {/* ── Recruiter-only ── */}
+
           {role === 'RECRUITER' && (
             <>
               <hr className={styles.divider} />

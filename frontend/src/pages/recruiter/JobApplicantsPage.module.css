@@ -11,6 +11,7 @@
 }
 .back:hover { color: var(--accent); }
 .title { font-size: 1.5rem; font-weight: 800; color: var(--text); }
+.jobTitleLabel { font-weight: 400; color: var(--text-2); }
 .sub   { font-size: .875rem; color: var(--text-2); margin-top: .2rem; }
 .loading { color: var(--text-3); }
 
