@@ -111,9 +111,6 @@
 .inputError:focus { box-shadow: 0 0 0 3px rgba(239,68,68,.15) !important; }
 .fieldError { font-size: .75rem; color: var(--danger); font-weight: 500; }
 
-/* ─────────────────────────────────────────
-   Split layout  (Login page only)
-───────────────────────────────────────── */
 .splitPage {
   display: flex;
   min-height: 100vh;

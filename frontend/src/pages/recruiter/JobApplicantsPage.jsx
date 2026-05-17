@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Users, FileText, CalendarPlus } from 'lucide-react';
 import { getJobApplications, updateAppStatus, deleteApplication } from '../../api/applications';
+import { getMyJobById } from '../../api/jobs';
 import Badge from '../../components/ui/Badge';
 import MatchBar from '../../components/ui/MatchBar';
 import Pagination from '../../components/ui/Pagination';
@@ -24,6 +25,7 @@ export default function JobApplicantsPage() {
   const navigate  = useNavigate();
 
   const [data, setData]               = useState(null);
+  const [jobTitle, setJobTitle]       = useState('');
   const [page, setPage]               = useState(0);
   const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading]         = useState(false);
@@ -42,6 +44,10 @@ export default function JobApplicantsPage() {
   }, [jobId, page, statusFilter]);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    getMyJobById(jobId).then(r => setJobTitle(r.data?.title ?? '')).catch(() => {});
+  }, [jobId]);
 
   const handleStatusChange = async (app, newStatus) => {
     if (newStatus === 'INTERVIEW') {
@@ -65,7 +71,9 @@ export default function JobApplicantsPage() {
       <div className={styles.header}>
         <div>
           <button className={styles.back} onClick={() => navigate('/recruiter/jobs')}>← Back to jobs</button>
-          <h2 className={styles.title}>Applicants</h2>
+          <h2 className={styles.title}>
+            Applicants{jobTitle && <span className={styles.jobTitleLabel}> — {jobTitle}</span>}
+          </h2>
           <p className={styles.sub}>
             {data ? `${data.totalElements} application${data.totalElements !== 1 ? 's' : ''}` : '…'}
           </p>

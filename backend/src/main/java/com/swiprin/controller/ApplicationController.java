@@ -33,8 +33,6 @@ public class ApplicationController {
 
     private final ApplicationService applicationService;
 
-    // ── Candidate ──────────────────────────────────────────────────────────
-
     @PostMapping
     @PreAuthorize("hasRole('CANDIDATE')")
     @Operation(summary = "Apply to a job")
@@ -85,8 +83,6 @@ public class ApplicationController {
         return ResponseEntity.ok(applicationService.getInterviewsForCandidate(
                 principal.getId(), PageRequest.of(page, size)));
     }
-
-    // ── Recruiter ──────────────────────────────────────────────────────────
 
     @GetMapping("/job/{jobId}")
     @PreAuthorize("hasRole('RECRUITER')")
