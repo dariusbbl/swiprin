@@ -4,6 +4,7 @@ import { LayoutDashboard, Briefcase, CalendarCheck, MessageSquare, LogOut, Chevr
 import { useAuth } from '../../context/AuthContext';
 import { getMe } from '../../api/users';
 import Avatar from '../ui/Avatar';
+import BrandLogo from '../ui/BrandLogo';
 import styles from './RecruiterLayout.module.css';
 
 export default function RecruiterLayout() {
@@ -30,7 +31,9 @@ export default function RecruiterLayout() {
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
-        <div className={styles.brand}>swiprin</div>
+        <div className={styles.brand}>
+          <BrandLogo />
+        </div>
 
         <nav className={styles.nav}>
           <p className={styles.section}>Recruiter</p>

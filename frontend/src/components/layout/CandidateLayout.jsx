@@ -3,6 +3,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Bell } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Avatar from '../ui/Avatar';
+import BrandLogo from '../ui/BrandLogo';
 import { getNotifications, getUnreadCount, markOneAsRead, markAllAsRead } from '../../api/notifications';
 import styles from './CandidateLayout.module.css';
 
@@ -79,7 +80,7 @@ export default function CandidateLayout() {
     <div className={styles.shell}>
       <nav className={styles.nav}>
         <div className={styles.brand}>
-          <span className={styles.logo}>swiprin</span>
+          <BrandLogo />
         </div>
 
         <div className={styles.links}>

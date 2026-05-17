@@ -1,0 +1,13 @@
+.brand { display: flex; align-items: center; gap: .05rem; }
+
+.icon {
+  width: 28px; height: 28px;
+  background: var(--accent);
+  border-radius: 7px;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: .875rem; flex-shrink: 0;
+  line-height: 1;
+}
+
+.text { font-size: 1.15rem; font-weight: 800; color: var(--text); letter-spacing: -.03em; }
