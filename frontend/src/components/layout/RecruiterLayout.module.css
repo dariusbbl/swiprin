@@ -10,8 +10,8 @@
 }
 
 .brand {
-  font-size: 1.3rem; font-weight: 800; color: var(--accent);
-  letter-spacing: -0.03em; padding: 0 1.25rem 1.25rem;
+  display: flex; align-items: center;
+  padding: 0 1.25rem 1.25rem;
   border-bottom: 1px solid var(--border);
 }
 

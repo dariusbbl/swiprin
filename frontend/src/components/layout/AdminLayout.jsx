@@ -3,6 +3,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Users, Building2, Ticket, LogOut, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Avatar from '../ui/Avatar';
+import BrandLogo from '../ui/BrandLogo';
 import styles from './RecruiterLayout.module.css';
 
 export default function AdminLayout() {
@@ -24,7 +25,9 @@ export default function AdminLayout() {
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
-        <div className={styles.brand}>swiprin</div>
+        <div className={styles.brand}>
+          <BrandLogo />
+        </div>
 
         <nav className={styles.nav}>
           <p className={styles.section}>Admin</p>
