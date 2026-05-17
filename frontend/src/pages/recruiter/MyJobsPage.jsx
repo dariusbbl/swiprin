@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, X, Briefcase } from 'lucide-react';
+import { MapPin, Briefcase } from 'lucide-react';
 import { getMyJobs, createJob, updateJob, deleteJob } from '../../api/jobs';
 import { getSkills } from '../../api/skills';
 import Tag from '../../components/ui/Tag';
@@ -125,9 +125,9 @@ export default function MyJobsPage() {
         <input className="form-control" placeholder="Search by title or company…"
           value={searchInput} onChange={e => setSearchInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && (setSearch(searchInput), setPage(0))} />
-        <Button variant="ghost" onClick={() => { setSearch(searchInput); setPage(0); }}>Search</Button>
+        <button className={styles.searchBtn} onClick={() => { setSearch(searchInput); setPage(0); }}>Search</button>
         {search && (
-          <Button variant="ghost" size="sm" onClick={() => { setSearch(''); setSearchInput(''); }}><X size={13} /> Clear</Button>
+          <button className={styles.clearBtn} onClick={() => { setSearch(''); setSearchInput(''); }}>✕ Clear</button>
         )}
       </div>
 

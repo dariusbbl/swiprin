@@ -24,6 +24,15 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     // Recruiter: filter applications for a specific job by status
     Page<Application> findAllByJobIdAndStatus(Long jobId, ApplicationStatus status, Pageable pageable);
 
+    @Query("SELECT a FROM Application a JOIN a.user u WHERE a.job.id = :jobId AND LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
+    Page<Application> findAllByJobIdAndCandidateName(
+            @Param("jobId") Long jobId, @Param("search") String search, Pageable pageable);
+
+    @Query("SELECT a FROM Application a JOIN a.user u WHERE a.job.id = :jobId AND a.status = :status AND LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
+    Page<Application> findAllByJobIdAndStatusAndCandidateName(
+            @Param("jobId") Long jobId, @Param("status") ApplicationStatus status,
+            @Param("search") String search, Pageable pageable);
+
     Optional<Application> findByJobIdAndUserId(Long jobId, Long userId);
 
     boolean existsByJobIdAndUserId(Long jobId, Long userId);

@@ -91,10 +91,11 @@ public class ApplicationController {
             @PathVariable Long jobId,
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(required = false) ApplicationStatus status,
+            @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(applicationService.getForJob(
-                jobId, principal.getId(), status,
+                jobId, principal.getId(), status, search,
                 PageRequest.of(page, size, Sort.by("matchPercent").descending())));
     }
 
