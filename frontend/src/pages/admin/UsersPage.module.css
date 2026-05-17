@@ -48,3 +48,36 @@
 .actions { display: flex; gap: .35rem; flex-wrap: wrap; }
 
 .companyBar { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-top: -.5rem; }
+
+.searchRow { display: flex; gap: .5rem; align-items: center; }
+.searchRow .form-control { max-width: 340px; }
+
+.searchBtn {
+  flex-shrink: 0;
+  padding: .45rem 1.1rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: calc(var(--radius) / 2);
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.searchBtn:hover { background: var(--accent-600); }
+
+.clearBtn {
+  flex-shrink: 0;
+  padding: .45rem .8rem;
+  background: none;
+  color: var(--text-2);
+  border: 1.5px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .15s, color .15s;
+}
+.clearBtn:hover { border-color: var(--danger); color: var(--danger); }

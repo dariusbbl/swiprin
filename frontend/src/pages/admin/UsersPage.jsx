@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Users } from 'lucide-react';
 import { getUsers, setUserStatus, deleteUser } from '../../api/users';
+import { useAuth } from '../../context/AuthContext';
 import Tag from '../../components/ui/Tag';
 import Pagination from '../../components/ui/Pagination';
 import EmptyState from '../../components/ui/EmptyState';
@@ -19,9 +20,12 @@ function fmt(dt) {
 }
 
 export default function UsersPage() {
+  const { user: me } = useAuth();
   const [data, setData]           = useState(null);
   const [page, setPage]           = useState(0);
   const [role, setRole]           = useState('');
+  const [nameInput, setNameInput] = useState('');
+  const [name, setName]           = useState('');
   const [companySearch, setCompanySearch] = useState('');
   const [companyInput,  setCompanyInput]  = useState('');
   const [loading, setLoading]     = useState(false);
@@ -60,7 +64,10 @@ export default function UsersPage() {
     finally { setDeleting(false); }
   };
 
-  const users = data?.content ?? [];
+  const displayed = (data?.content ?? []).filter(u =>
+    u.id !== me?.id &&
+    (!name || u.fullName?.toLowerCase().includes(name.toLowerCase()))
+  );
 
   return (
     <div className={styles.page}>
@@ -76,6 +83,16 @@ export default function UsersPage() {
             <option key={r} value={r}>{r.charAt(0) + r.slice(1).toLowerCase()}</option>
           ))}
         </select>
+      </div>
+
+      <div className={styles.searchRow}>
+        <input className="form-control" placeholder="Search by name..."
+          value={nameInput} onChange={e => setNameInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && setName(nameInput)} />
+        <button className={styles.searchBtn} onClick={() => setName(nameInput)}>Search</button>
+        {name && (
+          <button className={styles.clearBtn} onClick={() => { setName(''); setNameInput(''); }}>✕ Clear</button>
+        )}
       </div>
 
       {role === 'RECRUITER' && (
@@ -97,11 +114,12 @@ export default function UsersPage() {
 
       {loading && <p className={styles.loading}>Loading…</p>}
 
-      {!loading && users.length === 0 && (
-        <EmptyState icon={<Users size={44} />} title="No users" description="No users match the selected filter." />
+      {!loading && displayed.length === 0 && (
+        <EmptyState icon={<Users size={44} />} title="No users"
+          description={name ? 'No users match this name.' : 'No users match the selected filter.'} />
       )}
 
-      {!loading && users.length > 0 && (
+      {!loading && displayed.length > 0 && (
         <>
           <div className={styles.tableWrap}>
             <table className={styles.table}>
@@ -116,7 +134,7 @@ export default function UsersPage() {
                 </tr>
               </thead>
               <tbody>
-                {users.map(u => (
+                {displayed.map(u => (
                   <tr key={u.id}>
                     <td>
                       <div className={styles.userCell}>
