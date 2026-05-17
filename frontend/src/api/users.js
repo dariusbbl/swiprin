@@ -1,7 +1,7 @@
 import client from './client';
 
-export const getUsers = (page = 0, role, companyName) => {
-  const params = new URLSearchParams({ page, size: 10 });
+export const getUsers = (page = 0, role, companyName, size = 10) => {
+  const params = new URLSearchParams({ page, size });
   if (role)        params.append('role', role);
   if (companyName) params.append('companyName', companyName);
   return client.get(`/users?${params}`);
