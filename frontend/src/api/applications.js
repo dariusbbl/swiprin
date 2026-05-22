@@ -7,3 +7,5 @@ export const applyToJob          = (data)              => client.post('/applicat
 export const withdrawApplication = (id)               => client.put(`/applications/${id}/withdraw`);
 export const updateAppStatus     = (id, status)       => client.put(`/applications/${id}/status`, { status });
 export const deleteApplication   = (id)               => client.delete(`/applications/${id}`);
+export const toggleShortlist          = (id) => client.put(`/applications/${id}/shortlist`);
+export const getShortlistedCount      = ()  => client.get('/applications/shortlisted/count');

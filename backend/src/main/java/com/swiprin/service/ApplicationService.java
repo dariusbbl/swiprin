@@ -153,6 +153,34 @@ public class ApplicationService {
         return toManagementResponse(saved);
     }
 
+    public long countShortlistedForRecruiter(Long recruiterId) {
+        return applicationRepository.countShortlistedByRecruiterId(recruiterId);
+    }
+
+    @Transactional
+    public ApplicationManagementResponse toggleShortlist(Long id, Long recruiterId) {
+        Application application = findOrThrow(id);
+        if (!application.getJob().getRecruiter().getId().equals(recruiterId)) {
+            throw new ForbiddenException("You do not own this application's job");
+        }
+
+        boolean nowShortlisted = !Boolean.TRUE.equals(application.getShortlisted());
+        application.setShortlisted(nowShortlisted);
+        Application saved = applicationRepository.save(application);
+
+        if (nowShortlisted) {
+            notificationService.send(
+                    application.getUser().getId(),
+                    NotificationType.SHORTLIST,
+                    "You have been shortlisted for " + application.getJob().getTitle()
+                            + " at <strong>" + application.getJob().getCompany().getName() + "</strong>",
+                    saved.getId()
+            );
+        }
+
+        return toManagementResponse(saved);
+    }
+
     // Candidate: signal no longer interested — kept in DB with WITHDRAWN status
     @Transactional
     public void withdraw(Long id, Long userId) {

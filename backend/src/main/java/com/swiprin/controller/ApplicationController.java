@@ -109,6 +109,23 @@ public class ApplicationController {
         return ResponseEntity.ok(applicationService.updateStatus(id, req, principal.getId()));
     }
 
+    @GetMapping("/shortlisted/count")
+    @PreAuthorize("hasRole('RECRUITER')")
+    @Operation(summary = "Count shortlisted candidates across all recruiter's jobs")
+    public ResponseEntity<Map<String, Long>> countShortlisted(
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(Map.of("count", applicationService.countShortlistedForRecruiter(principal.getId())));
+    }
+
+    @PutMapping("/{id}/shortlist")
+    @PreAuthorize("hasRole('RECRUITER')")
+    @Operation(summary = "Toggle shortlist status for an application")
+    public ResponseEntity<ApplicationManagementResponse> toggleShortlist(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(applicationService.toggleShortlist(id, principal.getId()));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('RECRUITER')")
     @Operation(summary = "Hard-delete application (RECRUITER only)")

@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Users, FileText, CalendarPlus, ArrowLeft } from 'lucide-react';
-import { getJobApplications, updateAppStatus, deleteApplication } from '../../api/applications';
+import { getJobApplications, updateAppStatus, deleteApplication, toggleShortlist } from '../../api/applications';
 import { getMyJobById } from '../../api/jobs';
 import Badge from '../../components/ui/Badge';
+import Tag from '../../components/ui/Tag';
 import MatchBar from '../../components/ui/MatchBar';
 import Pagination from '../../components/ui/Pagination';
 import EmptyState from '../../components/ui/EmptyState';
@@ -58,6 +59,20 @@ export default function JobApplicantsPage() {
     }
     await updateAppStatus(app.id, newStatus);
     load();
+  };
+
+  const handleToggleShortlist = async (app) => {
+    setData(prev => prev ? {
+      ...prev,
+      content: prev.content.map(a =>
+        a.id === app.id ? { ...a, shortlisted: !a.shortlisted } : a
+      ),
+    } : prev);
+    try {
+      await toggleShortlist(app.id);
+    } catch {
+      load();
+    }
   };
 
   const handleDelete = async () => {
@@ -123,6 +138,7 @@ export default function JobApplicantsPage() {
                   <th>Candidate</th>
                   <th>Match</th>
                   <th>Status</th>
+                  <th>Shortlist</th>
                   <th>Applied</th>
                   <th>Change status</th>
                   <th>CV</th>
@@ -145,6 +161,13 @@ export default function JobApplicantsPage() {
                       <MatchBar percent={app.matchPercent} />
                     </td>
                     <td><Badge status={app.status} /></td>
+                    <td>
+                      <button className={styles.shortlistTagBtn} onClick={() => handleToggleShortlist(app)}>
+                        <Tag variant={app.shortlisted ? 'success' : 'default'}>
+                          {app.shortlisted ? 'Shortlisted' : '+ Shortlist'}
+                        </Tag>
+                      </button>
+                    </td>
                     <td className={styles.date}>{fmt(app.appliedAt)}</td>
                     <td>
                       <select className="form-select form-select-sm" style={{ minWidth: 130 }}
@@ -196,7 +219,7 @@ export default function JobApplicantsPage() {
         open={!!interviewApp}
         app={interviewApp}
         onClose={() => setInterviewApp(null)}
-        onDone={() => { setInterviewApp(null); refresh(); }}
+        onDone={() => { setInterviewApp(null); load(); }}
       />
 
       <ConfirmModal
