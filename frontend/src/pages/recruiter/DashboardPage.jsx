@@ -2,19 +2,25 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
 import { getMyJobs } from '../../api/jobs';
+import { getShortlistedCount } from '../../api/applications';
 import Tag from '../../components/ui/Tag';
 import Button from '../../components/ui/Button';
 import styles from './DashboardPage.module.css';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const [jobs, setJobs]       = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [jobs, setJobs]                 = useState([]);
+  const [shortlisted, setShortlisted]   = useState(null);
+  const [loading, setLoading]           = useState(true);
 
   useEffect(() => {
-    getMyJobs(0)
-      .then(r => setJobs(r.data?.content ?? []))
-      .finally(() => setLoading(false));
+    Promise.all([
+      getMyJobs(0),
+      getShortlistedCount(),
+    ]).then(([jobsRes, countRes]) => {
+      setJobs(jobsRes.data?.content ?? []);
+      setShortlisted(countRes.data?.count ?? 0);
+    }).finally(() => setLoading(false));
   }, []);
 
   const activeJobs = jobs.filter(j => j.active).length;
@@ -37,6 +43,10 @@ export default function DashboardPage() {
         <div className={styles.stat}>
           <span className={styles.statNum}>{loading ? '—' : totalApps}</span>
           <span className={styles.statLabel}>Total applications</span>
+        </div>
+        <div className={styles.stat}>
+          <span className={styles.statNum}>{loading ? '—' : (shortlisted ?? '—')}</span>
+          <span className={styles.statLabel}>Shortlisted candidates</span>
         </div>
       </div>
 

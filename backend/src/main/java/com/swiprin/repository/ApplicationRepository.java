@@ -43,6 +43,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     long countByUserIdAndStatus(Long userId, ApplicationStatus status);
 
+    @Query("SELECT COUNT(a) FROM Application a JOIN a.job j WHERE j.recruiter.id = :recruiterId AND a.shortlisted = true")
+    long countShortlistedByRecruiterId(@Param("recruiterId") Long recruiterId);
+
     // Applications for all jobs of a recruiter, sorted by match percent desc
     @Query("""
             SELECT a FROM Application a
