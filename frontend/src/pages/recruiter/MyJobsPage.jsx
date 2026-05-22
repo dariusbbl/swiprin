@@ -10,6 +10,7 @@ import ConfirmModal from '../../components/ui/ConfirmModal';
 import Modal from '../../components/ui/Modal';
 import Button from '../../components/ui/Button';
 import LocationPicker from '../../components/ui/LocationPicker';
+import RichTextEditor from '../../components/ui/RichTextEditor';
 import styles from './MyJobsPage.module.css';
 
 const WORK_MODES = ['ON_SITE', 'REMOTE', 'HYBRID'];
@@ -229,10 +230,11 @@ export default function MyJobsPage() {
 
           <div className={styles.field}>
             <label>Description *</label>
-            <textarea name="description" value={form.description} onChange={handleField}
-              required rows={8} className="form-control"
-              style={{ resize: 'vertical', minHeight: '120px' }}
-              placeholder="Describe the role, requirements and responsibilities…" />
+            <RichTextEditor
+              value={form.description}
+              onChange={val => setForm(f => ({ ...f, description: val }))}
+              placeholder="Describe the role, requirements and responsibilities…"
+            />
           </div>
 
           <div className={styles.row2}>

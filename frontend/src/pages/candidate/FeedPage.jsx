@@ -267,7 +267,7 @@ export default function FeedPage() {
 
             <SkillsSection skills={top.skills ?? []} matchedSkills={top.matchedSkills ?? []} />
 
-            <p className={styles.desc}>{top.description}</p>
+            <div className={styles.desc} dangerouslySetInnerHTML={{ __html: top.description }} />
 
             <div className={styles.cardActions}>
               <button className={[styles.btn, styles.btnSkip].join(' ')}
