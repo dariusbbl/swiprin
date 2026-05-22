@@ -17,6 +17,10 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     // Candidate: filter own applications by status
     Page<Application> findAllByUserIdAndStatus(Long userId, ApplicationStatus status, Pageable pageable);
 
+    Page<Application> findAllByUserIdAndShortlisted(Long userId, Boolean shortlisted, Pageable pageable);
+
+    Page<Application> findAllByUserIdAndStatusAndShortlisted(Long userId, ApplicationStatus status, Boolean shortlisted, Pageable pageable);
+
     Page<Application> findAllByJobId(Long jobId, Pageable pageable);
 
     Page<Application> findAllByJobIdAndShortlistedTrue(Long jobId, Pageable pageable);
@@ -32,6 +36,20 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     Page<Application> findAllByJobIdAndStatusAndCandidateName(
             @Param("jobId") Long jobId, @Param("status") ApplicationStatus status,
             @Param("search") String search, Pageable pageable);
+
+    Page<Application> findAllByJobIdAndShortlisted(Long jobId, Boolean shortlisted, Pageable pageable);
+
+    Page<Application> findAllByJobIdAndStatusAndShortlisted(Long jobId, ApplicationStatus status, Boolean shortlisted, Pageable pageable);
+
+    @Query("SELECT a FROM Application a JOIN a.user u WHERE a.job.id = :jobId AND a.shortlisted = :shortlisted AND LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
+    Page<Application> findAllByJobIdAndShortlistedAndCandidateName(
+            @Param("jobId") Long jobId, @Param("shortlisted") Boolean shortlisted,
+            @Param("search") String search, Pageable pageable);
+
+    @Query("SELECT a FROM Application a JOIN a.user u WHERE a.job.id = :jobId AND a.status = :status AND a.shortlisted = :shortlisted AND LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
+    Page<Application> findAllByJobIdAndStatusAndShortlistedAndCandidateName(
+            @Param("jobId") Long jobId, @Param("status") ApplicationStatus status,
+            @Param("shortlisted") Boolean shortlisted, @Param("search") String search, Pageable pageable);
 
     Optional<Application> findByJobIdAndUserId(Long jobId, Long userId);
 

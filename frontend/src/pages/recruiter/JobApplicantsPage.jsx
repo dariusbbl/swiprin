@@ -25,26 +25,31 @@ export default function JobApplicantsPage() {
   const { jobId } = useParams();
   const navigate  = useNavigate();
 
-  const [data, setData]               = useState(null);
-  const [jobTitle, setJobTitle]       = useState('');
-  const [page, setPage]               = useState(0);
-  const [statusFilter, setStatusFilter] = useState('');
-  const [searchInput, setSearchInput] = useState('');
-  const [search, setSearch]           = useState('');
-  const [loading, setLoading]         = useState(false);
-  const [deleteId, setDeleteId]       = useState(null);
-  const [deleting, setDeleting]       = useState(false);
-  const [interviewApp, setInterviewApp] = useState(null);
+  const [data, setData]                     = useState(null);
+  const [jobTitle, setJobTitle]             = useState('');
+  const [page, setPage]                     = useState(0);
+  const [statusFilter, setStatusFilter]     = useState('');
+  const [shortlistedFilter, setShortlistedFilter] = useState('');
+  const [sortBy, setSortBy]                 = useState('matchPercent');
+  const [sortDir, setSortDir]               = useState('desc');
+  const [searchInput, setSearchInput]       = useState('');
+  const [search, setSearch]                 = useState('');
+  const [loading, setLoading]               = useState(false);
+  const [deleteId, setDeleteId]             = useState(null);
+  const [deleting, setDeleting]             = useState(false);
+  const [interviewApp, setInterviewApp]     = useState(null);
+
+  const shortlistedParam = shortlistedFilter === 'true' ? true : shortlistedFilter === 'false' ? false : null;
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getJobApplications(jobId, page, statusFilter || undefined);
+      const res = await getJobApplications(jobId, page, statusFilter || undefined, shortlistedParam, sortBy, sortDir);
       setData(res.data);
     } finally {
       setLoading(false);
     }
-  }, [jobId, page, statusFilter]);
+  }, [jobId, page, statusFilter, shortlistedParam, sortBy, sortDir]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -106,6 +111,38 @@ export default function JobApplicantsPage() {
             <option key={s} value={s}>{s.charAt(0) + s.slice(1).toLowerCase()}</option>
           ))}
         </select>
+      </div>
+
+      <div className={styles.filterRow}>
+        {[
+          { val: '',      label: 'All' },
+          { val: 'true',  label: 'Shortlisted' },
+          { val: 'false', label: 'Not shortlisted' },
+        ].map(opt => (
+          <button key={opt.val}
+            className={[styles.chip, shortlistedFilter === opt.val ? styles.chipActive : ''].join(' ')}
+            onClick={() => { setShortlistedFilter(opt.val); setPage(0); }}>
+            {opt.label}
+          </button>
+        ))}
+
+        <span className={styles.filterDivider} />
+
+        {[
+          { val: 'matchPercent_desc', label: 'Match % ↓' },
+          { val: 'matchPercent_asc',  label: 'Match % ↑' },
+          { val: 'appliedAt_desc',    label: 'Date ↓' },
+          { val: 'appliedAt_asc',     label: 'Date ↑' },
+        ].map(opt => (
+          <button key={opt.val}
+            className={[styles.chip, `${sortBy}_${sortDir}` === opt.val ? styles.chipActive : ''].join(' ')}
+            onClick={() => {
+              const [field, dir] = opt.val.split('_');
+              setSortBy(field); setSortDir(dir); setPage(0);
+            }}>
+            {opt.label}
+          </button>
+        ))}
       </div>
 
       <div className={styles.searchBar}>

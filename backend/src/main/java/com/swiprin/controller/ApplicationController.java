@@ -53,15 +53,20 @@ public class ApplicationController {
 
     @GetMapping("/me")
     @PreAuthorize("hasRole('CANDIDATE')")
-    @Operation(summary = "Get own applications (optional status filter + pagination)")
+    @Operation(summary = "Get own applications (optional status/shortlisted filter, dynamic sort)")
     public ResponseEntity<PageResponse<ApplicationResponse>> getMyApplications(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(required = false) ApplicationStatus status,
+            @RequestParam(required = false) Boolean shortlisted,
+            @RequestParam(defaultValue = "appliedAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+        Sort.Direction dir = "asc".equalsIgnoreCase(sortDir) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        String field = "matchPercent".equals(sortBy) ? "matchPercent" : "appliedAt";
         return ResponseEntity.ok(applicationService.getForCandidate(
-                principal.getId(), status,
-                PageRequest.of(page, size, Sort.by("appliedAt").descending())));
+                principal.getId(), status, shortlisted,
+                PageRequest.of(page, size, Sort.by(dir, field))));
     }
 
     @PutMapping("/{id}/withdraw")
@@ -86,17 +91,22 @@ public class ApplicationController {
 
     @GetMapping("/job/{jobId}")
     @PreAuthorize("hasRole('RECRUITER')")
-    @Operation(summary = "Get applications for a job (optional status filter, sorted by match%)")
+    @Operation(summary = "Get applications for a job (optional status/shortlisted filter, dynamic sort)")
     public ResponseEntity<PageResponse<ApplicationManagementResponse>> getForJob(
             @PathVariable Long jobId,
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(required = false) ApplicationStatus status,
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) Boolean shortlisted,
+            @RequestParam(defaultValue = "matchPercent") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
+        Sort.Direction dir = "asc".equalsIgnoreCase(sortDir) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        String field = "appliedAt".equals(sortBy) ? "appliedAt" : "matchPercent";
         return ResponseEntity.ok(applicationService.getForJob(
-                jobId, principal.getId(), status, search,
-                PageRequest.of(page, size, Sort.by("matchPercent").descending())));
+                jobId, principal.getId(), status, search, shortlisted,
+                PageRequest.of(page, size, Sort.by(dir, field))));
     }
 
     @PutMapping("/{id}/status")

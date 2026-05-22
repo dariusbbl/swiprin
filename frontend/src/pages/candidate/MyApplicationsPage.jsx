@@ -22,14 +22,19 @@ const STATUS_TABS = [
 const WORK_MODE = { ON_SITE: 'On-site', REMOTE: 'Remote', HYBRID: 'Hybrid' };
 
 export default function MyApplicationsPage() {
-  const [data, setData]             = useState(null);
-  const [page, setPage]             = useState(0);
-  const [statusFilter, setStatus]   = useState('');
-  const [loading, setLoading]       = useState(false);
-  const [counts, setCounts]         = useState({});
-  const [withdrawId, setWithdrawId]   = useState(null);
-  const [withdrawing, setWithdrawing] = useState(false);
-  const [ivApp, setIvApp]             = useState(null);
+  const [data, setData]                         = useState(null);
+  const [page, setPage]                         = useState(0);
+  const [statusFilter, setStatus]               = useState('');
+  const [shortlistedFilter, setShortlistedFilter] = useState('');
+  const [sortBy, setSortBy]                     = useState('appliedAt');
+  const [sortDir, setSortDir]                   = useState('desc');
+  const [loading, setLoading]                   = useState(false);
+  const [counts, setCounts]                     = useState({});
+  const [withdrawId, setWithdrawId]             = useState(null);
+  const [withdrawing, setWithdrawing]           = useState(false);
+  const [ivApp, setIvApp]                       = useState(null);
+
+  const shortlistedParam = shortlistedFilter === 'true' ? true : shortlistedFilter === 'false' ? false : null;
 
   const loadCounts = useCallback(() => {
     getMyApplicationCounts().then(r => setCounts(r.data ?? {})).catch(() => {});
@@ -38,12 +43,12 @@ export default function MyApplicationsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getMyApplications(page, statusFilter || undefined);
+      const res = await getMyApplications(page, statusFilter || undefined, shortlistedParam, sortBy, sortDir);
       setData(res.data);
     } finally {
       setLoading(false);
     }
-  }, [page, statusFilter]);
+  }, [page, statusFilter, shortlistedParam, sortBy, sortDir]);
 
   useEffect(() => { loadCounts(); }, [loadCounts]);
   useEffect(() => { load(); }, [load]);
@@ -86,6 +91,36 @@ export default function MyApplicationsPage() {
             </button>
           );
         })}
+      </div>
+
+      <div className={styles.filterRow}>
+        {[
+          { val: '',      label: 'All' },
+          { val: 'true',  label: 'Shortlisted' },
+          { val: 'false', label: 'Not shortlisted' },
+        ].map(opt => (
+          <button key={opt.val}
+            className={[styles.chip, shortlistedFilter === opt.val ? styles.chipActive : ''].join(' ')}
+            onClick={() => { setShortlistedFilter(opt.val); setPage(0); }}>
+            {opt.label}
+          </button>
+        ))}
+
+        <span className={styles.filterDivider} />
+
+        {[
+          { val: 'appliedAt_desc', label: 'Date ↓' },
+          { val: 'appliedAt_asc',  label: 'Date ↑' },
+        ].map(opt => (
+          <button key={opt.val}
+            className={[styles.chip, `${sortBy}_${sortDir}` === opt.val ? styles.chipActive : ''].join(' ')}
+            onClick={() => {
+              const [field, dir] = opt.val.split('_');
+              setSortBy(field); setSortDir(dir); setPage(0);
+            }}>
+            {opt.label}
+          </button>
+        ))}
       </div>
 
       {loading && <p className={styles.loading}>Loading…</p>}

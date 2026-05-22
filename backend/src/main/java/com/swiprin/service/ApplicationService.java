@@ -96,16 +96,23 @@ public class ApplicationService {
         return counts;
     }
 
-    public PageResponse<ApplicationResponse> getForCandidate(Long userId, ApplicationStatus status, Pageable pageable) {
-        Page<Application> page = (status != null)
-                ? applicationRepository.findAllByUserIdAndStatus(userId, status, pageable)
-                : applicationRepository.findAllByUserId(userId, pageable);
+    public PageResponse<ApplicationResponse> getForCandidate(Long userId, ApplicationStatus status, Boolean shortlisted, Pageable pageable) {
+        Page<Application> page;
+        if (shortlisted != null) {
+            page = (status != null)
+                    ? applicationRepository.findAllByUserIdAndStatusAndShortlisted(userId, status, shortlisted, pageable)
+                    : applicationRepository.findAllByUserIdAndShortlisted(userId, shortlisted, pageable);
+        } else {
+            page = (status != null)
+                    ? applicationRepository.findAllByUserIdAndStatus(userId, status, pageable)
+                    : applicationRepository.findAllByUserId(userId, pageable);
+        }
         return toPageResponse(page, this::toCandidateResponse);
     }
 
     public PageResponse<ApplicationManagementResponse> getForJob(Long jobId, Long recruiterId,
                                                                    ApplicationStatus status, String search,
-                                                                   Pageable pageable) {
+                                                                   Boolean shortlisted, Pageable pageable) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
         if (!job.getRecruiter().getId().equals(recruiterId)) {
@@ -114,14 +121,25 @@ public class ApplicationService {
         boolean hasSearch = search != null && !search.isBlank();
         String s = hasSearch ? search.trim() : null;
         Page<Application> page;
-        if (hasSearch && status != null)
-            page = applicationRepository.findAllByJobIdAndStatusAndCandidateName(jobId, status, s, pageable);
-        else if (hasSearch)
-            page = applicationRepository.findAllByJobIdAndCandidateName(jobId, s, pageable);
-        else if (status != null)
-            page = applicationRepository.findAllByJobIdAndStatus(jobId, status, pageable);
-        else
-            page = applicationRepository.findAllByJobId(jobId, pageable);
+        if (shortlisted != null) {
+            if (hasSearch && status != null)
+                page = applicationRepository.findAllByJobIdAndStatusAndShortlistedAndCandidateName(jobId, status, shortlisted, s, pageable);
+            else if (hasSearch)
+                page = applicationRepository.findAllByJobIdAndShortlistedAndCandidateName(jobId, shortlisted, s, pageable);
+            else if (status != null)
+                page = applicationRepository.findAllByJobIdAndStatusAndShortlisted(jobId, status, shortlisted, pageable);
+            else
+                page = applicationRepository.findAllByJobIdAndShortlisted(jobId, shortlisted, pageable);
+        } else {
+            if (hasSearch && status != null)
+                page = applicationRepository.findAllByJobIdAndStatusAndCandidateName(jobId, status, s, pageable);
+            else if (hasSearch)
+                page = applicationRepository.findAllByJobIdAndCandidateName(jobId, s, pageable);
+            else if (status != null)
+                page = applicationRepository.findAllByJobIdAndStatus(jobId, status, pageable);
+            else
+                page = applicationRepository.findAllByJobId(jobId, pageable);
+        }
         return toPageResponse(page, this::toManagementResponse);
     }
 

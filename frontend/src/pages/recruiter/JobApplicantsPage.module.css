@@ -22,6 +22,43 @@
 .back:hover { background: var(--surface-2); color: var(--accent); }
 .title { font-size: 1.5rem; font-weight: 800; color: var(--text); }
 .jobTitleLabel { font-weight: 400; color: var(--text-2); }
+.filterRow {
+  display: flex;
+  gap: .35rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: .25rem .75rem;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  font-size: .75rem;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.chipActive {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.chipActive:hover { background: var(--accent-600); border-color: var(--accent-600); color: #fff; }
+
+.filterDivider {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 .15rem;
+  flex-shrink: 0;
+}
+
 .searchBar {
   display: flex;
   gap: .5rem;
