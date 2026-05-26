@@ -39,7 +39,12 @@
 .table tbody tr { transition: background .12s; }
 .table tbody tr:hover td { background: var(--accent-50); }
 
-.companyCell { display: flex; align-items: center; gap: .6rem; }
+.companyCell {
+  display: flex; align-items: center; gap: .6rem;
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: inherit; border-radius: 6px; transition: opacity .15s;
+}
+.companyCell:hover { opacity: .75; }
 .name   { font-weight: 600; }
 .link   { color: var(--accent); text-decoration: none; font-size: .82rem; }
 .link:hover { text-decoration: underline; }

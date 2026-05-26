@@ -4,7 +4,9 @@ import com.swiprin.dto.request.CreateCompanyRequest;
 import com.swiprin.dto.request.UpdateCompanyRequest;
 import com.swiprin.dto.response.CompanyResponse;
 import com.swiprin.dto.response.PageResponse;
+import com.swiprin.dto.response.UserResponse;
 import com.swiprin.service.CompanyService;
+import com.swiprin.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class CompanyController {
 
     private final CompanyService companyService;
+    private final UserService    userService;
 
     @GetMapping
     @Operation(summary = "List companies (search + pagination)")
@@ -68,5 +71,12 @@ public class CompanyController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         companyService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/recruiters")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "List recruiters for a company (ADMIN only)")
+    public ResponseEntity<java.util.List<UserResponse>> getRecruiters(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getRecruitersForCompany(id));
     }
 }

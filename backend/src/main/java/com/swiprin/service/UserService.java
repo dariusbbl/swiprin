@@ -17,6 +17,7 @@ import com.swiprin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,6 +82,11 @@ public class UserService {
             throw new com.swiprin.exception.BadRequestException("Admin accounts cannot be deleted");
         }
         userRepository.delete(user);
+    }
+
+    public List<UserResponse> getRecruitersForCompany(Long companyId) {
+        return userRepository.findRecruitersByCompanyId(companyId, Pageable.unpaged())
+                .stream().map(this::toResponse).toList();
     }
 
     public UserProfileResponse getProfile(Long userId) {

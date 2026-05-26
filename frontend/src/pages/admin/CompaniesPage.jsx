@@ -8,6 +8,7 @@ import ConfirmModal from '../../components/ui/ConfirmModal';
 import Modal from '../../components/ui/Modal';
 import Button from '../../components/ui/Button';
 import CompanyLogo from '../../components/ui/CompanyLogo';
+import CompanyProfileModal from '../../components/ui/CompanyProfileModal';
 import styles from './CompaniesPage.module.css';
 
 const EMPTY_FORM = { name: '', website: '', description: '', logoUrl: '' };
@@ -32,6 +33,8 @@ export default function CompaniesPage() {
 
   const [deleteId, setDeleteId] = useState(null);
   const [deleting, setDeleting] = useState(false);
+
+  const [profileCompany, setProfileCompany] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -132,10 +135,10 @@ export default function CompaniesPage() {
                       <span className={styles.idBadge}>{c.id}</span>
                     </td>
                     <td>
-                      <div className={styles.companyCell}>
+                      <button className={styles.companyCell} onClick={() => setProfileCompany(c)}>
                         <CompanyLogo name={c.name} size={32} />
                         <span className={styles.name}>{c.name}</span>
-                      </div>
+                      </button>
                     </td>
                     <td>
                       {c.website
@@ -205,6 +208,12 @@ export default function CompaniesPage() {
         onConfirm={handleDelete} loading={deleting}
         title="Delete company?"
         message="This will permanently delete the company. This action cannot be undone."
+      />
+
+      <CompanyProfileModal
+        open={!!profileCompany} onClose={() => setProfileCompany(null)}
+        company={profileCompany}
+        showRecruiters
       />
     </div>
   );

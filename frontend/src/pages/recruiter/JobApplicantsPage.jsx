@@ -12,6 +12,7 @@ import ConfirmModal from '../../components/ui/ConfirmModal';
 import Button from '../../components/ui/Button';
 import Avatar from '../../components/ui/Avatar';
 import InterviewModal from '../../components/recruiter/InterviewModal';
+import CandidateProfileModal from '../../components/ui/CandidateProfileModal';
 import styles from './JobApplicantsPage.module.css';
 
 const STATUSES = ['APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN'];
@@ -38,6 +39,7 @@ export default function JobApplicantsPage() {
   const [deleteId, setDeleteId]             = useState(null);
   const [deleting, setDeleting]             = useState(false);
   const [interviewApp, setInterviewApp]     = useState(null);
+  const [profileApp, setProfileApp]         = useState(null);
 
   const shortlistedParam = shortlistedFilter === 'true' ? true : shortlistedFilter === 'false' ? false : null;
 
@@ -186,13 +188,13 @@ export default function JobApplicantsPage() {
                 {displayed.map(app => (
                   <tr key={app.id}>
                     <td>
-                      <div className={styles.candidateCell}>
+                      <button className={styles.candidateCell} onClick={() => setProfileApp(app)}>
                         <Avatar name={app.candidate?.fullName} size={32} />
                         <div>
                           <div className={styles.candidateName}>{app.candidate?.fullName}</div>
                           <div className={styles.candidateEmail}>{app.candidate?.email}</div>
                         </div>
-                      </div>
+                      </button>
                     </td>
                     <td className={styles.matchCell}>
                       <MatchBar value={app.matchPercent} />
@@ -264,6 +266,12 @@ export default function JobApplicantsPage() {
         onConfirm={handleDelete} loading={deleting}
         title="Remove application?"
         message="This will permanently delete this application. This action cannot be undone."
+      />
+
+      <CandidateProfileModal
+        open={!!profileApp} onClose={() => setProfileApp(null)}
+        candidate={profileApp?.candidate}
+        jobSkills={profileApp?.job?.skills}
       />
     </div>
   );

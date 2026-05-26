@@ -7,6 +7,7 @@ import EmptyState from '../../components/ui/EmptyState';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import Tag from '../../components/ui/Tag';
 import InterviewDetailsModal from '../../components/candidate/InterviewDetailsModal';
+import CompanyProfileModal from '../../components/ui/CompanyProfileModal';
 import styles from './MyApplicationsPage.module.css';
 
 const STATUS_TABS = [
@@ -33,6 +34,7 @@ export default function MyApplicationsPage() {
   const [withdrawId, setWithdrawId]             = useState(null);
   const [withdrawing, setWithdrawing]           = useState(false);
   const [ivApp, setIvApp]                       = useState(null);
+  const [profileCompany, setProfileCompany]     = useState(null);
 
   const shortlistedParam = shortlistedFilter === 'true' ? true : shortlistedFilter === 'false' ? false : null;
 
@@ -153,7 +155,11 @@ export default function MyApplicationsPage() {
                         {app.shortlisted && <Tag variant="success">Shortlisted <Check size={11} /></Tag>}
                       </div>
                     </td>
-                    <td>{app.job.company?.name ?? '—'}</td>
+                    <td>
+                      {app.job.company
+                        ? <button className={styles.companyBtn} onClick={() => setProfileCompany(app.job.company)}>{app.job.company.name}</button>
+                        : '—'}
+                    </td>
                     <td><Tag>{WORK_MODE[app.job.workMode] ?? app.job.workMode}</Tag></td>
                     <td><Badge status={app.status} /></td>
                     <td className={styles.date}>
@@ -195,6 +201,11 @@ export default function MyApplicationsPage() {
         onConfirm={handleWithdraw} loading={withdrawing}
         title="Withdraw application?"
         message="Your application will be marked as withdrawn. The recruiter will be notified."
+      />
+
+      <CompanyProfileModal
+        open={!!profileCompany} onClose={() => setProfileCompany(null)}
+        company={profileCompany}
       />
     </div>
   );

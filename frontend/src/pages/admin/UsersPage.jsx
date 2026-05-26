@@ -8,6 +8,7 @@ import EmptyState from '../../components/ui/EmptyState';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import Button from '../../components/ui/Button';
 import Avatar from '../../components/ui/Avatar';
+import CandidateProfileModal from '../../components/ui/CandidateProfileModal';
 import styles from './UsersPage.module.css';
 
 const ROLES    = ['', 'CANDIDATE', 'RECRUITER', 'ADMIN'];
@@ -31,6 +32,8 @@ export default function UsersPage() {
   const [loading, setLoading]     = useState(false);
   const [deleteId, setDeleteId]   = useState(null);
   const [deleting, setDeleting]   = useState(false);
+
+  const [profileUser, setProfileUser] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -137,13 +140,13 @@ export default function UsersPage() {
                 {displayed.map(u => (
                   <tr key={u.id}>
                     <td>
-                      <div className={styles.userCell}>
+                      <button className={styles.userCell} onClick={() => setProfileUser(u)}>
                         <Avatar name={u.fullName} size={32} />
                         <div>
                           <div className={styles.name}>{u.fullName}</div>
                           <div className={styles.email}>{u.email}</div>
                         </div>
-                      </div>
+                      </button>
                     </td>
                     <td><Tag>{u.role}</Tag></td>
                     <td>
@@ -181,6 +184,11 @@ export default function UsersPage() {
         onConfirm={handleDelete} loading={deleting}
         title="Delete user?"
         message="This will permanently delete the user and all their data. This action cannot be undone."
+      />
+
+      <CandidateProfileModal
+        open={!!profileUser} onClose={() => setProfileUser(null)}
+        candidate={profileUser}
       />
     </div>
   );

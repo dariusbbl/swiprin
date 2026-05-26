@@ -1,0 +1,49 @@
+.wrap { display: flex; flex-direction: column; gap: 1.1rem; }
+
+.header { display: flex; align-items: center; gap: .85rem; }
+.name { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+.jobTitle { font-size: .82rem; color: var(--text-2); margin-top: .1rem; }
+.email { font-size: .8rem; color: var(--text-3); margin-top: .15rem; }
+
+.loading { font-size: .85rem; color: var(--text-3); margin: 0; }
+
+.section { display: flex; flex-direction: column; gap: .35rem; }
+.label {
+  font-size: .72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--text-3); margin: 0;
+}
+.bio { font-size: .875rem; color: var(--text-2); line-height: 1.6; margin: 0; }
+
+.metaRow { display: flex; align-items: flex-start; gap: .4rem; }
+.metaIcon { color: var(--text-3); flex-shrink: 0; margin-top: 2px; }
+.metaText { font-size: .85rem; color: var(--text-2); line-height: 1.5; }
+
+.links { display: flex; gap: .75rem; flex-wrap: wrap; }
+.link {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .82rem; font-weight: 600;
+  color: var(--accent); text-decoration: none;
+  padding: .3rem .65rem;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  transition: border-color .15s, background .15s;
+}
+.link:hover { border-color: var(--accent); background: var(--accent-50); }
+
+.skillGroups { display: flex; flex-direction: column; gap: .75rem; }
+.skillGroup  { display: flex; flex-direction: column; gap: .35rem; }
+.skillGroupLabel {
+  font-size: .72rem; font-weight: 700; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+
+.skillWrap { display: flex; flex-wrap: wrap; gap: .35rem; }
+.chip {
+  padding: .25rem .65rem; border-radius: 99px;
+  font-size: .78rem; font-weight: 500;
+  background: var(--surface-2); border: 1.5px solid var(--border);
+  color: var(--text-2);
+}
+.chipMatched {
+  background: var(--accent-50); border-color: var(--accent);
+  color: var(--accent); font-weight: 600;
+}
