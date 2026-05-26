@@ -22,4 +22,6 @@ public interface CvDraftRepository extends JpaRepository<CvDraft, Long> {
     @Modifying
     @Query("UPDATE CvDraft c SET c.isDefault = false WHERE c.user.id = :userId")
     void clearDefaultForUser(@Param("userId") Long userId);
+
+    List<CvDraft> findAllByFileUrlIsNotNullAndExtractedTextIsNull();
 }

@@ -36,6 +36,7 @@ public class ApplicationService {
     private final JobService jobService;
     private final UserService userService;
     private final CvDraftService cvDraftService;
+    private final MatchingService matchingService;
 
     @Transactional
     public ApplicationResponse apply(CreateApplicationRequest req, Long userId) {
@@ -61,7 +62,7 @@ public class ApplicationService {
             cvDraftRepository.save(cvDraft);
         }
 
-        int matchPercent = calculateSkillMatch(candidate, job);
+        int matchPercent = matchingService.computeMatch(candidate, job, cvDraft);
 
         Application application = Application.builder()
                 .job(job)
@@ -347,14 +348,6 @@ public class ApplicationService {
         return cvDraftRepository.findByUserIdAndIsDefaultTrueAndDeletedFalse(userId)
                 .orElseThrow(() -> new BadRequestException(
                         "No default CV found. Please select or create a CV before applying"));
-    }
-
-    private int calculateSkillMatch(User candidate, Job job) {
-        if (job.getSkills().isEmpty()) return 0;
-        long overlap = candidate.getSkills().stream()
-                .filter(s -> job.getSkills().contains(s))
-                .count();
-        return (int) Math.round((double) overlap / job.getSkills().size() * 100);
     }
 
     private Application findOrThrow(Long id) {

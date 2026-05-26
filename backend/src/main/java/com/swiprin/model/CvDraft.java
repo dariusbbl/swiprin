@@ -37,6 +37,12 @@ public class CvDraft {
     @Builder.Default
     private Boolean deleted = false;
 
+    @Column(name = "extracted_text", columnDefinition = "TEXT")
+    private String extractedText;
+
+    @Column(name = "experience_years")
+    private Float experienceYears;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
