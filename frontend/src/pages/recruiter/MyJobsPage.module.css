@@ -165,3 +165,62 @@
   text-decoration: underline;
 }
 .clearSeniority:hover { color: var(--text-2); }
+
+/* Info button next to threshold label */
+.thresholdLabel {
+  display: flex; align-items: center; gap: .35rem;
+}
+.infoBtn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--surface-2); border: 1.5px solid var(--border);
+  color: var(--text-3); cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+  flex-shrink: 0;
+}
+.infoBtn:hover {
+  border-color: var(--accent); color: var(--accent); background: var(--accent-50);
+}
+
+/* Matching guide modal content */
+.guideWrap { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.guideSection { display: flex; flex-direction: column; gap: .6rem; }
+.guideSectionTitle {
+  font-size: .8rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--text-3); margin: 0;
+}
+.guideIntro { font-size: .875rem; color: var(--text-2); margin: 0; }
+
+.formulaRows { display: flex; flex-direction: column; gap: .75rem; }
+.formulaRow  { display: flex; flex-direction: column; gap: .25rem; }
+.formulaBar  {
+  height: 6px; border-radius: 99px;
+  width: var(--w); background: var(--c); opacity: .85;
+}
+.formulaInfo { display: flex; align-items: baseline; gap: .4rem; }
+.formulaLabel { font-size: .875rem; font-weight: 600; color: var(--text); }
+.formulaWeight {
+  font-size: .78rem; font-weight: 700; color: var(--text-3);
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 4px; padding: .05rem .35rem;
+}
+.formulaDesc { font-size: .8rem; color: var(--text-2); margin: 0; line-height: 1.5; }
+
+.guideList {
+  margin: 0; padding-left: 1.1rem;
+  display: flex; flex-direction: column; gap: .4rem;
+}
+.guideList li { font-size: .8rem; color: var(--text-2); line-height: 1.55; }
+.guideList em { color: var(--text); font-style: normal; font-weight: 600; }
+
+.thresholdGuide { display: flex; flex-direction: column; gap: .5rem; }
+.thresholdRow   { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; }
+.thresholdBadge {
+  font-size: .75rem; font-weight: 700; padding: .2rem .6rem;
+  border-radius: 99px; border: 1.5px solid; white-space: nowrap;
+}
+.thresholdRange {
+  font-size: .82rem; font-weight: 700; color: var(--text); white-space: nowrap; min-width: 60px;
+}
+.thresholdHint { font-size: .78rem; color: var(--text-2); }

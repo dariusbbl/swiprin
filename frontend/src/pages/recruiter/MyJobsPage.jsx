@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Briefcase } from 'lucide-react';
+import { MapPin, Briefcase, Info } from 'lucide-react';
 import { getMyJobs, createJob, updateJob, deleteJob } from '../../api/jobs';
 import { getSkills } from '../../api/skills';
 import Tag from '../../components/ui/Tag';
@@ -35,6 +35,7 @@ export default function MyJobsPage() {
   const [skills, setSkills]     = useState([]);
 
   const [formOpen, setFormOpen]       = useState(false);
+  const [matchInfoOpen, setMatchInfoOpen] = useState(false);
   const [editing, setEditing]         = useState(null);
   const [form, setForm]               = useState(EMPTY_FORM);
   const [noThreshold, setNoThreshold] = useState(false);
@@ -245,7 +246,13 @@ export default function MyJobsPage() {
               </select>
             </div>
             <div className={styles.field}>
-              <label>Shortlist threshold (%)</label>
+              <label className={styles.thresholdLabel}>
+                Shortlist threshold (%)
+                <button type="button" className={styles.infoBtn}
+                  onClick={() => setMatchInfoOpen(true)} title="Matching score guide">
+                  <Info size={12} />
+                </button>
+              </label>
               <input type="number" name="shortlistThreshold" value={form.shortlistThreshold}
                 onChange={handleField} min={1} max={100} className="form-control"
                 disabled={noThreshold} />
@@ -351,6 +358,93 @@ export default function MyJobsPage() {
         title="Delete job?"
         message="This will permanently delete the job and all its applications. This action cannot be undone."
       />
+
+      <Modal open={matchInfoOpen} onClose={() => setMatchInfoOpen(false)}
+        title="Matching score guide" size="md">
+        <div className={styles.guideWrap}>
+
+          <section className={styles.guideSection}>
+            <h6 className={styles.guideSectionTitle}>How the score is computed</h6>
+            <p className={styles.guideIntro}>
+              Each application receives a score from 0–100% based on three components:
+            </p>
+            <div className={styles.formulaRows}>
+              <div className={styles.formulaRow}>
+                <div className={styles.formulaBar} style={{ '--w': '25%', '--c': 'var(--accent)' }} />
+                <div className={styles.formulaInfo}>
+                  <span className={styles.formulaLabel}>Skills match</span>
+                  <span className={styles.formulaWeight}>25%</span>
+                </div>
+                <p className={styles.formulaDesc}>
+                  Proportion of required skills from the job that the candidate has in their profile.
+                  Adding more required skills to the job increases precision.
+                </p>
+              </div>
+              <div className={styles.formulaRow}>
+                <div className={styles.formulaBar} style={{ '--w': '15%', '--c': '#8b5cf6' }} />
+                <div className={styles.formulaInfo}>
+                  <span className={styles.formulaLabel}>Experience match</span>
+                  <span className={styles.formulaWeight}>15%</span>
+                </div>
+                <p className={styles.formulaDesc}>
+                  Compatibility between the candidate's years of experience and the seniority level
+                  you set for this job. Selecting a seniority level makes this component active.
+                </p>
+              </div>
+              <div className={styles.formulaRow}>
+                <div className={styles.formulaBar} style={{ '--w': '60%', '--c': '#0ea5e9' }} />
+                <div className={styles.formulaInfo}>
+                  <span className={styles.formulaLabel}>CV coverage</span>
+                  <span className={styles.formulaWeight}>60%</span>
+                </div>
+                <p className={styles.formulaDesc}>
+                  How well the candidate's CV text covers the keywords, technologies and concepts
+                  from the job description. This is the dominant factor — a well-written description
+                  leads to more accurate matches.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.guideSection}>
+            <h6 className={styles.guideSectionTitle}>Tips for writing a good job description</h6>
+            <ul className={styles.guideList}>
+              <li>Mention all required technologies and tools explicitly (e.g. <em>TensorFlow, Python, SQL</em>) — these carry the most weight in matching.</li>
+              <li>Use clear headings like <em>Requirements</em> and <em>Nice to have</em> to separate must-haves from optional skills.</li>
+              <li>Describe the actual work: <em>"build ML pipelines"</em>, <em>"optimize model performance"</em> — candidates whose CVs mirror this language will score higher.</li>
+              <li>Avoid filler text and generic phrases (<em>"fast-paced environment"</em>, <em>"team player"</em>) — they add noise without improving match quality.</li>
+              <li>Use the same terminology that candidates would write in their CVs (e.g. <em>"machine learning"</em> rather than <em>"AI solutions"</em> if precision matters).</li>
+            </ul>
+          </section>
+
+          <section className={styles.guideSection}>
+            <h6 className={styles.guideSectionTitle}>Choosing the right threshold</h6>
+            <div className={styles.thresholdGuide}>
+              <div className={styles.thresholdRow}>
+                <span className={styles.thresholdBadge} style={{ background: '#f0fdf4', color: '#16a34a', borderColor: '#bbf7d0' }}>Internship</span>
+                <span className={styles.thresholdRange}>20–40%</span>
+                <span className={styles.thresholdHint}>Candidates are early-stage; keep the bar accessible.</span>
+              </div>
+              <div className={styles.thresholdRow}>
+                <span className={styles.thresholdBadge} style={{ background: '#eff6ff', color: '#2563eb', borderColor: '#bfdbfe' }}>Junior</span>
+                <span className={styles.thresholdRange}>35–55%</span>
+                <span className={styles.thresholdHint}>Expect partial skill coverage; reward strong CV alignment.</span>
+              </div>
+              <div className={styles.thresholdRow}>
+                <span className={styles.thresholdBadge} style={{ background: '#faf5ff', color: '#7c3aed', borderColor: '#ddd6fe' }}>Mid</span>
+                <span className={styles.thresholdRange}>50–65%</span>
+                <span className={styles.thresholdHint}>Solid experience + skill match expected at this level.</span>
+              </div>
+              <div className={styles.thresholdRow}>
+                <span className={styles.thresholdBadge} style={{ background: '#fff7ed', color: '#c2410c', borderColor: '#fed7aa' }}>Senior</span>
+                <span className={styles.thresholdRange}>65–80%</span>
+                <span className={styles.thresholdHint}>High bar justified — seniority and full skill overlap expected.</span>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </Modal>
     </div>
   );
 }
