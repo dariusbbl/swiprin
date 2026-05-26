@@ -109,6 +109,14 @@ public class UserController {
         return ResponseEntity.ok(userService.getById(id));
     }
 
+    @GetMapping("/{id}/profile")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECRUITER')")
+    @Operation(summary = "Get extended profile for any user (ADMIN, RECRUITER)")
+    public ResponseEntity<UserProfileResponse> getProfileById(@PathVariable Long id) {
+        UserProfileResponse profile = userService.getProfile(id);
+        return profile != null ? ResponseEntity.ok(profile) : ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Approve or reject a recruiter (ADMIN only)")

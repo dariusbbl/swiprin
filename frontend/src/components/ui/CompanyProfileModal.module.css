@@ -1,0 +1,29 @@
+.wrap { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.header { display: flex; align-items: center; gap: 1rem; }
+.headerInfo { display: flex; flex-direction: column; gap: .4rem; }
+.name { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+.meta { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.jobCount { font-size: .8rem; color: var(--text-3); }
+
+.section { display: flex; flex-direction: column; gap: .3rem; }
+.label {
+  font-size: .72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--text-3); margin: 0;
+}
+.desc { font-size: .875rem; color: var(--text-2); line-height: 1.6; margin: 0; }
+.value { font-size: .875rem; color: var(--text); margin: 0; }
+
+.link {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .875rem; color: var(--accent); text-decoration: none;
+}
+.link:hover { text-decoration: underline; }
+
+.muted { font-size: .85rem; color: var(--text-3); margin: 0; }
+
+.recruiterList { display: flex; flex-direction: column; gap: .6rem; }
+.recruiterRow  { display: flex; align-items: center; gap: .65rem; }
+.recruiterName { font-size: .875rem; font-weight: 600; color: var(--text); }
+.recruiterMeta { display: flex; align-items: center; gap: .3rem; font-size: .78rem; color: var(--text-3); flex-wrap: wrap; }
+.dot { color: var(--border); }

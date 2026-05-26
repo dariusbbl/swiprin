@@ -128,7 +128,12 @@
 .table tbody tr { transition: background .12s; }
 .table tbody tr:hover td { background: var(--accent-50); }
 
-.candidateCell { display: flex; align-items: center; gap: .6rem; }
+.candidateCell {
+  display: flex; align-items: center; gap: .6rem;
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: inherit; text-align: left; border-radius: 6px; transition: opacity .15s;
+}
+.candidateCell:hover { opacity: .75; }
 .candidateName  { font-weight: 600; }
 .candidateEmail { font-size: .78rem; color: var(--text-3); }
 

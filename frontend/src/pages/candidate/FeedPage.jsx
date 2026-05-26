@@ -6,6 +6,7 @@ import { getCvDrafts } from '../../api/cvDrafts';
 import Tag from '../../components/ui/Tag';
 import EmptyState from '../../components/ui/EmptyState';
 import LocationPicker from '../../components/ui/LocationPicker';
+import CompanyProfileModal from '../../components/ui/CompanyProfileModal';
 import styles from './FeedPage.module.css';
 
 const WORK_LABEL = { ON_SITE: 'On-site', REMOTE: 'Remote', HYBRID: 'Hybrid' };
@@ -88,6 +89,7 @@ export default function FeedPage() {
 
   const [seniority, setSeniority] = useState(null);
   const [location, setLocation]   = useState('');
+  const [profileCompany, setProfileCompany] = useState(null);
 
   const pageRef      = useRef(0);
   const hasMoreRef   = useRef(true);
@@ -252,7 +254,11 @@ export default function FeedPage() {
             <div className={styles.cardTop}>
               <div>
                 <h3 className={styles.jobTitle}>{top.title}</h3>
-                {top.company?.name && <p className={styles.company}>{top.company.name}</p>}
+                {top.company?.name && (
+                  <button className={styles.companyBtn} onClick={e => { e.stopPropagation(); setProfileCompany(top.company); }}>
+                    {top.company.name}
+                  </button>
+                )}
                 {top.location && <p className={styles.location}><MapPin size={13} /> {top.location}</p>}
               </div>
               <div className={styles.tagGroup}>
@@ -309,6 +315,11 @@ export default function FeedPage() {
       <p className={styles.keyHint}>Use ← → arrow keys to swipe</p>
       </>
       )}
+
+      <CompanyProfileModal
+        open={!!profileCompany} onClose={() => setProfileCompany(null)}
+        company={profileCompany}
+      />
     </div>
   );
 }
