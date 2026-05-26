@@ -195,7 +195,7 @@ export default function JobApplicantsPage() {
                       </div>
                     </td>
                     <td className={styles.matchCell}>
-                      <MatchBar percent={app.matchPercent} />
+                      <MatchBar value={app.matchPercent} />
                     </td>
                     <td><Badge status={app.status} /></td>
                     <td>

@@ -10,6 +10,7 @@ import com.swiprin.model.User;
 import com.swiprin.repository.CvDraftRepository;
 import com.swiprin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +18,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CvDraftService {
 
     private final CvDraftRepository cvDraftRepository;
     private final UserRepository userRepository;
+    private final PdfExtractionService pdfExtractionService;
+    private final FileStorageService fileStorageService;
 
     public List<CvDraftResponse> getAllForUser(Long userId) {
         return cvDraftRepository.findAllByUserIdAndDeletedFalse(userId)
@@ -44,14 +48,17 @@ public class CvDraftService {
             cvDraftRepository.clearDefaultForUser(userId);
         }
 
+        String fileUrl = req.getFileUrl() != null ? req.getFileUrl().trim() : null;
+
         CvDraft draft = CvDraft.builder()
                 .user(user)
                 .name(req.getName().trim())
-                .fileUrl(req.getFileUrl() != null ? req.getFileUrl().trim() : null)
+                .fileUrl(fileUrl)
                 .isDefault(Boolean.TRUE.equals(req.getIsDefault()))
                 .deleted(false)
                 .build();
 
+        extractAndStore(draft, fileUrl);
         return toResponse(cvDraftRepository.save(draft));
     }
 
@@ -60,7 +67,14 @@ public class CvDraftService {
         CvDraft draft = findOwnedOrThrow(id, userId);
 
         if (req.getName() != null) draft.setName(req.getName().trim());
-        if (req.getFileUrl() != null) draft.setFileUrl(req.getFileUrl().isBlank() ? null : req.getFileUrl().trim());
+
+        if (req.getFileUrl() != null) {
+            String newUrl = req.getFileUrl().isBlank() ? null : req.getFileUrl().trim();
+            if (!java.util.Objects.equals(newUrl, draft.getFileUrl())) {
+                draft.setFileUrl(newUrl);
+                extractAndStore(draft, newUrl);
+            }
+        }
 
         if (Boolean.TRUE.equals(req.getIsDefault()) && !Boolean.TRUE.equals(draft.getIsDefault())) {
             cvDraftRepository.clearDefaultForUser(userId);
@@ -74,6 +88,7 @@ public class CvDraftService {
     public CvDraftResponse setFileUrl(Long id, String fileUrl, Long userId) {
         CvDraft draft = findOwnedOrThrow(id, userId);
         draft.setFileUrl(fileUrl);
+        extractAndStore(draft, fileUrl);
         return toResponse(cvDraftRepository.save(draft));
     }
 
@@ -97,6 +112,39 @@ public class CvDraftService {
         }
         draft.setDeleted(true);
         cvDraftRepository.save(draft);
+    }
+
+    @Transactional
+    public int reextractAll() {
+        List<CvDraft> pending = cvDraftRepository.findAllByFileUrlIsNotNullAndExtractedTextIsNull();
+        int processed = 0;
+        for (CvDraft draft : pending) {
+            extractAndStore(draft, draft.getFileUrl());
+            cvDraftRepository.save(draft);
+            processed++;
+        }
+        log.info("Re-extracted PDF text for {} CV drafts", processed);
+        return processed;
+    }
+
+    // Parses /api/cv-drafts/files/{userId}/{filename}, resolves the file path,
+    // and populates extractedText + experienceYears on the draft.
+    // Only PDFs are processed; failures are non-fatal.
+    private void extractAndStore(CvDraft draft, String fileUrl) {
+        if (fileUrl == null || fileUrl.isBlank()) return;
+        if (!fileUrl.toLowerCase().endsWith(".pdf")) return;
+        try {
+            String[] parts = fileUrl.split("/");
+            Long fileUserId = Long.parseLong(parts[parts.length - 2]);
+            String filename  = parts[parts.length - 1];
+
+            java.nio.file.Path filePath = fileStorageService.resolveFile(fileUserId, filename);
+            String text = pdfExtractionService.extractText(filePath);
+            draft.setExtractedText(text);
+            draft.setExperienceYears(pdfExtractionService.extractExperienceYears(text));
+        } catch (Exception e) {
+            log.warn("CV extraction skipped for '{}': {}", draft.getName(), e.getMessage());
+        }
     }
 
     private CvDraft findOwnedOrThrow(Long id, Long userId) {

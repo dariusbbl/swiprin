@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cv-drafts")
@@ -119,5 +120,13 @@ public class CvDraftController {
                                         @AuthenticationPrincipal UserPrincipal principal) {
         cvDraftService.delete(id, principal.getId());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/reextract")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Re-extract PDF text for all CVs uploaded before V13 migration")
+    public ResponseEntity<Map<String, Object>> reextractAll() {
+        int count = cvDraftService.reextractAll();
+        return ResponseEntity.ok(Map.of("processed", count));
     }
 }
