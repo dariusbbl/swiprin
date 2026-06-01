@@ -24,6 +24,8 @@ public interface InterviewScheduleRepository extends JpaRepository<InterviewSche
 
     boolean existsByIdAndApplicationJobRecruiterId(Long id, Long recruiterId);
 
+    boolean existsByIdAndApplicationJobCompanyId(Long id, Long companyId);
+
     @Query("""
             SELECT i FROM InterviewSchedule i
             JOIN i.application a

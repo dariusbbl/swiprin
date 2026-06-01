@@ -116,9 +116,7 @@ public class ApplicationService {
                                                                    Boolean shortlisted, Pageable pageable) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
-        if (!job.getRecruiter().getId().equals(recruiterId)) {
-            throw new ForbiddenException("You do not own this job");
-        }
+        requireSameCompany(job, recruiterId);
         boolean hasSearch = search != null && !search.isBlank();
         String s = hasSearch ? search.trim() : null;
         Page<Application> page;
@@ -147,9 +145,7 @@ public class ApplicationService {
     @Transactional
     public ApplicationManagementResponse updateStatus(Long id, UpdateApplicationStatusRequest req, Long recruiterId) {
         Application application = findOrThrow(id);
-        if (!application.getJob().getRecruiter().getId().equals(recruiterId)) {
-            throw new ForbiddenException("You do not own this application's job");
-        }
+        requireSameCompany(application.getJob(), recruiterId);
         if (req.getStatus() == ApplicationStatus.WITHDRAWN) {
             throw new BadRequestException("Cannot set status to WITHDRAWN — only candidates can withdraw");
         }
@@ -179,15 +175,15 @@ public class ApplicationService {
     }
 
     public long countShortlistedForRecruiter(Long recruiterId) {
-        return applicationRepository.countShortlistedByRecruiterId(recruiterId);
+        User recruiter = userRepository.findById(recruiterId).orElse(null);
+        if (recruiter == null || recruiter.getCompany() == null) return 0L;
+        return applicationRepository.countShortlistedByCompanyId(recruiter.getCompany().getId());
     }
 
     @Transactional
     public ApplicationManagementResponse toggleShortlist(Long id, Long recruiterId) {
         Application application = findOrThrow(id);
-        if (!application.getJob().getRecruiter().getId().equals(recruiterId)) {
-            throw new ForbiddenException("You do not own this application's job");
-        }
+        requireSameCompany(application.getJob(), recruiterId);
 
         if (application.getStatus() == ApplicationStatus.REJECTED) {
             throw new BadRequestException("Cannot shortlist a rejected candidate. Change their status first.");
@@ -232,18 +228,14 @@ public class ApplicationService {
     @Transactional
     public void delete(Long id, Long recruiterId) {
         Application application = findOrThrow(id);
-        if (!application.getJob().getRecruiter().getId().equals(recruiterId)) {
-            throw new ForbiddenException("You do not own this application's job");
-        }
+        requireSameCompany(application.getJob(), recruiterId);
         applicationRepository.delete(application);
     }
 
     @Transactional
     public InterviewResponse scheduleInterview(Long applicationId, CreateInterviewRequest req, Long recruiterId) {
         Application application = findOrThrow(applicationId);
-        if (!application.getJob().getRecruiter().getId().equals(recruiterId)) {
-            throw new ForbiddenException("You do not own this application's job");
-        }
+        requireSameCompany(application.getJob(), recruiterId);
 
         InterviewSchedule interview = InterviewSchedule.builder()
                 .application(application)
@@ -272,8 +264,11 @@ public class ApplicationService {
     public InterviewResponse updateInterview(Long interviewId, UpdateInterviewRequest req, Long recruiterId) {
         InterviewSchedule interview = interviewScheduleRepository.findById(interviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Interview not found"));
-        if (!interviewScheduleRepository.existsByIdAndApplicationJobRecruiterId(interviewId, recruiterId)) {
-            throw new ForbiddenException("You do not own this interview");
+        User recruiter = userRepository.findById(recruiterId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Long companyId = recruiter.getCompany() != null ? recruiter.getCompany().getId() : null;
+        if (companyId == null || !interviewScheduleRepository.existsByIdAndApplicationJobCompanyId(interviewId, companyId)) {
+            throw new ForbiddenException("You do not have access to this interview");
         }
 
         if (req.getTitle() != null) interview.setTitle(req.getTitle());
@@ -307,9 +302,7 @@ public class ApplicationService {
 
     public List<InterviewResponse> getInterviewsForApplication(Long applicationId, Long recruiterId) {
         Application application = findOrThrow(applicationId);
-        if (!application.getJob().getRecruiter().getId().equals(recruiterId)) {
-            throw new ForbiddenException("You do not own this application's job");
-        }
+        requireSameCompany(application.getJob(), recruiterId);
         return interviewScheduleRepository
                 .findAllByApplicationIdOrderByScheduledAtAsc(applicationId)
                 .stream().map(this::toInterviewResponse).toList();
@@ -363,6 +356,16 @@ public class ApplicationService {
     private Application findOrThrow(Long id) {
         return applicationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found: " + id));
+    }
+
+    private void requireSameCompany(Job job, Long recruiterId) {
+        User recruiter = userRepository.findById(recruiterId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Long jobCompanyId       = job.getRecruiter().getCompany() != null ? job.getRecruiter().getCompany().getId() : null;
+        Long recruiterCompanyId = recruiter.getCompany() != null ? recruiter.getCompany().getId() : null;
+        if (jobCompanyId == null || !jobCompanyId.equals(recruiterCompanyId)) {
+            throw new ForbiddenException("You do not have access to this job");
+        }
     }
 
     private ApplicationResponse toCandidateResponse(Application a) {

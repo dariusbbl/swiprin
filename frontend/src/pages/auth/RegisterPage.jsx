@@ -151,7 +151,7 @@ export default function RegisterPage() {
                 placeholder="Repeat password" />
               <button type="button" className={styles.pwToggle}
                 onClick={() => setShowConfirm(v => !v)} tabIndex={-1} aria-label={showConfirm ? 'Hide password' : 'Show password'}>
-                {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showConfirm ? <Eye size={16} /> : <EyeOff size={16} />}
               </button>
             </div>
             {passwordMismatch && <span className={styles.fieldError}>Passwords don't match</span>}
