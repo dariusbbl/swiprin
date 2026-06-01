@@ -63,19 +63,20 @@ public class JobService {
                 .build();
     }
 
-    // Recruiter — own jobs
+    // Recruiter — all jobs in the same company
     public PageResponse<JobManagementResponse> getByRecruiter(Long recruiterId, Boolean activeOnly, Pageable pageable) {
+        User recruiter = findRecruiterOrThrow(recruiterId);
+        Long companyId = recruiter.getCompany() != null ? recruiter.getCompany().getId() : null;
+        if (companyId == null) return toManagementPageResponse(Page.empty(pageable));
         Page<Job> page = Boolean.TRUE.equals(activeOnly)
-                ? jobRepository.findByRecruiterIdAndActiveTrue(recruiterId, pageable)
-                : jobRepository.findByRecruiterId(recruiterId, pageable);
+                ? jobRepository.findByCompanyIdAndActiveTrue(companyId, pageable)
+                : jobRepository.findByCompanyId(companyId, pageable);
         return toManagementPageResponse(page);
     }
 
     public JobManagementResponse getByIdForRecruiter(Long jobId, Long recruiterId) {
         Job job = findOrThrow(jobId);
-        if (!job.getRecruiter().getId().equals(recruiterId)) {
-            throw new ForbiddenException("You do not own this job");
-        }
+        requireSameCompany(job, findRecruiterOrThrow(recruiterId));
         return toManagementResponse(job);
     }
 
@@ -119,9 +120,7 @@ public class JobService {
     @Transactional
     public JobManagementResponse update(Long jobId, UpdateJobRequest req, Long recruiterId) {
         Job job = findOrThrow(jobId);
-        if (!job.getRecruiter().getId().equals(recruiterId)) {
-            throw new ForbiddenException("You do not own this job");
-        }
+        requireSameCompany(job, findRecruiterOrThrow(recruiterId));
         if (req.getTitle() != null) job.setTitle(req.getTitle().trim());
         if (req.getDescription() != null) job.setDescription(req.getDescription().trim());
         if (req.getLocation() != null) job.setLocation(req.getLocation().trim());
@@ -137,9 +136,7 @@ public class JobService {
     @Transactional
     public void delete(Long jobId, Long recruiterId) {
         Job job = findOrThrow(jobId);
-        if (!job.getRecruiter().getId().equals(recruiterId)) {
-            throw new ForbiddenException("You do not own this job");
-        }
+        requireSameCompany(job, findRecruiterOrThrow(recruiterId));
         jobRepository.delete(job);
     }
 
@@ -155,6 +152,19 @@ public class JobService {
     private Job findOrThrow(Long id) {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found: " + id));
+    }
+
+    private User findRecruiterOrThrow(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
+    }
+
+    private void requireSameCompany(Job job, User recruiter) {
+        Long jobCompanyId       = job.getRecruiter().getCompany() != null ? job.getRecruiter().getCompany().getId() : null;
+        Long recruiterCompanyId = recruiter.getCompany() != null ? recruiter.getCompany().getId() : null;
+        if (jobCompanyId == null || !jobCompanyId.equals(recruiterCompanyId)) {
+            throw new ForbiddenException("You do not have access to this job");
+        }
     }
 
     // Used internally (e.g. from ApplicationService) — no active check, preserves history

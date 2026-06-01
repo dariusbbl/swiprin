@@ -16,6 +16,8 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     long countByCompanyIdAndActiveTrue(Long companyId);
 
+    Page<Job> findByCompanyId(Long companyId, Pageable pageable);
+
     Page<Job> findByRecruiterId(Long recruiterId, Pageable pageable);
 
     Page<Job> findByRecruiterIdAndActiveTrue(Long recruiterId, Pageable pageable);
