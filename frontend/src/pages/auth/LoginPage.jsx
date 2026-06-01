@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { MonitorSmartphone } from 'lucide-react';
+import { MonitorSmartphone, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import styles from './AuthPage.module.css';
 
 export default function LoginPage() {
   const { login, loading } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm]   = useState({ email: '', password: '', remember: false });
-  const [error, setError] = useState('');
+  const [form, setForm]     = useState({ email: '', password: '', remember: false });
+  const [error, setError]   = useState('');
+  const [showPw, setShowPw] = useState(false);
 
   const handle = (e) => {
     const { name, value, type, checked } = e.target;
@@ -54,9 +55,15 @@ export default function LoginPage() {
             </div>
             <div className={styles.field}>
               <label>Password</label>
-              <input type="password" name="password" value={form.password}
-                onChange={handle} required autoComplete="current-password"
-                className="form-control" placeholder="••••••••" />
+              <div className={styles.pwWrap}>
+                <input type={showPw ? 'text' : 'password'} name="password" value={form.password}
+                  onChange={handle} required autoComplete="current-password"
+                  className="form-control" placeholder="••••••••" />
+                <button type="button" className={styles.pwToggle}
+                  onClick={() => setShowPw(v => !v)} tabIndex={-1} aria-label={showPw ? 'Hide password' : 'Show password'}>
+                  {showPw ? <Eye size={16} /> : <EyeOff size={16} />}
+                </button>
+              </div>
             </div>
 
             <div className={styles.rememberRow}>
@@ -64,7 +71,7 @@ export default function LoginPage() {
                 <input type="checkbox" name="remember" checked={form.remember} onChange={handle} />
                 <span>Remember me</span>
               </label>
-              <span className={styles.forgotLink}>Forgot password?</span>
+              {/* <span className={styles.forgotLink}>Forgot password?</span> */}
             </div>
 
             <button type="submit" className={`btn btn-primary w-100 ${styles.submit}`} disabled={loading}>

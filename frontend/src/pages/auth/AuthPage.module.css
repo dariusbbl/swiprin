@@ -52,6 +52,16 @@
 .field { display: flex; flex-direction: column; gap: .3rem; }
 .field label { font-size: .8rem; font-weight: 600; color: var(--text-2); }
 
+.pwWrap { position: relative; display: flex; align-items: center; }
+.pwWrap .form-control { padding-right: 2.5rem; width: 100%; }
+.pwToggle {
+  position: absolute; right: .65rem;
+  background: none; border: none; padding: 0; cursor: pointer;
+  color: var(--text-3); display: flex; align-items: center;
+  transition: color .15s;
+}
+.pwToggle:hover { color: var(--text); }
+
 .submit { margin-top: .4rem; padding: .65rem; font-weight: 700; }
 
 .footer { text-align: center; font-size: .85rem; color: var(--text-2); margin-top: 1.25rem; }
