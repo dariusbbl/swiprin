@@ -8,6 +8,7 @@ import ConfirmModal from '../../components/ui/ConfirmModal';
 import Tag from '../../components/ui/Tag';
 import InterviewDetailsModal from '../../components/candidate/InterviewDetailsModal';
 import CompanyProfileModal from '../../components/ui/CompanyProfileModal';
+import Modal from '../../components/ui/Modal';
 import styles from './MyApplicationsPage.module.css';
 
 const STATUS_TABS = [
@@ -35,6 +36,7 @@ export default function MyApplicationsPage() {
   const [withdrawing, setWithdrawing]           = useState(false);
   const [ivApp, setIvApp]                       = useState(null);
   const [profileCompany, setProfileCompany]     = useState(null);
+  const [feedbackApp, setFeedbackApp]           = useState(null);
 
   const shortlistedParam = shortlistedFilter === 'true' ? true : shortlistedFilter === 'false' ? false : null;
 
@@ -172,6 +174,11 @@ export default function MyApplicationsPage() {
                             Withdraw
                           </button>
                         )}
+                        {app.status === 'REJECTED' && app.rejectionNote && (
+                          <button className={styles.feedbackBtn} onClick={() => setFeedbackApp(app)}>
+                            View feedback
+                          </button>
+                        )}
                         {app.status === 'INTERVIEW' && (
                           <button className={styles.ivBtn} onClick={() => setIvApp(app)}
                             title="View interview details">
@@ -207,6 +214,12 @@ export default function MyApplicationsPage() {
         open={!!profileCompany} onClose={() => setProfileCompany(null)}
         company={profileCompany}
       />
+
+      <Modal open={!!feedbackApp} onClose={() => setFeedbackApp(null)}
+        title={`Feedback — ${feedbackApp?.job?.title ?? ''}`}>
+        <div className={styles.feedbackBody}
+          dangerouslySetInnerHTML={{ __html: feedbackApp?.rejectionNote ?? '' }} />
+      </Modal>
     </div>
   );
 }

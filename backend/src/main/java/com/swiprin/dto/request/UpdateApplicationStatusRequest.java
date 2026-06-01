@@ -9,4 +9,6 @@ public class UpdateApplicationStatusRequest {
 
     @NotNull
     private ApplicationStatus status;
+
+    private String rejectionNote;
 }

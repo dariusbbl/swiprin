@@ -42,6 +42,9 @@ public class Application {
     @Column(name = "match_percent")
     private Integer matchPercent;
 
+    @Column(name = "rejection_note", columnDefinition = "TEXT")
+    private String rejectionNote;
+
     @Column(nullable = false)
     @Builder.Default
     private Boolean shortlisted = false;

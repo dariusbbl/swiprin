@@ -22,5 +22,6 @@ public class ApplicationManagementResponse {
     private ApplicationStatus status;
     private Integer matchPercent;
     private Boolean shortlisted;
+    private String rejectionNote;
     private LocalDateTime appliedAt;
 }
