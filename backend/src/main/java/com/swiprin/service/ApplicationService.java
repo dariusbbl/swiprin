@@ -156,17 +156,23 @@ public class ApplicationService {
 
         ApplicationStatus oldStatus = application.getStatus();
         application.setStatus(req.getStatus());
+
+        if (req.getStatus() == ApplicationStatus.REJECTED) {
+            String note = req.getRejectionNote();
+            application.setRejectionNote(note != null && !note.isBlank() ? note.trim() : null);
+            application.setShortlisted(false);
+        }
+
         Application saved = applicationRepository.save(application);
 
         if (!oldStatus.equals(req.getStatus())) {
-            notificationService.send(
-                    application.getUser().getId(),
-                    NotificationType.STATUS_UPDATE,
-                    "Your application for " + application.getJob().getTitle()
-                            + " at <strong>" + application.getJob().getCompany().getName() + "</strong>"
-                            + " status updated to: " + req.getStatus().name(),
-                    saved.getId()
-            );
+            String msg = "Your application for " + application.getJob().getTitle()
+                    + " at <strong>" + application.getJob().getCompany().getName() + "</strong>"
+                    + " status updated to: " + req.getStatus().name();
+            if (req.getStatus() == ApplicationStatus.REJECTED && application.getRejectionNote() != null) {
+                msg += ". The recruiter left feedback — check your applications for details.";
+            }
+            notificationService.send(application.getUser().getId(), NotificationType.STATUS_UPDATE, msg, saved.getId());
         }
 
         return toManagementResponse(saved);
@@ -181,6 +187,10 @@ public class ApplicationService {
         Application application = findOrThrow(id);
         if (!application.getJob().getRecruiter().getId().equals(recruiterId)) {
             throw new ForbiddenException("You do not own this application's job");
+        }
+
+        if (application.getStatus() == ApplicationStatus.REJECTED) {
+            throw new BadRequestException("Cannot shortlist a rejected candidate. Change their status first.");
         }
 
         boolean nowShortlisted = !Boolean.TRUE.equals(application.getShortlisted());
@@ -363,6 +373,7 @@ public class ApplicationService {
                 .status(a.getStatus())
                 .matchPercent(a.getMatchPercent())
                 .shortlisted(a.getShortlisted())
+                .rejectionNote(a.getRejectionNote())
                 .appliedAt(a.getAppliedAt())
                 .build();
     }
@@ -376,6 +387,7 @@ public class ApplicationService {
                 .status(a.getStatus())
                 .matchPercent(a.getMatchPercent())
                 .shortlisted(a.getShortlisted())
+                .rejectionNote(a.getRejectionNote())
                 .appliedAt(a.getAppliedAt())
                 .build();
     }

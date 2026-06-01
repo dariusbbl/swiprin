@@ -150,6 +150,22 @@
 }
 .companyBtn:hover { color: var(--accent); }
 
+.feedbackBtn {
+  font-size: .78rem; font-weight: 600; padding: .25rem .6rem;
+  background: var(--surface-2); border: 1.5px solid var(--border);
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+  color: var(--text-2); white-space: nowrap; transition: border-color .15s, color .15s;
+}
+.feedbackBtn:hover { border-color: var(--accent); color: var(--accent); }
+
+.feedbackBody {
+  font-size: .9rem; line-height: 1.65; color: var(--text-2);
+}
+.feedbackBody p  { margin: 0 0 .6rem; }
+.feedbackBody ul, .feedbackBody ol { padding-left: 1.3rem; margin: 0 0 .6rem; }
+.feedbackBody strong { color: var(--text); }
+.feedbackBody em { font-style: italic; }
+
 .ivBtn {
   display: inline-flex; align-items: center; gap: .35rem;
   background: var(--accent-50); border: 1.5px solid var(--accent);

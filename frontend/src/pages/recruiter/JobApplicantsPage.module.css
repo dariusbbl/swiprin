@@ -1,5 +1,16 @@
 .page { display: flex; flex-direction: column; gap: 1.5rem; }
 
+.shortlistErrBanner {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: .65rem 1rem;
+  background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px;
+  font-size: .875rem; font-weight: 500; color: #c2410c;
+}
+.shortlistErrClose {
+  background: none; border: none; cursor: pointer; color: #c2410c;
+  font-size: .9rem; line-height: 1; padding: 0; flex-shrink: 0;
+}
+
 .header {
   display: flex; align-items: flex-start; justify-content: space-between;
   flex-wrap: wrap; gap: 1rem;

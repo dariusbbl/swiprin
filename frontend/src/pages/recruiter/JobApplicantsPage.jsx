@@ -12,6 +12,7 @@ import ConfirmModal from '../../components/ui/ConfirmModal';
 import Button from '../../components/ui/Button';
 import Avatar from '../../components/ui/Avatar';
 import InterviewModal from '../../components/recruiter/InterviewModal';
+import RejectionNoteModal from '../../components/recruiter/RejectionNoteModal';
 import CandidateProfileModal from '../../components/ui/CandidateProfileModal';
 import styles from './JobApplicantsPage.module.css';
 
@@ -40,6 +41,9 @@ export default function JobApplicantsPage() {
   const [deleting, setDeleting]             = useState(false);
   const [interviewApp, setInterviewApp]     = useState(null);
   const [profileApp, setProfileApp]         = useState(null);
+  const [rejectApp, setRejectApp]           = useState(null);
+  const [rejecting, setRejecting]           = useState(false);
+  const [shortlistErr, setShortlistErr]     = useState('');
 
   const shortlistedParam = shortlistedFilter === 'true' ? true : shortlistedFilter === 'false' ? false : null;
 
@@ -60,15 +64,28 @@ export default function JobApplicantsPage() {
   }, [jobId]);
 
   const handleStatusChange = async (app, newStatus) => {
-    if (newStatus === 'INTERVIEW') {
-      setInterviewApp(app);
-      return;
-    }
+    if (newStatus === 'INTERVIEW') { setInterviewApp(app); return; }
+    if (newStatus === 'REJECTED')  { setRejectApp(app);   return; }
     await updateAppStatus(app.id, newStatus);
     load();
   };
 
+  const handleRejectConfirm = async (note) => {
+    setRejecting(true);
+    try {
+      await updateAppStatus(rejectApp.id, 'REJECTED', note || null);
+      setRejectApp(null);
+      load();
+    } finally {
+      setRejecting(false);
+    }
+  };
+
   const handleToggleShortlist = async (app) => {
+    if (app.status === 'REJECTED') {
+      setShortlistErr('Cannot shortlist a rejected candidate. Change their status first.');
+      return;
+    }
     setData(prev => prev ? {
       ...prev,
       content: prev.content.map(a =>
@@ -161,6 +178,13 @@ export default function JobApplicantsPage() {
         )}
       </div>
 
+      {shortlistErr && (
+        <div className={styles.shortlistErrBanner}>
+          {shortlistErr}
+          <button className={styles.shortlistErrClose} onClick={() => setShortlistErr('')}>✕</button>
+        </div>
+      )}
+
       {loading && <p className={styles.loading}>Loading…</p>}
 
       {!loading && displayed.length === 0 && (
@@ -202,8 +226,8 @@ export default function JobApplicantsPage() {
                     <td><Badge status={app.status} /></td>
                     <td>
                       <button className={styles.shortlistTagBtn} onClick={() => handleToggleShortlist(app)}>
-                        <Tag variant={app.shortlisted ? 'success' : 'default'}>
-                          {app.shortlisted ? 'Shortlisted' : '+ Shortlist'}
+                        <Tag variant={app.shortlisted && app.status !== 'REJECTED' ? 'success' : 'default'}>
+                          {app.shortlisted && app.status !== 'REJECTED' ? 'Shortlisted' : '+ Shortlist'}
                         </Tag>
                       </button>
                     </td>
@@ -259,6 +283,13 @@ export default function JobApplicantsPage() {
         app={interviewApp}
         onClose={() => setInterviewApp(null)}
         onDone={() => { setInterviewApp(null); load(); }}
+      />
+
+      <RejectionNoteModal
+        open={!!rejectApp}
+        onClose={() => setRejectApp(null)}
+        onConfirm={handleRejectConfirm}
+        loading={rejecting}
       />
 
       <ConfirmModal
