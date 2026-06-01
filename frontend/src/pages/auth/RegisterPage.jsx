@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { CheckCircle2, Clock } from 'lucide-react';
+import { CheckCircle2, Clock, Eye, EyeOff } from 'lucide-react';
 import { registerCandidate, registerRecruiter } from '../../api/auth';
 import styles from './AuthPage.module.css';
 
@@ -11,6 +11,8 @@ export default function RegisterPage() {
   const [error, setError]           = useState('');
   const [loading, setLoading]       = useState(false);
   const [done, setDone]             = useState(false); // shows confirmation screen
+  const [showPw, setShowPw]         = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const [form, setForm] = useState({
     fullName: '', email: '', password: '', confirmPassword: '',
@@ -130,15 +132,28 @@ export default function RegisterPage() {
           </div>
           <div className={styles.field}>
             <label>Password</label>
-            <input type="password" name="password" value={form.password} onChange={handle}
-              required minLength={8} className="form-control" placeholder="Min. 8 characters" />
+            <div className={styles.pwWrap}>
+              <input type={showPw ? 'text' : 'password'} name="password" value={form.password}
+                onChange={handle} required minLength={8}
+                className="form-control" placeholder="Min. 8 characters" />
+              <button type="button" className={styles.pwToggle}
+                onClick={() => setShowPw(v => !v)} tabIndex={-1} aria-label={showPw ? 'Hide password' : 'Show password'}>
+                {showPw ? <Eye size={16} /> : <EyeOff size={16} />}
+              </button>
+            </div>
           </div>
           <div className={styles.field}>
             <label>Confirm password</label>
-            <input type="password" name="confirmPassword" value={form.confirmPassword}
-              onChange={handle} required
-              className={['form-control', passwordMismatch ? styles.inputError : ''].join(' ')}
-              placeholder="Repeat password" />
+            <div className={styles.pwWrap}>
+              <input type={showConfirm ? 'text' : 'password'} name="confirmPassword"
+                value={form.confirmPassword} onChange={handle} required
+                className={['form-control', passwordMismatch ? styles.inputError : ''].join(' ')}
+                placeholder="Repeat password" />
+              <button type="button" className={styles.pwToggle}
+                onClick={() => setShowConfirm(v => !v)} tabIndex={-1} aria-label={showConfirm ? 'Hide password' : 'Show password'}>
+                {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
             {passwordMismatch && <span className={styles.fieldError}>Passwords don't match</span>}
           </div>
 
