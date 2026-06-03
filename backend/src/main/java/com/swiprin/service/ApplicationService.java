@@ -159,6 +159,17 @@ public class ApplicationService {
             application.setShortlisted(false);
         }
 
+        if (req.getStatus() == ApplicationStatus.OFFER) {
+            application.setOfferText(req.getOfferText());
+            application.setOfferSalary(req.getOfferSalary());
+            application.setOfferSalaryType(req.getOfferSalaryType());
+            application.setOfferEmploymentType(req.getOfferEmploymentType());
+            application.setOfferDeadline(req.getOfferDeadline());
+            application.setOfferStartDate(req.getOfferStartDate());
+            application.setOfferAcceptedAt(null);
+            application.setOfferDeclinedAt(null);
+        }
+
         Application saved = applicationRepository.save(application);
 
         if (!oldStatus.equals(req.getStatus())) {
@@ -167,6 +178,11 @@ public class ApplicationService {
                     + " status updated to: " + req.getStatus().name();
             if (req.getStatus() == ApplicationStatus.REJECTED && application.getRejectionNote() != null) {
                 msg += ". The recruiter left feedback — check your applications for details.";
+            }
+            if (req.getStatus() == ApplicationStatus.OFFER) {
+                msg = "You received a job offer for " + application.getJob().getTitle()
+                        + " at <strong>" + application.getJob().getCompany().getName() + "</strong>"
+                        + ". Check your applications to view and respond to the offer.";
             }
             notificationService.send(application.getUser().getId(), NotificationType.STATUS_UPDATE, msg, saved.getId());
         }
@@ -353,6 +369,76 @@ public class ApplicationService {
                         "No default CV found. Please select or create a CV before applying"));
     }
 
+    @Transactional
+    public ApplicationResponse acceptOffer(Long id, Long userId) {
+        Application application = findOrThrow(id);
+        if (!application.getUser().getId().equals(userId)) {
+            throw new ForbiddenException("This is not your application");
+        }
+        if (application.getStatus() != ApplicationStatus.OFFER) {
+            throw new BadRequestException("No active offer on this application");
+        }
+        if (application.getOfferAcceptedAt() != null || application.getOfferDeclinedAt() != null) {
+            throw new BadRequestException("Offer already responded to");
+        }
+        application.setOfferAcceptedAt(java.time.LocalDateTime.now());
+        Application saved = applicationRepository.save(application);
+        notificationService.send(
+                application.getJob().getRecruiter().getId(),
+                NotificationType.STATUS_UPDATE,
+                application.getUser().getFullName() + " accepted your offer for "
+                        + application.getJob().getTitle()
+                        + " at <strong>" + application.getJob().getCompany().getName() + "</strong>",
+                saved.getId()
+        );
+        return toCandidateResponse(saved);
+    }
+
+    @Transactional
+    public ApplicationResponse declineOffer(Long id, Long userId) {
+        Application application = findOrThrow(id);
+        if (!application.getUser().getId().equals(userId)) {
+            throw new ForbiddenException("This is not your application");
+        }
+        if (application.getStatus() != ApplicationStatus.OFFER) {
+            throw new BadRequestException("No active offer on this application");
+        }
+        if (application.getOfferAcceptedAt() != null || application.getOfferDeclinedAt() != null) {
+            throw new BadRequestException("Offer already responded to");
+        }
+        application.setOfferDeclinedAt(java.time.LocalDateTime.now());
+        application.setStatus(ApplicationStatus.WITHDRAWN);
+        Application saved = applicationRepository.save(application);
+        notificationService.send(
+                application.getJob().getRecruiter().getId(),
+                NotificationType.STATUS_UPDATE,
+                application.getUser().getFullName() + " declined your offer for "
+                        + application.getJob().getTitle()
+                        + " at <strong>" + application.getJob().getCompany().getName() + "</strong>",
+                saved.getId()
+        );
+        return toCandidateResponse(saved);
+    }
+
+    @Transactional
+    public int autoRejectExpiredOffers() {
+        java.util.List<Application> expired = applicationRepository.findExpiredOffers(java.time.LocalDate.now());
+        for (Application app : expired) {
+            app.setStatus(ApplicationStatus.REJECTED);
+            app.setRejectionNote(null);
+            applicationRepository.save(app);
+            notificationService.send(
+                    app.getUser().getId(),
+                    NotificationType.STATUS_UPDATE,
+                    "Your offer for " + app.getJob().getTitle()
+                            + " at <strong>" + app.getJob().getCompany().getName() + "</strong>"
+                            + " has expired without a response and was automatically withdrawn.",
+                    app.getId()
+            );
+        }
+        return expired.size();
+    }
+
     private Application findOrThrow(Long id) {
         return applicationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found: " + id));
@@ -377,6 +463,14 @@ public class ApplicationService {
                 .matchPercent(a.getMatchPercent())
                 .shortlisted(a.getShortlisted())
                 .rejectionNote(a.getRejectionNote())
+                .offerText(a.getOfferText())
+                .offerSalary(a.getOfferSalary())
+                .offerSalaryType(a.getOfferSalaryType())
+                .offerEmploymentType(a.getOfferEmploymentType())
+                .offerDeadline(a.getOfferDeadline())
+                .offerStartDate(a.getOfferStartDate())
+                .offerAcceptedAt(a.getOfferAcceptedAt())
+                .offerDeclinedAt(a.getOfferDeclinedAt())
                 .appliedAt(a.getAppliedAt())
                 .build();
     }
@@ -391,6 +485,14 @@ public class ApplicationService {
                 .matchPercent(a.getMatchPercent())
                 .shortlisted(a.getShortlisted())
                 .rejectionNote(a.getRejectionNote())
+                .offerText(a.getOfferText())
+                .offerSalary(a.getOfferSalary())
+                .offerSalaryType(a.getOfferSalaryType())
+                .offerEmploymentType(a.getOfferEmploymentType())
+                .offerDeadline(a.getOfferDeadline())
+                .offerStartDate(a.getOfferStartDate())
+                .offerAcceptedAt(a.getOfferAcceptedAt())
+                .offerDeclinedAt(a.getOfferDeclinedAt())
                 .appliedAt(a.getAppliedAt())
                 .build();
     }

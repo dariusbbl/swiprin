@@ -1,0 +1,36 @@
+.wrap { display: flex; flex-direction: column; gap: 1.1rem; }
+
+.subtitle { font-size: .875rem; color: var(--text-2); margin: 0; }
+.subtitle strong { color: var(--text); }
+
+.errorBanner {
+  padding: .6rem .9rem; background: #fee2e2; border: 1px solid #fecaca;
+  border-radius: 8px; font-size: .85rem; color: #991b1b; font-weight: 500;
+}
+
+.section { display: flex; flex-direction: column; gap: .35rem; }
+.label { font-size: .8rem; font-weight: 600; color: var(--text-2); }
+.opt { font-weight: 400; color: var(--text-3); }
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+.salaryRow { display: flex; flex-direction: column; gap: .4rem; }
+.salaryTypeRow { display: flex; gap: .4rem; }
+
+.empRow { display: flex; flex-wrap: wrap; gap: .4rem; }
+
+.typeCard {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 8px;
+  border: 1.5px solid var(--border); cursor: pointer;
+  font-size: .8rem; font-weight: 600; color: var(--text-2);
+  transition: border-color .15s, background .15s, color .15s;
+  user-select: none;
+}
+.typeCard input { display: none; }
+.typeCard:hover { border-color: var(--accent); }
+.typeActive { border-color: var(--accent); background: var(--accent-50); color: var(--accent); }
+
+.deadlineHint { font-size: .75rem; color: var(--text-3); margin-top: .15rem; }
+
+.actions { display: flex; justify-content: flex-end; gap: .75rem; padding-top: .25rem; }

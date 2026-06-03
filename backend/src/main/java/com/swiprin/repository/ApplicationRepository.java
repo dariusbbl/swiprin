@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
@@ -66,6 +68,15 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     @Query("SELECT COUNT(a) FROM Application a JOIN a.job j WHERE j.company.id = :companyId AND a.shortlisted = true")
     long countShortlistedByCompanyId(@Param("companyId") Long companyId);
+
+    @Query("""
+            SELECT a FROM Application a
+            WHERE a.status = 'OFFER'
+              AND a.offerDeadline < :today
+              AND a.offerAcceptedAt IS NULL
+              AND a.offerDeclinedAt IS NULL
+            """)
+    List<Application> findExpiredOffers(@Param("today") LocalDate today);
 
     // Applications for all jobs of a recruiter, sorted by match percent desc
     @Query("""

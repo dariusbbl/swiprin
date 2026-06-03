@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 // Candidate-facing: shows their own application status and match percent
@@ -22,5 +23,13 @@ public class ApplicationResponse {
     private Integer matchPercent;
     private Boolean shortlisted;
     private String rejectionNote;
+    private String    offerText;
+    private Integer   offerSalary;
+    private String    offerSalaryType;
+    private String    offerEmploymentType;
+    private LocalDate offerDeadline;
+    private LocalDate offerStartDate;
+    private LocalDateTime offerAcceptedAt;
+    private LocalDateTime offerDeclinedAt;
     private LocalDateTime appliedAt;
 }
