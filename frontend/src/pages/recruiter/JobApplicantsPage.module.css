@@ -1,5 +1,15 @@
 .page { display: flex; flex-direction: column; gap: 1.5rem; }
 
+.statusCell { display: flex; flex-direction: column; gap: .25rem; align-items: flex-start; }
+
+.offerResponse {
+  font-size: .7rem; font-weight: 700; padding: .1rem .45rem;
+  border-radius: 4px; letter-spacing: .02em;
+}
+.offerAccepted { background: #f0fdf4; color: #16a34a; }
+.offerDeclined { background: #fef2f2; color: #dc2626; }
+.offerPending  { background: #fff7ed; color: #c2410c; }
+
 .shortlistErrBanner {
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
   padding: .65rem 1rem;

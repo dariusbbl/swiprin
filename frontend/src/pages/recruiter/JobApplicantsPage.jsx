@@ -13,6 +13,7 @@ import Button from '../../components/ui/Button';
 import Avatar from '../../components/ui/Avatar';
 import InterviewModal from '../../components/recruiter/InterviewModal';
 import RejectionNoteModal from '../../components/recruiter/RejectionNoteModal';
+import OfferModal from '../../components/recruiter/OfferModal';
 import CandidateProfileModal from '../../components/ui/CandidateProfileModal';
 import styles from './JobApplicantsPage.module.css';
 
@@ -43,6 +44,8 @@ export default function JobApplicantsPage() {
   const [profileApp, setProfileApp]         = useState(null);
   const [rejectApp, setRejectApp]           = useState(null);
   const [rejecting, setRejecting]           = useState(false);
+  const [offerApp, setOfferApp]             = useState(null);
+  const [offering, setOffering]             = useState(false);
   const [shortlistErr, setShortlistErr]     = useState('');
 
   const shortlistedParam = shortlistedFilter === 'true' ? true : shortlistedFilter === 'false' ? false : null;
@@ -66,6 +69,7 @@ export default function JobApplicantsPage() {
   const handleStatusChange = async (app, newStatus) => {
     if (newStatus === 'INTERVIEW') { setInterviewApp(app); return; }
     if (newStatus === 'REJECTED')  { setRejectApp(app);   return; }
+    if (newStatus === 'OFFER')     { setOfferApp(app);    return; }
     await updateAppStatus(app.id, newStatus);
     load();
   };
@@ -78,6 +82,17 @@ export default function JobApplicantsPage() {
       load();
     } finally {
       setRejecting(false);
+    }
+  };
+
+  const handleOfferConfirm = async (offerData) => {
+    setOffering(true);
+    try {
+      await updateAppStatus(offerApp.id, 'OFFER', null, offerData);
+      setOfferApp(null);
+      load();
+    } finally {
+      setOffering(false);
     }
   };
 
@@ -223,7 +238,20 @@ export default function JobApplicantsPage() {
                     <td className={styles.matchCell}>
                       <MatchBar value={app.matchPercent} />
                     </td>
-                    <td><Badge status={app.status} /></td>
+                    <td>
+                      <div className={styles.statusCell}>
+                        <Badge status={app.status} />
+                        {app.status === 'OFFER' && app.offerAcceptedAt && (
+                          <span className={styles.offerResponse + ' ' + styles.offerAccepted}>Accepted</span>
+                        )}
+                        {app.status === 'OFFER' && app.offerDeclinedAt && (
+                          <span className={styles.offerResponse + ' ' + styles.offerDeclined}>Declined</span>
+                        )}
+                        {app.status === 'OFFER' && !app.offerAcceptedAt && !app.offerDeclinedAt && (
+                          <span className={styles.offerResponse + ' ' + styles.offerPending}>Awaiting</span>
+                        )}
+                      </div>
+                    </td>
                     <td>
                       <button className={styles.shortlistTagBtn} onClick={() => handleToggleShortlist(app)}>
                         <Tag variant={app.shortlisted && app.status !== 'REJECTED' ? 'success' : 'default'}>
@@ -290,6 +318,14 @@ export default function JobApplicantsPage() {
         onClose={() => setRejectApp(null)}
         onConfirm={handleRejectConfirm}
         loading={rejecting}
+      />
+
+      <OfferModal
+        open={!!offerApp}
+        app={offerApp}
+        onClose={() => setOfferApp(null)}
+        onConfirm={handleOfferConfirm}
+        loading={offering}
       />
 
       <ConfirmModal

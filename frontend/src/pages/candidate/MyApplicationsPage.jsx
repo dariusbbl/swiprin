@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ClipboardList, Check, CalendarDays } from 'lucide-react';
-import { getMyApplications, getMyApplicationCounts, withdrawApplication } from '../../api/applications';
+import { getMyApplications, getMyApplicationCounts, withdrawApplication, acceptOffer, declineOffer } from '../../api/applications';
 import Badge from '../../components/ui/Badge';
 import Pagination from '../../components/ui/Pagination';
 import EmptyState from '../../components/ui/EmptyState';
@@ -37,6 +37,7 @@ export default function MyApplicationsPage() {
   const [ivApp, setIvApp]                       = useState(null);
   const [profileCompany, setProfileCompany]     = useState(null);
   const [feedbackApp, setFeedbackApp]           = useState(null);
+  const [offerApp, setOfferApp]                 = useState(null);
 
   const shortlistedParam = shortlistedFilter === 'true' ? true : shortlistedFilter === 'false' ? false : null;
 
@@ -67,6 +68,16 @@ export default function MyApplicationsPage() {
     } finally {
       setWithdrawing(false);
     }
+  };
+
+  const handleAcceptOffer = async (appId) => {
+    await acceptOffer(appId);
+    load(); loadCounts();
+  };
+
+  const handleDeclineOffer = async (appId) => {
+    await declineOffer(appId);
+    load(); loadCounts();
   };
 
   const selectStatus = (key) => { setStatus(key); setPage(0); };
@@ -179,6 +190,11 @@ export default function MyApplicationsPage() {
                             View feedback
                           </button>
                         )}
+                        {app.status === 'OFFER' && (
+                          <button className={styles.offerBtn} onClick={() => setOfferApp(app)}>
+                            View offer
+                          </button>
+                        )}
                         {app.status === 'INTERVIEW' && (
                           <button className={styles.ivBtn} onClick={() => setIvApp(app)}
                             title="View interview details">
@@ -219,6 +235,83 @@ export default function MyApplicationsPage() {
         title={`Feedback — ${feedbackApp?.job?.title ?? ''}`}>
         <div className={styles.feedbackBody}
           dangerouslySetInnerHTML={{ __html: feedbackApp?.rejectionNote ?? '' }} />
+      </Modal>
+
+      <Modal open={!!offerApp} onClose={() => setOfferApp(null)}
+        title={`Job offer — ${offerApp?.job?.title ?? ''}`} size="md">
+        {offerApp && (
+          <div className={styles.offerWrap}>
+
+            {offerApp.offerText && (
+              <div className={styles.offerSection}>
+                <p className={styles.offerSectionLabel}>Offer letter</p>
+                <div className={styles.feedbackBody}
+                  dangerouslySetInnerHTML={{ __html: offerApp.offerText }} />
+              </div>
+            )}
+
+            <div className={styles.offerMeta}>
+              {offerApp.offerSalary && (
+                <div className={styles.offerMetaItem}>
+                  <span className={styles.offerMetaLabel}>Salary</span>
+                  <span className={styles.offerMetaValue}>
+                    €{offerApp.offerSalary.toLocaleString()} / month
+                    <span className={styles.salaryBadge}>{offerApp.offerSalaryType}</span>
+                  </span>
+                </div>
+              )}
+              {offerApp.offerEmploymentType && (
+                <div className={styles.offerMetaItem}>
+                  <span className={styles.offerMetaLabel}>Employment</span>
+                  <span className={styles.offerMetaValue}>
+                    {{ FULL_TIME: 'Full-time', PART_TIME: 'Part-time', INTERNSHIP: 'Internship', CONTRACT: 'Contract' }[offerApp.offerEmploymentType]}
+                  </span>
+                </div>
+              )}
+              {offerApp.offerDeadline && (
+                <div className={styles.offerMetaItem}>
+                  <span className={styles.offerMetaLabel}>Respond until</span>
+                  <span className={styles.offerMetaValue}>
+                    {new Date(offerApp.offerDeadline + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}
+                  </span>
+                </div>
+              )}
+              {offerApp.offerStartDate && (
+                <div className={styles.offerMetaItem}>
+                  <span className={styles.offerMetaLabel}>Expected start</span>
+                  <span className={styles.offerMetaValue}>
+                    {new Date(offerApp.offerStartDate + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {!offerApp.offerAcceptedAt && !offerApp.offerDeclinedAt && (
+              <div className={styles.offerActions}>
+                <button className={styles.declineBtn}
+                  onClick={() => { handleDeclineOffer(offerApp.id); setOfferApp(null); }}>
+                  Decline
+                </button>
+                <button className={styles.acceptBtn}
+                  onClick={() => { handleAcceptOffer(offerApp.id); setOfferApp(null); }}>
+                  Accept offer
+                </button>
+              </div>
+            )}
+
+            {offerApp.offerAcceptedAt && (
+              <p className={styles.offerResponse + ' ' + styles.offerAccepted}>
+                You accepted this offer.
+              </p>
+            )}
+            {offerApp.offerDeclinedAt && (
+              <p className={styles.offerResponse + ' ' + styles.offerDeclined}>
+                You declined this offer.
+              </p>
+            )}
+
+          </div>
+        )}
       </Modal>
     </div>
   );

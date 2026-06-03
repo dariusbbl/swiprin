@@ -78,6 +78,22 @@ public class ApplicationController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}/offer/accept")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    @Operation(summary = "Accept a job offer")
+    public ResponseEntity<ApplicationResponse> acceptOffer(@PathVariable Long id,
+                                                            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(applicationService.acceptOffer(id, principal.getId()));
+    }
+
+    @PutMapping("/{id}/offer/decline")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    @Operation(summary = "Decline a job offer")
+    public ResponseEntity<ApplicationResponse> declineOffer(@PathVariable Long id,
+                                                             @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(applicationService.declineOffer(id, principal.getId()));
+    }
+
     @GetMapping("/me/interviews")
     @PreAuthorize("hasRole('CANDIDATE')")
     @Operation(summary = "Get all scheduled interviews for the current candidate")

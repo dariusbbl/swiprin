@@ -7,8 +7,10 @@ export const getJobApplications  = (jobId, page = 0, status, shortlisted, sortBy
   client.get(`/applications/job/${jobId}?page=${page}&size=20${status ? `&status=${status}` : ''}${shortlisted != null ? `&shortlisted=${shortlisted}` : ''}&sortBy=${sortBy}&sortDir=${sortDir}`);
 export const applyToJob          = (data)              => client.post('/applications', data);
 export const withdrawApplication = (id)               => client.put(`/applications/${id}/withdraw`);
-export const updateAppStatus     = (id, status, rejectionNote) =>
-  client.put(`/applications/${id}/status`, { status, ...(rejectionNote != null ? { rejectionNote } : {}) });
+export const updateAppStatus     = (id, status, rejectionNote, offerData) =>
+  client.put(`/applications/${id}/status`, { status, ...(rejectionNote != null ? { rejectionNote } : {}), ...(offerData ?? {}) });
 export const deleteApplication   = (id)               => client.delete(`/applications/${id}`);
 export const toggleShortlist          = (id) => client.put(`/applications/${id}/shortlist`);
 export const getShortlistedCount      = ()  => client.get('/applications/shortlisted/count');
+export const acceptOffer              = (id) => client.put(`/applications/${id}/offer/accept`);
+export const declineOffer             = (id) => client.put(`/applications/${id}/offer/decline`);
