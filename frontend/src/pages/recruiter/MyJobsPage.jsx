@@ -16,10 +16,10 @@ import styles from './MyJobsPage.module.css';
 const WORK_MODES = ['ON_SITE', 'REMOTE', 'HYBRID'];
 const WORK_LABEL = { ON_SITE: 'On-site', REMOTE: 'Remote', HYBRID: 'Hybrid' };
 const SENIORITY_OPTS = [
-  { value: 'INTERNSHIP', label: 'Internship' },
-  { value: 'JUNIOR',     label: 'Junior' },
-  { value: 'MID',        label: 'Mid' },
-  { value: 'SENIOR',     label: 'Senior' },
+  { value: 'INTERNSHIP', label: 'Internship', years: '< 1 yr' },
+  { value: 'JUNIOR',     label: 'Junior',     years: '1–3 yrs' },
+  { value: 'MID',        label: 'Mid',        years: '3–5 yrs' },
+  { value: 'SENIOR',     label: 'Senior',     years: '5+ yrs' },
 ];
 const SENIORITY_LABEL = Object.fromEntries(SENIORITY_OPTS.map(o => [o.value, o.label]));
 
@@ -293,7 +293,10 @@ export default function MyJobsPage() {
                   <input type="radio" name="seniority" value={opt.value}
                     checked={form.seniority === opt.value}
                     onChange={() => setForm(f => ({ ...f, seniority: opt.value }))} />
-                  <span className={styles.payLabel}>{opt.label}</span>
+                  <span className={styles.senLabel}>
+                    <span className={styles.payLabel}>{opt.label}</span>
+                    <span className={styles.senYears}>{opt.years}</span>
+                  </span>
                 </label>
               ))}
             </div>
@@ -366,7 +369,7 @@ export default function MyJobsPage() {
           <section className={styles.guideSection}>
             <h6 className={styles.guideSectionTitle}>How the score is computed</h6>
             <p className={styles.guideIntro}>
-              Each application receives a score from 0–100% based on three components:
+              Each application receives a score from 0 - 100% based on three components:
             </p>
             <div className={styles.formulaRows}>
               <div className={styles.formulaRow}>
@@ -399,7 +402,7 @@ export default function MyJobsPage() {
                 </div>
                 <p className={styles.formulaDesc}>
                   How well the candidate's CV text covers the keywords, technologies and concepts
-                  from the job description. This is the dominant factor — a well-written description
+                  from the job description. This is the dominant factor, a well-written description
                   leads to more accurate matches.
                 </p>
               </div>
@@ -409,10 +412,10 @@ export default function MyJobsPage() {
           <section className={styles.guideSection}>
             <h6 className={styles.guideSectionTitle}>Tips for writing a good job description</h6>
             <ul className={styles.guideList}>
-              <li>Mention all required technologies and tools explicitly (e.g. <em>TensorFlow, Python, SQL</em>) — these carry the most weight in matching.</li>
+              <li>Mention all required technologies and tools explicitly (e.g. <em>TensorFlow, Python, SQL</em>) - these carry the most weight in matching.</li>
               <li>Use clear headings like <em>Requirements</em> and <em>Nice to have</em> to separate must-haves from optional skills.</li>
-              <li>Describe the actual work: <em>"build ML pipelines"</em>, <em>"optimize model performance"</em> — candidates whose CVs mirror this language will score higher.</li>
-              <li>Avoid filler text and generic phrases (<em>"fast-paced environment"</em>, <em>"team player"</em>) — they add noise without improving match quality.</li>
+              <li>Describe the actual work: <em>"build ML pipelines"</em>, <em>"optimize model performance"</em> - candidates whose CVs mirror this language will score higher.</li>
+              <li>Avoid filler text and generic phrases (<em>"fast-paced environment"</em>, <em>"team player"</em>) - they add noise without improving match quality.</li>
               <li>Use the same terminology that candidates would write in their CVs (e.g. <em>"machine learning"</em> rather than <em>"AI solutions"</em> if precision matters).</li>
             </ul>
           </section>
@@ -422,23 +425,23 @@ export default function MyJobsPage() {
             <div className={styles.thresholdGuide}>
               <div className={styles.thresholdRow}>
                 <span className={styles.thresholdBadge} style={{ background: '#f0fdf4', color: '#16a34a', borderColor: '#bbf7d0' }}>Internship</span>
-                <span className={styles.thresholdRange}>20–40%</span>
+                <span className={styles.thresholdRange}>20 - 40%</span>
                 <span className={styles.thresholdHint}>Candidates are early-stage; keep the bar accessible.</span>
               </div>
               <div className={styles.thresholdRow}>
                 <span className={styles.thresholdBadge} style={{ background: '#eff6ff', color: '#2563eb', borderColor: '#bfdbfe' }}>Junior</span>
-                <span className={styles.thresholdRange}>35–55%</span>
+                <span className={styles.thresholdRange}>35 - 55%</span>
                 <span className={styles.thresholdHint}>Expect partial skill coverage; reward strong CV alignment.</span>
               </div>
               <div className={styles.thresholdRow}>
                 <span className={styles.thresholdBadge} style={{ background: '#faf5ff', color: '#7c3aed', borderColor: '#ddd6fe' }}>Mid</span>
-                <span className={styles.thresholdRange}>50–65%</span>
+                <span className={styles.thresholdRange}>50 - 65%</span>
                 <span className={styles.thresholdHint}>Solid experience + skill match expected at this level.</span>
               </div>
               <div className={styles.thresholdRow}>
                 <span className={styles.thresholdBadge} style={{ background: '#fff7ed', color: '#c2410c', borderColor: '#fed7aa' }}>Senior</span>
-                <span className={styles.thresholdRange}>65–80%</span>
-                <span className={styles.thresholdHint}>High bar justified — seniority and full skill overlap expected.</span>
+                <span className={styles.thresholdRange}>65 - 80%</span>
+                <span className={styles.thresholdHint}>High bar justified; seniority and full skill overlap expected.</span>
               </div>
             </div>
           </section>
