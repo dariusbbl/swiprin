@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { FileText } from 'lucide-react';
 import { getMyProfile, upsertProfile, getFaculties, updateMe } from '../../api/users';
 import { getCvDrafts, createCvDraft, updateCvDraft, uploadCvFile, setDefaultCv, deleteCvDraft } from '../../api/cvDrafts';
@@ -30,6 +31,8 @@ const EMPTY_CV = { name: '', isDefault: false };
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
+  const [searchParams] = useSearchParams();
+  const isFirstLogin = searchParams.get('welcome') === '1';
 
   const [form, setForm]           = useState(EMPTY_PROFILE);
   const [faculties, setFaculties] = useState([]);
@@ -166,6 +169,16 @@ export default function ProfilePage() {
 
   return (
     <div className={styles.page}>
+
+      {isFirstLogin && (
+        <div className={styles.welcomeBanner}>
+          <p className={styles.welcomeTitle}>Welcome to Swiprin!</p>
+          <p className={styles.welcomeText}>
+            Before you start swiping through jobs, take a moment to complete your profile.
+            Adding your skills, education and links helps recruiters find you and improves your match scores.
+          </p>
+        </div>
+      )}
 
       <div className={styles.avatarRow}>
         <Avatar name={user?.fullName} size={64} />
