@@ -21,8 +21,15 @@ export default function LoginPage() {
     setError('');
     try {
       const user = await login(form.email, form.password);
-      if (user.role === 'CANDIDATE') navigate('/');
-      else if (user.role === 'RECRUITER') navigate('/recruiter');
+      if (user.role === 'CANDIDATE') {
+        const key = `profileSeen_${user.id}`;
+        if (!localStorage.getItem(key)) {
+          localStorage.setItem(key, '1');
+          navigate('/profile?welcome=1');
+        } else {
+          navigate('/');
+        }
+      } else if (user.role === 'RECRUITER') navigate('/recruiter');
       else navigate('/admin');
     } catch (err) {
       setError(err.response?.data?.message ?? 'Login failed. Check your credentials.');
