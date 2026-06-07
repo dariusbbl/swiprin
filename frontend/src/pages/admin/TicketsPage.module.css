@@ -8,6 +8,18 @@
 .sub   { font-size: .875rem; color: var(--text-2); margin-top: .2rem; }
 .loading { color: var(--text-3); }
 
+.sortChip {
+  padding: .4rem .85rem; border-radius: 99px;
+  border: 1.5px solid var(--border); background: var(--surface-2);
+  font-size: .82rem; font-weight: 600; color: var(--text-2);
+  cursor: pointer; white-space: nowrap;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.sortChip:hover { border-color: var(--accent); color: var(--accent); }
+.sortChipActive {
+  border-color: var(--accent); background: var(--accent-50); color: var(--accent);
+}
+
 .tableWrap {
   background: var(--surface);
   border: 1px solid var(--border);

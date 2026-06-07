@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, useCallback } from 'react';
 import { Ticket } from 'lucide-react';
-import { getAllTickets, resolveTicket, inProgressTicket, deleteTicket } from '../../api/tickets';
+import { getAllTickets, resolveTicket, inProgressTicket, deleteTicket, approveDeletion } from '../../api/tickets';
 import Tag from '../../components/ui/Tag';
 import Badge from '../../components/ui/Badge';
 import Pagination from '../../components/ui/Pagination';
@@ -11,10 +11,12 @@ import styles from './TicketsPage.module.css';
 
 const STATUS_OPTIONS = ['', 'OPEN', 'IN_PROGRESS', 'RESOLVED'];
 const STATUS_LABEL   = { '': 'All statuses', OPEN: 'Open', IN_PROGRESS: 'In progress', RESOLVED: 'Resolved' };
+const CAT_OPTIONS = ['', 'BUG_REPORT', 'FEATURE_REQUEST', 'ACCOUNT_ISSUE', 'DELETE_ACCOUNT', 'OTHER'];
 const PRIORITY_VARIANT = { LOW: 'default', MEDIUM: 'warn', HIGH: 'danger' };
+const PRIORITY_ORDER   = { HIGH: 0, MEDIUM: 1, LOW: 2 };
 const CAT_LABEL = {
   BUG_REPORT: 'Bug report', FEATURE_REQUEST: 'Feature request',
-  ACCOUNT_ISSUE: 'Account issue', OTHER: 'Other',
+  ACCOUNT_ISSUE: 'Account issue', DELETE_ACCOUNT: 'Delete account', OTHER: 'Other',
 };
 
 function fmt(dt) {
@@ -27,23 +29,28 @@ export default function TicketsPage() {
   const [page, setPage]       = useState(0);
   const [status, setStatus]   = useState('');
   const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState('');
   const [deleteId, setDeleteId] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [approveId, setApproveId] = useState(null);
+  const [approving, setApproving] = useState(false);
   const [expanded, setExpanded] = useState(null);
+  const [sortByPriority, setSortByPriority] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getAllTickets(status || undefined, page);
+      const res = await getAllTickets(status || undefined, page, category || undefined);
       setData(res.data);
     } finally {
       setLoading(false);
     }
-  }, [page, status]);
+  }, [page, status, category]);
 
   useEffect(() => { load(); }, [load]);
 
-  const handleStatus = (val) => { setStatus(val); setPage(0); };
+  const handleStatus   = (val) => { setStatus(val);   setPage(0); };
+  const handleCategory = (val) => { setCategory(val); setPage(0); };
 
   const handleInProgress = async (id) => { await inProgressTicket(id); load(); };
   const handleResolve    = async (id) => { await resolveTicket(id); load(); };
@@ -54,7 +61,20 @@ export default function TicketsPage() {
     finally { setDeleting(false); }
   };
 
-  const tickets = data?.content ?? [];
+  const handleApproveDeletion = async () => {
+    setApproving(true);
+    try { await approveDeletion(approveId); setApproveId(null); load(); }
+    finally { setApproving(false); }
+  };
+
+  const rawTickets = data?.content ?? [];
+  const tickets = sortByPriority
+    ? [...rawTickets].sort((a, b) => {
+        const pa = PRIORITY_ORDER[a.priority] ?? 3;
+        const pb = PRIORITY_ORDER[b.priority] ?? 3;
+        return pa - pb;
+      })
+    : rawTickets;
 
   return (
     <div className={styles.page}>
@@ -63,12 +83,26 @@ export default function TicketsPage() {
           <h2 className={styles.title}>Support Tickets</h2>
           <p className={styles.sub}>Review and resolve user feedback</p>
         </div>
-        <select className="form-select" style={{ width: 'auto' }}
-          value={status} onChange={e => handleStatus(e.target.value)}>
-          {STATUS_OPTIONS.map(s => (
-            <option key={s} value={s}>{STATUS_LABEL[s]}</option>
-          ))}
-        </select>
+        <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
+          <button
+            className={[styles.sortChip, sortByPriority ? styles.sortChipActive : ''].join(' ')}
+            onClick={() => setSortByPriority(v => !v)}>
+            Priority {sortByPriority ? '↓' : '↕'}
+          </button>
+          <select className="form-select" style={{ width: 'auto' }}
+            value={category} onChange={e => handleCategory(e.target.value)}>
+            <option value="">All categories</option>
+            {CAT_OPTIONS.filter(c => c).map(c => (
+              <option key={c} value={c}>{CAT_LABEL[c] ?? c}</option>
+            ))}
+          </select>
+          <select className="form-select" style={{ width: 'auto' }}
+            value={status} onChange={e => handleStatus(e.target.value)}>
+            {STATUS_OPTIONS.map(s => (
+              <option key={s} value={s}>{STATUS_LABEL[s]}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {loading && <p className={styles.loading}>Loading…</p>}
@@ -102,21 +136,38 @@ export default function TicketsPage() {
                         <div className={styles.userName}>{t.userFullName}</div>
                         <div className={styles.userEmail}>{t.userEmail}</div>
                       </td>
-                      <td>{CAT_LABEL[t.category] ?? t.category}</td>
-                      <td><Tag variant={PRIORITY_VARIANT[t.priority]}>{t.priority}</Tag></td>
+                      <td>
+                        <Tag variant={t.category === 'DELETE_ACCOUNT' ? 'danger' : 'default'}>
+                          {CAT_LABEL[t.category] ?? t.category}
+                        </Tag>
+                      </td>
+                      <td>
+                        {t.category !== 'DELETE_ACCOUNT'
+                          ? <Tag variant={PRIORITY_VARIANT[t.priority]}>{t.priority}</Tag>
+                          : <span style={{ color: 'var(--text-3)' }}>—</span>}
+                      </td>
                       <td><Badge status={t.status} /></td>
                       <td className={styles.date}>{fmt(t.createdAt)}</td>
                       <td onClick={e => e.stopPropagation()}>
                         <div className={styles.actions}>
-                          {t.status === 'OPEN' && (
-                            <Button size="sm" variant="ghost" onClick={() => handleInProgress(t.id)}>
-                              In progress
+                          {t.category === 'DELETE_ACCOUNT' && t.status !== 'RESOLVED' ? (
+                            <Button size="sm" variant="danger-soft"
+                              onClick={() => setApproveId(t.id)}>
+                              Approve & delete
                             </Button>
-                          )}
-                          {t.status !== 'RESOLVED' && (
-                            <Button size="sm" variant="success-soft" onClick={() => handleResolve(t.id)}>
-                              Resolve
-                            </Button>
+                          ) : (
+                            <>
+                              {t.status === 'OPEN' && (
+                                <Button size="sm" variant="ghost" onClick={() => handleInProgress(t.id)}>
+                                  In progress
+                                </Button>
+                              )}
+                              {t.status !== 'RESOLVED' && (
+                                <Button size="sm" variant="success-soft" onClick={() => handleResolve(t.id)}>
+                                  Resolve
+                                </Button>
+                              )}
+                            </>
                           )}
                           <Button size="sm" variant="danger-soft" onClick={() => setDeleteId(t.id)}>
                             Delete
@@ -151,6 +202,13 @@ export default function TicketsPage() {
         onConfirm={handleDelete} loading={deleting}
         title="Delete ticket?"
         message="This will permanently remove the ticket. This action cannot be undone."
+      />
+
+      <ConfirmModal
+        open={!!approveId} onClose={() => setApproveId(null)}
+        onConfirm={handleApproveDeletion} loading={approving}
+        title="Delete this account?"
+        message="This will permanently delete the user's account and all associated data. The ticket will be marked as resolved. This action cannot be undone."
       />
     </div>
   );

@@ -50,13 +50,14 @@ public class SupportTicketController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "List all tickets (ADMIN only, optional status filter)")
+    @Operation(summary = "List all tickets (ADMIN only, optional status/category filter)")
     public ResponseEntity<PageResponse<TicketResponse>> getAll(
             @RequestParam(required = false) TicketStatus status,
+            @RequestParam(required = false) com.swiprin.model.enums.TicketCategory category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(ticketService.getAll(
-                status,
+                status, category,
                 PageRequest.of(page, size, Sort.by("createdAt").descending())));
     }
 
@@ -74,6 +75,16 @@ public class SupportTicketController {
             @PathVariable Long id,
             @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(ticketService.resolve(id, principal.getId()));
+    }
+
+    @PostMapping("/{id}/approve-deletion")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Approve account deletion request — deletes the user and resolves the ticket (ADMIN only)")
+    public ResponseEntity<Void> approveAccountDeletion(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        ticketService.approveAccountDeletion(id, principal.getId());
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
