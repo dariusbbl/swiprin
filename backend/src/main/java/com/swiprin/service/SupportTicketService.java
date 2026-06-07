@@ -3,10 +3,13 @@ package com.swiprin.service;
 import com.swiprin.dto.request.CreateTicketRequest;
 import com.swiprin.dto.response.PageResponse;
 import com.swiprin.dto.response.TicketResponse;
+import com.swiprin.exception.BadRequestException;
 import com.swiprin.exception.ForbiddenException;
 import com.swiprin.exception.ResourceNotFoundException;
 import com.swiprin.model.SupportTicket;
 import com.swiprin.model.User;
+import com.swiprin.model.enums.TicketCategory;
+import com.swiprin.model.enums.TicketPriority;
 import com.swiprin.model.enums.TicketStatus;
 import com.swiprin.repository.SupportTicketRepository;
 import com.swiprin.repository.UserRepository;
@@ -30,11 +33,26 @@ public class SupportTicketService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        boolean isDeleteAccount = req.getCategory() == TicketCategory.DELETE_ACCOUNT;
+
+        if (!isDeleteAccount) {
+            String msg = req.getMessage();
+            if (msg == null || msg.isBlank() || msg.trim().length() < 10) {
+                throw new BadRequestException("Message must be at least 10 characters");
+            }
+        }
+
+        TicketPriority priority = isDeleteAccount ? TicketPriority.LOW
+                : (req.getPriority() != null ? req.getPriority() : TicketPriority.LOW);
+
+        String message = (req.getMessage() != null && !req.getMessage().isBlank())
+                ? req.getMessage().trim() : "";
+
         SupportTicket ticket = SupportTicket.builder()
                 .user(user)
                 .category(req.getCategory())
-                .priority(req.getPriority())
-                .message(req.getMessage().trim())
+                .priority(priority)
+                .message(message)
                 .contactConsent(Boolean.TRUE.equals(req.getContactConsent()))
                 .build();
 
@@ -45,11 +63,18 @@ public class SupportTicketService {
         return toPageResponse(ticketRepository.findAllByUserId(userId, pageable));
     }
 
-    // Admin: list all tickets, optional status filter
-    public PageResponse<TicketResponse> getAll(TicketStatus status, Pageable pageable) {
-        Page<SupportTicket> page = status != null
-                ? ticketRepository.findAllByStatus(status, pageable)
-                : ticketRepository.findAll(pageable);
+    // Admin: list all tickets, optional status + category filter
+    public PageResponse<TicketResponse> getAll(TicketStatus status, TicketCategory category, Pageable pageable) {
+        Page<SupportTicket> page;
+        if (status != null && category != null) {
+            page = ticketRepository.findAllByStatusAndCategory(status, category, pageable);
+        } else if (status != null) {
+            page = ticketRepository.findAllByStatus(status, pageable);
+        } else if (category != null) {
+            page = ticketRepository.findAllByCategory(category, pageable);
+        } else {
+            page = ticketRepository.findAll(pageable);
+        }
         return toPageResponse(page);
     }
 
@@ -72,6 +97,28 @@ public class SupportTicketService {
         SupportTicket ticket = findOrThrow(ticketId);
         ticket.setStatus(TicketStatus.IN_PROGRESS);
         return toResponse(ticketRepository.save(ticket));
+    }
+
+    @Transactional
+    public void approveAccountDeletion(Long ticketId, Long adminId) {
+        SupportTicket ticket = findOrThrow(ticketId);
+        if (ticket.getCategory() != TicketCategory.DELETE_ACCOUNT) {
+            throw new BadRequestException("This ticket is not a delete-account request");
+        }
+        User admin = userRepository.findById(adminId)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin not found"));
+
+        User target = ticket.getUser();
+        if (target.getRole() == com.swiprin.model.enums.Role.ADMIN) {
+            throw new BadRequestException("Admin accounts cannot be deleted");
+        }
+
+        ticket.setStatus(TicketStatus.RESOLVED);
+        ticket.setResolvedBy(admin);
+        ticket.setResolvedAt(LocalDateTime.now());
+        ticketRepository.save(ticket);
+
+        userRepository.delete(target);
     }
 
     @Transactional

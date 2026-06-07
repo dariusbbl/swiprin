@@ -7,6 +7,7 @@ const CATEGORIES = [
   { value: 'BUG_REPORT',      label: 'Bug report' },
   { value: 'FEATURE_REQUEST', label: 'Feature request' },
   { value: 'ACCOUNT_ISSUE',   label: 'Account issue' },
+  { value: 'DELETE_ACCOUNT',  label: 'Delete account' },
   { value: 'OTHER',           label: 'Other' },
 ];
 
@@ -24,6 +25,8 @@ export default function FeedbackForm() {
   const [success, setSuccess] = useState(false);
   const [error, setError]   = useState('');
 
+  const isDeleteAccount = form.category === 'DELETE_ACCOUNT';
+
   const handle = (e) => {
     const { name, value, type, checked } = e.target;
     setForm(f => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
@@ -32,7 +35,7 @@ export default function FeedbackForm() {
   const submit = async (e) => {
     e.preventDefault();
     if (!form.category) { setError('Please select a category.'); return; }
-    if (form.message.trim().length < 10) { setError('Message must be at least 10 characters.'); return; }
+    if (!isDeleteAccount && form.message.trim().length < 10) { setError('Message must be at least 10 characters.'); return; }
     setError(''); setLoading(true);
     try {
       await submitTicket({ ...form, message: form.message.trim() });
@@ -49,10 +52,14 @@ export default function FeedbackForm() {
       <div className={styles.page}>
         <div className={styles.successCard}>
           <div className={styles.successIcon}><CheckCircle2 size={48} /></div>
-          <h2>Ticket submitted!</h2>
-          <p>Our team will review your feedback. Thank you for helping us improve Swiprin.</p>
+          <h2>{form.category === 'DELETE_ACCOUNT' ? 'Request received!' : 'Ticket submitted!'}</h2>
+          <p>
+            {form.category === 'DELETE_ACCOUNT'
+              ? 'Your account deletion request has been sent to our admins. They will process it and notify you shortly.'
+              : 'Our team will review your feedback. Thank you for helping us improve Swiprin.'}
+          </p>
           <button className="btn btn-primary" onClick={() => { setSuccess(false); setForm(EMPTY); }}>
-            Submit another
+            {form.category === 'DELETE_ACCOUNT' ? 'Back' : 'Submit another'}
           </button>
         </div>
       </div>
@@ -79,30 +86,42 @@ export default function FeedbackForm() {
             </select>
           </div>
 
-          <div className={styles.field}>
-            <label>Priority *</label>
-            <div className={styles.radioGroup}>
-              {PRIORITIES.map(p => (
-                <label key={p.value}
-                  className={[styles.radioCard, form.priority === p.value ? styles.radioActive : ''].join(' ')}>
-                  <input type="radio" name="priority" value={p.value}
-                    checked={form.priority === p.value} onChange={handle} />
-                  <div>
-                    <span className={styles.radioLabel}>{p.label}</span>
-                    <span className={styles.radioDesc}>{p.desc}</span>
-                  </div>
-                </label>
-              ))}
+          {!isDeleteAccount && (
+            <div className={styles.field}>
+              <label>Priority *</label>
+              <div className={styles.radioGroup}>
+                {PRIORITIES.map(p => (
+                  <label key={p.value}
+                    className={[styles.radioCard, form.priority === p.value ? styles.radioActive : ''].join(' ')}>
+                    <input type="radio" name="priority" value={p.value}
+                      checked={form.priority === p.value} onChange={handle} />
+                    <div>
+                      <span className={styles.radioLabel}>{p.label}</span>
+                      <span className={styles.radioDesc}>{p.desc}</span>
+                    </div>
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {isDeleteAccount && (
+            <div className={styles.deleteWarning}>
+              This will send a deletion request to the admins. Your account and all associated data will be permanently removed.
+              This action cannot be undone.
+            </div>
+          )}
 
           <div className={styles.field}>
             <label htmlFor="message">
-              Message * <span className={styles.charHint}>({form.message.length}/2000)</span>
+              {isDeleteAccount ? 'Reason (optional)' : 'Message *'}{' '}
+              <span className={styles.charHint}>({form.message.length}/2000)</span>
             </label>
             <textarea id="message" name="message" value={form.message} onChange={handle}
-              rows={5} maxLength={2000} required className="form-control"
-              placeholder="Describe the issue or suggestion in detail…" />
+              rows={5} maxLength={2000} required={!isDeleteAccount} className="form-control"
+              placeholder={isDeleteAccount
+                ? 'Optionally explain why you want to delete your account…'
+                : 'Describe the issue or suggestion in detail…'} />
           </div>
 
           <label className={styles.checkboxRow}>
@@ -110,8 +129,10 @@ export default function FeedbackForm() {
             <span>I allow the Swiprin team to use my account details to investigate this ticket</span>
           </label>
 
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Submitting…' : 'Submit ticket'}
+          <button type="submit"
+            className={isDeleteAccount ? `btn ${styles.deleteBtn}` : 'btn btn-primary'}
+            disabled={loading}>
+            {loading ? 'Submitting…' : isDeleteAccount ? 'Request account deletion' : 'Submit ticket'}
           </button>
         </form>
       </div>

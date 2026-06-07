@@ -1,6 +1,7 @@
 package com.swiprin.repository;
 
 import com.swiprin.model.SupportTicket;
+import com.swiprin.model.enums.TicketCategory;
 import com.swiprin.model.enums.TicketStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,4 +12,8 @@ public interface SupportTicketRepository extends JpaRepository<SupportTicket, Lo
     Page<SupportTicket> findAllByUserId(Long userId, Pageable pageable);
 
     Page<SupportTicket> findAllByStatus(TicketStatus status, Pageable pageable);
+
+    Page<SupportTicket> findAllByCategory(TicketCategory category, Pageable pageable);
+
+    Page<SupportTicket> findAllByStatusAndCategory(TicketStatus status, TicketCategory category, Pageable pageable);
 }

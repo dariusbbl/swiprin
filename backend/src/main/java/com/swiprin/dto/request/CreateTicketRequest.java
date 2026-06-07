@@ -13,11 +13,9 @@ public class CreateTicketRequest {
     @NotNull
     private TicketCategory category;
 
-    @NotNull
     private TicketPriority priority;
 
-    @NotBlank
-    @Size(min = 10, max = 2000)
+    @Size(max = 2000)
     private String message;
 
     private Boolean contactConsent = false;

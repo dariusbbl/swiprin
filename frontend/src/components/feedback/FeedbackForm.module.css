@@ -60,3 +60,19 @@
 .successIcon { line-height: 1; color: #16a34a; }
 .successCard h2 { font-size: 1.3rem; font-weight: 800; color: var(--text); }
 .successCard p  { font-size: .9rem; color: var(--text-2); line-height: 1.6; }
+
+.deleteWarning {
+  padding: .75rem 1rem;
+  background: #fef2f2; border: 1.5px solid #fecaca;
+  border-radius: 8px;
+  font-size: .85rem; color: #991b1b; line-height: 1.55;
+}
+
+.deleteBtn {
+  background: var(--danger, #dc2626); color: #fff;
+  border: none; border-radius: calc(var(--radius) / 2);
+  padding: .65rem 1.25rem; font-weight: 700; font-size: .9rem;
+  cursor: pointer; width: 100%; transition: background .15s;
+}
+.deleteBtn:hover { background: #b91c1c; }
+.deleteBtn:disabled { opacity: .6; cursor: not-allowed; }
