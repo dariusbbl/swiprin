@@ -275,7 +275,18 @@ export default function JobApplicantsPage() {
                           <span className={styles.cvName}>{app.cvDraft.name}</span>
                           {app.cvDraft.fileUrl && (
                             <a href={app.cvDraft.fileUrl} target="_blank" rel="noreferrer"
-                              className={styles.cvLink}>
+                              className={styles.cvLink}
+                              onClick={() => {
+                                if (app.status === 'APPLIED') {
+                                  setData(prev => prev ? {
+                                    ...prev,
+                                    content: prev.content.map(a =>
+                                      a.id === app.id ? { ...a, status: 'SCREENING' } : a
+                                    ),
+                                  } : prev);
+                                  updateAppStatus(app.id, 'SCREENING').catch(() => load());
+                                }
+                              }}>
                               <FileText size={13} /> View ↗
                             </a>
                           )}
