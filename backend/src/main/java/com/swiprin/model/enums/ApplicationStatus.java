@@ -6,5 +6,6 @@ public enum ApplicationStatus {
     INTERVIEW,
     OFFER,
     REJECTED,
-    WITHDRAWN
+    WITHDRAWN,
+    REMOVED
 }
