@@ -36,6 +36,7 @@ export default function MyJobsPage() {
 
   const [formOpen, setFormOpen]       = useState(false);
   const [matchInfoOpen, setMatchInfoOpen] = useState(false);
+  const [descTipsOpen, setDescTipsOpen]   = useState(false);
   const [editing, setEditing]         = useState(null);
   const [form, setForm]               = useState(EMPTY_FORM);
   const [noThreshold, setNoThreshold] = useState(false);
@@ -230,7 +231,13 @@ export default function MyJobsPage() {
           </div>
 
           <div className={styles.field}>
-            <label>Description *</label>
+            <label className={styles.thresholdLabel}>
+              Description *
+              <button type="button" className={styles.infoBtn}
+                onClick={() => setDescTipsOpen(true)} title="Tips for writing a good job description">
+                <Info size={12} />
+              </button>
+            </label>
             <RichTextEditor
               value={form.description}
               onChange={val => setForm(f => ({ ...f, description: val }))}
@@ -410,17 +417,6 @@ export default function MyJobsPage() {
           </section>
 
           <section className={styles.guideSection}>
-            <h6 className={styles.guideSectionTitle}>Tips for writing a good job description</h6>
-            <ul className={styles.guideList}>
-              <li>Mention all required technologies and tools explicitly (e.g. <em>TensorFlow, Python, SQL</em>) - these carry the most weight in matching.</li>
-              <li>Use clear headings like <em>Requirements</em> and <em>Nice to have</em> to separate must-haves from optional skills.</li>
-              <li>Describe the actual work: <em>"build ML pipelines"</em>, <em>"optimize model performance"</em> - candidates whose CVs mirror this language will score higher.</li>
-              <li>Avoid filler text and generic phrases (<em>"fast-paced environment"</em>, <em>"team player"</em>) - they add noise without improving match quality.</li>
-              <li>Use the same terminology that candidates would write in their CVs (e.g. <em>"machine learning"</em> rather than <em>"AI solutions"</em> if precision matters).</li>
-            </ul>
-          </section>
-
-          <section className={styles.guideSection}>
             <h6 className={styles.guideSectionTitle}>Choosing the right threshold</h6>
             <div className={styles.thresholdGuide}>
               <div className={styles.thresholdRow}>
@@ -446,6 +442,25 @@ export default function MyJobsPage() {
             </div>
           </section>
 
+        </div>
+      </Modal>
+
+      <Modal open={descTipsOpen} onClose={() => setDescTipsOpen(false)}
+        title="Tips for writing a good job description" size="md">
+        <div className={styles.guideWrap}>
+          <section className={styles.guideSection}>
+            <p className={styles.guideIntro}>
+              A well-written job description is the dominant factor in CV matching.
+              The clearer and more specific you are, the more accurately candidates will be ranked.
+            </p>
+            <ul className={styles.guideList}>
+              <li>Mention all required technologies and tools explicitly (e.g. <em>TensorFlow, Python, SQL</em>) - these carry the most weight in matching.</li>
+              <li>Use clear headings like <em>Requirements</em> and <em>Nice to have</em> to separate must-haves from optional skills.</li>
+              <li>Describe the actual work: <em>"build ML pipelines"</em>, <em>"optimize model performance"</em> - candidates whose CVs mirror this language will score higher.</li>
+              <li>Avoid filler text and generic phrases (<em>"fast-paced environment"</em>, <em>"team player"</em>) - they add noise without improving match quality.</li>
+              <li>Use the same terminology that candidates would write in their CVs (e.g. <em>"machine learning"</em> rather than <em>"AI solutions"</em> if precision matters).</li>
+            </ul>
+          </section>
         </div>
       </Modal>
     </div>
