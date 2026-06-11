@@ -14,23 +14,31 @@ import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
 
-    Page<Application> findAllByUserId(Long userId, Pageable pageable);
+    // REMOVED applications are filtered out from all list/count queries below.
+    // The row is kept only so existsByJobIdAndUserId stays true and blocks re-applying.
+
+    @Query("SELECT a FROM Application a WHERE a.user.id = :userId AND a.status <> 'REMOVED'")
+    Page<Application> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
 
     // Candidate: filter own applications by status
     Page<Application> findAllByUserIdAndStatus(Long userId, ApplicationStatus status, Pageable pageable);
 
-    Page<Application> findAllByUserIdAndShortlisted(Long userId, Boolean shortlisted, Pageable pageable);
+    @Query("SELECT a FROM Application a WHERE a.user.id = :userId AND a.shortlisted = :shortlisted AND a.status <> 'REMOVED'")
+    Page<Application> findAllByUserIdAndShortlisted(
+            @Param("userId") Long userId, @Param("shortlisted") Boolean shortlisted, Pageable pageable);
 
     Page<Application> findAllByUserIdAndStatusAndShortlisted(Long userId, ApplicationStatus status, Boolean shortlisted, Pageable pageable);
 
-    Page<Application> findAllByJobId(Long jobId, Pageable pageable);
+    @Query("SELECT a FROM Application a WHERE a.job.id = :jobId AND a.status <> 'REMOVED'")
+    Page<Application> findAllByJobId(@Param("jobId") Long jobId, Pageable pageable);
 
-    Page<Application> findAllByJobIdAndShortlistedTrue(Long jobId, Pageable pageable);
+    @Query("SELECT a FROM Application a WHERE a.job.id = :jobId AND a.shortlisted = true AND a.status <> 'REMOVED'")
+    Page<Application> findAllByJobIdAndShortlistedTrue(@Param("jobId") Long jobId, Pageable pageable);
 
     // Recruiter: filter applications for a specific job by status
     Page<Application> findAllByJobIdAndStatus(Long jobId, ApplicationStatus status, Pageable pageable);
 
-    @Query("SELECT a FROM Application a JOIN a.user u WHERE a.job.id = :jobId AND LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
+    @Query("SELECT a FROM Application a JOIN a.user u WHERE a.job.id = :jobId AND a.status <> 'REMOVED' AND LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<Application> findAllByJobIdAndCandidateName(
             @Param("jobId") Long jobId, @Param("search") String search, Pageable pageable);
 
@@ -39,11 +47,13 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
             @Param("jobId") Long jobId, @Param("status") ApplicationStatus status,
             @Param("search") String search, Pageable pageable);
 
-    Page<Application> findAllByJobIdAndShortlisted(Long jobId, Boolean shortlisted, Pageable pageable);
+    @Query("SELECT a FROM Application a WHERE a.job.id = :jobId AND a.shortlisted = :shortlisted AND a.status <> 'REMOVED'")
+    Page<Application> findAllByJobIdAndShortlisted(
+            @Param("jobId") Long jobId, @Param("shortlisted") Boolean shortlisted, Pageable pageable);
 
     Page<Application> findAllByJobIdAndStatusAndShortlisted(Long jobId, ApplicationStatus status, Boolean shortlisted, Pageable pageable);
 
-    @Query("SELECT a FROM Application a JOIN a.user u WHERE a.job.id = :jobId AND a.shortlisted = :shortlisted AND LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
+    @Query("SELECT a FROM Application a JOIN a.user u WHERE a.job.id = :jobId AND a.shortlisted = :shortlisted AND a.status <> 'REMOVED' AND LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<Application> findAllByJobIdAndShortlistedAndCandidateName(
             @Param("jobId") Long jobId, @Param("shortlisted") Boolean shortlisted,
             @Param("search") String search, Pageable pageable);
@@ -57,9 +67,11 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     boolean existsByJobIdAndUserId(Long jobId, Long userId);
 
-    long countByJobId(Long jobId);
+    @Query("SELECT COUNT(a) FROM Application a WHERE a.job.id = :jobId AND a.status <> 'REMOVED'")
+    long countByJobId(@Param("jobId") Long jobId);
 
-    long countByUserId(Long userId);
+    @Query("SELECT COUNT(a) FROM Application a WHERE a.user.id = :userId AND a.status <> 'REMOVED'")
+    long countByUserId(@Param("userId") Long userId);
 
     long countByUserIdAndStatus(Long userId, ApplicationStatus status);
 

@@ -73,7 +73,7 @@ public class ApplicationService {
 
         Application saved = applicationRepository.save(application);
 
-        if (matchPercent >= job.getShortlistThreshold()) {
+        if (job.getShortlistThreshold() > 0 && matchPercent >= job.getShortlistThreshold()) {
             saved.setShortlisted(true);
             applicationRepository.save(saved);
             notificationService.send(
@@ -240,12 +240,15 @@ public class ApplicationService {
         applicationRepository.save(application);
     }
 
-    // Admin/Recruiter: hard delete
+    // Recruiter "Remove": soft-delete so the candidate cannot re-apply to the same job.
+    // The row stays in DB; status changes to REMOVED and the candidate's shortlist flag is cleared.
     @Transactional
     public void delete(Long id, Long recruiterId) {
         Application application = findOrThrow(id);
         requireSameCompany(application.getJob(), recruiterId);
-        applicationRepository.delete(application);
+        application.setStatus(ApplicationStatus.REMOVED);
+        application.setShortlisted(false);
+        applicationRepository.save(application);
     }
 
     @Transactional
