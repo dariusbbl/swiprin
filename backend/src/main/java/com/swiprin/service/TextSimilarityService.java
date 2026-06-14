@@ -21,7 +21,12 @@ public class TextSimilarityService {
         "throughout", "despite", "towards", "upon", "about", "this", "that",
         "these", "those", "it", "its", "we", "our", "you", "your", "they",
         "their", "i", "me", "my", "him", "her", "us", "them", "what", "which",
-        "who", "not", "no", "so", "than", "then", "when", "where", "how"
+        "who", "not", "no", "so", "than", "then", "when", "where", "how",
+        "requirements", "requirement", "require",
+        "responsibilities", "responsibility",
+        "preferred", "preferr",
+        "qualifications", "qualification", "qualific",
+        "benefits", "benefit"
     );
 
     // Normalizes tech abbreviations to their canonical forms after lowercase
@@ -49,6 +54,14 @@ public class TextSimilarityService {
     // Phrase normalization applied before tokenization — longer phrases must come first
     // so "natural language processing" is caught before "natural language".
     private static final List<String[]> PHRASE_REPLACEMENTS = List.of(
+        // Section headings and boilerplate phrases wiped out before tokenization
+        new String[]{"nice to have",                " "},
+        new String[]{"nice-to-have",                " "},
+        new String[]{"what you'll do",              " "},
+        new String[]{"what you will do",            " "},
+        new String[]{"about us",                    " "},
+        new String[]{"who we are",                  " "},
+        new String[]{"our company",                 " "},
         new String[]{"natural language processing", "nlp"},
         new String[]{"natural language",            "nlp"},
         new String[]{"machine learning",            "machinelearning"},
