@@ -16,6 +16,7 @@ import com.swiprin.repository.JobRepository;
 import com.swiprin.repository.SkillRepository;
 import com.swiprin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JobService {
 
     private final JobRepository jobRepository;
@@ -38,6 +40,7 @@ public class JobService {
 
     // Candidate feed — sorted by skill match, includes applied flag
     public PageResponse<JobResponse> getFeedForCandidate(Long userId, Seniority seniority, String location, Pageable pageable) {
+        long __benchStart = System.nanoTime();
         Set<Long> candidateSkillIds = userRepository.findById(userId)
                 .map(u -> u.getSkills().stream().map(Skill::getId).collect(java.util.stream.Collectors.toSet()))
                 .orElse(Set.of());
@@ -53,7 +56,7 @@ public class JobService {
         } else {
             page = jobRepository.findActiveJobsSortedBySkillMatch(userId, pageable);
         }
-        return PageResponse.<JobResponse>builder()
+        PageResponse<JobResponse> resp = PageResponse.<JobResponse>builder()
                 .content(page.getContent().stream().map(j -> toJobResponse(j, userId, candidateSkillIds)).toList())
                 .page(page.getNumber())
                 .size(page.getSize())
@@ -61,6 +64,9 @@ public class JobService {
                 .totalPages(page.getTotalPages())
                 .last(page.isLast())
                 .build();
+        log.info("[BENCH] feed page (N={}) took {} ms", resp.getContent().size(),
+                (System.nanoTime() - __benchStart) / 1_000_000.0);
+        return resp;
     }
 
     // Recruiter — all jobs in the same company

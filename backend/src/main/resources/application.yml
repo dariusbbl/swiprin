@@ -37,3 +37,7 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     operations-sorter: method
+
+logging:
+  file:
+    name: /tmp/swiprin-bench.log

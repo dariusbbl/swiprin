@@ -9,6 +9,7 @@ import com.swiprin.model.enums.NotificationType;
 import com.swiprin.repository.NotificationRepository;
 import com.swiprin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
@@ -50,6 +52,7 @@ public class NotificationService {
     // Internal helper — used by other services to create notifications
     @Transactional
     public void send(Long userId, NotificationType type, String message, Long referenceId) {
+        long __benchStart = System.nanoTime();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
         Notification notification = Notification.builder()
@@ -59,6 +62,8 @@ public class NotificationService {
                 .referenceId(referenceId)
                 .build();
         notificationRepository.save(notification);
+        log.info("[BENCH] notification send ({}) took {} ms", type,
+                (System.nanoTime() - __benchStart) / 1_000_000.0);
     }
 
     private NotificationResponse toResponse(Notification n) {

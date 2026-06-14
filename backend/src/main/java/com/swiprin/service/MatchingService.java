@@ -5,10 +5,12 @@ import com.swiprin.model.Job;
 import com.swiprin.model.User;
 import com.swiprin.model.enums.Seniority;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MatchingService {
 
     private final TextSimilarityService textSimilarityService;
@@ -28,12 +30,15 @@ public class MatchingService {
     };
 
     public int computeMatch(User candidate, Job job, CvDraft cvDraft) {
+        long __benchStart = System.nanoTime();
         double skillMatch      = computeSkillMatch(candidate, job);
         double experienceMatch = computeExperienceMatch(cvDraft, job);
         double textSimilarity  = computeTextSimilarity(cvDraft, job);
 
         double result = W_SKILL * skillMatch + W_EXPERIENCE * experienceMatch + W_TEXT * textSimilarity;
-        return (int) Math.round(Math.min(result, 100.0));
+        int score = (int) Math.round(Math.min(result, 100.0));
+        log.info("[BENCH] computeMatch took {} ms", (System.nanoTime() - __benchStart) / 1_000_000.0);
+        return score;
     }
 
     // -----------------------------------------------------------------------

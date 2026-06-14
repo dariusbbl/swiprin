@@ -139,9 +139,12 @@ public class CvDraftService {
             String filename  = parts[parts.length - 1];
 
             java.nio.file.Path filePath = fileStorageService.resolveFile(fileUserId, filename);
+            long __benchStart = System.nanoTime();
             String text = pdfExtractionService.extractText(filePath);
             draft.setExtractedText(text);
             draft.setExperienceYears(pdfExtractionService.extractExperienceYears(text));
+            log.info("[BENCH] PDF text+experience extraction took {} ms",
+                    (System.nanoTime() - __benchStart) / 1_000_000.0);
         } catch (Exception e) {
             log.warn("CV extraction skipped for '{}': {}", draft.getName(), e.getMessage());
         }
