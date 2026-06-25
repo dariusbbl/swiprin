@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface InterviewScheduleRepository extends JpaRepository<InterviewSchedule, Long> {
@@ -48,4 +49,13 @@ public interface InterviewScheduleRepository extends JpaRepository<InterviewSche
             @Param("companyId") Long companyId,
             @Param("jobId") Long jobId,
             Pageable pageable);
+
+    // Interviews scheduled within a given day (used for the T-1 reminder cron)
+    @Query("""
+            SELECT i FROM InterviewSchedule i
+            WHERE i.scheduledAt >= :dayStart AND i.scheduledAt < :dayEnd
+            """)
+    List<InterviewSchedule> findAllScheduledBetween(
+            @Param("dayStart") LocalDateTime dayStart,
+            @Param("dayEnd")   LocalDateTime dayEnd);
 }

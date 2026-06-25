@@ -90,6 +90,15 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
             """)
     List<Application> findExpiredOffers(@Param("today") LocalDate today);
 
+    @Query("""
+            SELECT a FROM Application a
+            WHERE a.status = 'OFFER'
+              AND a.offerDeadline = :targetDate
+              AND a.offerAcceptedAt IS NULL
+              AND a.offerDeclinedAt IS NULL
+            """)
+    List<Application> findOffersWithDeadlineOn(@Param("targetDate") LocalDate targetDate);
+
     // Applications for all jobs of a recruiter, sorted by match percent desc
     @Query("""
             SELECT a FROM Application a
