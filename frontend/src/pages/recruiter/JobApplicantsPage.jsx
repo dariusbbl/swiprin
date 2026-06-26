@@ -29,7 +29,7 @@ export default function JobApplicantsPage() {
   const navigate  = useNavigate();
 
   const [data, setData]                     = useState(null);
-  const [jobTitle, setJobTitle]             = useState('');
+  const [jobInfo, setJobInfo]               = useState(null);
   const [page, setPage]                     = useState(0);
   const [statusFilter, setStatusFilter]     = useState('');
   const [shortlistedFilter, setShortlistedFilter] = useState('');
@@ -63,7 +63,13 @@ export default function JobApplicantsPage() {
   useEffect(() => { load(); }, [load]);
 
   useEffect(() => {
-    getMyJobById(jobId).then(r => setJobTitle(r.data?.title ?? '')).catch(() => {});
+    const fetchJob = () => getMyJobById(jobId).then(r => setJobInfo(r.data ?? null)).catch(() => {});
+    fetchJob();
+    // Refetch when the tab regains focus — covers the case where the recruiter
+    // edits the threshold from "My Jobs" in another tab and comes back here.
+    const onFocus = () => fetchJob();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
   }, [jobId]);
 
   const handleStatusChange = async (app, newStatus) => {
@@ -132,10 +138,22 @@ export default function JobApplicantsPage() {
             <ArrowLeft size={14} strokeWidth={2.5} /> Back to jobs
           </button>
           <h2 className={styles.title}>
-            Applicants{jobTitle && <span className={styles.jobTitleLabel}> — {jobTitle}</span>}
+            Applicants{jobInfo?.title && <span className={styles.jobTitleLabel}> — {jobInfo.title}</span>}
           </h2>
           <p className={styles.sub}>
             {data ? `${data.totalElements} application${data.totalElements !== 1 ? 's' : ''}` : '…'}
+            {jobInfo && (
+              <>
+                <span className={styles.subDot}>·</span>
+                <span className={styles.thresholdChip}>
+                  Shortlist threshold: <strong>
+                    {!jobInfo.shortlistThreshold || jobInfo.shortlistThreshold === 0
+                      ? 'No threshold'
+                      : `${jobInfo.shortlistThreshold}%`}
+                  </strong>
+                </span>
+              </>
+            )}
           </p>
         </div>
         <select className="form-select" style={{ width: 'auto' }}

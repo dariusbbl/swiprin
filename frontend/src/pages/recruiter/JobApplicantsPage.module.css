@@ -115,7 +115,16 @@
   transition: border-color .15s, color .15s;
 }
 .clearBtn:hover { border-color: var(--danger); color: var(--danger); }
-.sub   { font-size: .875rem; color: var(--text-2); margin-top: .2rem; }
+.sub   { font-size: .875rem; color: var(--text-2); margin-top: .2rem; display: inline-flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.subDot { color: var(--text-3); }
+.thresholdChip {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .78rem; font-weight: 500;
+  padding: .15rem .55rem; border-radius: 99px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text-2);
+}
+.thresholdChip strong { color: var(--text); font-weight: 700; }
 .loading { color: var(--text-3); }
 
 .tableWrap {

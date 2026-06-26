@@ -6,9 +6,12 @@ import com.swiprin.dto.response.*;
 import com.swiprin.exception.BadRequestException;
 import com.swiprin.exception.ForbiddenException;
 import com.swiprin.exception.ResourceNotFoundException;
+import com.swiprin.model.Application;
 import com.swiprin.model.Job;
 import com.swiprin.model.Skill;
 import com.swiprin.model.User;
+import com.swiprin.model.enums.ApplicationStatus;
+import com.swiprin.model.enums.NotificationType;
 import com.swiprin.model.enums.Seniority;
 import com.swiprin.model.enums.UserStatus;
 import com.swiprin.repository.ApplicationRepository;
@@ -35,6 +38,7 @@ public class JobService {
     private final ApplicationRepository applicationRepository;
     private final CompanyService companyService;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     // Candidate feed — sorted by skill match, includes applied flag
     public PageResponse<JobResponse> getFeedForCandidate(Long userId, Seniority seniority, String location, Pageable pageable) {
@@ -121,16 +125,60 @@ public class JobService {
     public JobManagementResponse update(Long jobId, UpdateJobRequest req, Long recruiterId) {
         Job job = findOrThrow(jobId);
         requireSameCompany(job, findRecruiterOrThrow(recruiterId));
+
+        Integer oldThreshold = job.getShortlistThreshold();
+        Integer newThreshold = req.getShortlistThreshold();
+        boolean thresholdChanged = newThreshold != null && !newThreshold.equals(oldThreshold);
+
         if (req.getTitle() != null) job.setTitle(req.getTitle().trim());
         if (req.getDescription() != null) job.setDescription(req.getDescription().trim());
         if (req.getLocation() != null) job.setLocation(req.getLocation().trim());
         if (req.getWorkMode() != null) job.setWorkMode(req.getWorkMode());
         if (req.getActive() != null) job.setActive(req.getActive());
-        if (req.getShortlistThreshold() != null) job.setShortlistThreshold(req.getShortlistThreshold());
+        if (newThreshold != null) job.setShortlistThreshold(newThreshold);
         if (req.getPaid() != null) job.setPaid(req.getPaid());
         if (req.getSeniority() != null) job.setSeniority(req.getSeniority());
         if (req.getSkillIds() != null) job.setSkills(resolveSkills(req.getSkillIds()));
-        return toManagementResponse(jobRepository.save(job));
+
+        Job saved = jobRepository.save(job);
+
+        if (thresholdChanged) {
+            autoShortlistAgainstThreshold(saved);
+        }
+
+        return toManagementResponse(saved);
+    }
+
+    // After a threshold change, re-evaluate existing applications: any non-shortlisted
+    // candidate whose match% now meets or exceeds the threshold gets auto-shortlisted
+    // and notified (same flow as on initial apply). Threshold of 0 (no threshold) is a no-op.
+    private void autoShortlistAgainstThreshold(Job job) {
+        int threshold = job.getShortlistThreshold();
+        if (threshold <= 0) return;
+
+        List<Application> apps = applicationRepository
+                .findAllByJobId(job.getId(), org.springframework.data.domain.Pageable.unpaged())
+                .getContent();
+
+        for (Application app : apps) {
+            if (Boolean.TRUE.equals(app.getShortlisted())) continue;
+            ApplicationStatus st = app.getStatus();
+            if (st == ApplicationStatus.REJECTED
+                    || st == ApplicationStatus.WITHDRAWN
+                    || st == ApplicationStatus.OFFER) continue;
+            Integer pct = app.getMatchPercent();
+            if (pct == null || pct < threshold) continue;
+
+            app.setShortlisted(true);
+            applicationRepository.save(app);
+            notificationService.send(
+                    app.getUser().getId(),
+                    NotificationType.SHORTLIST,
+                    "You have been shortlisted for " + job.getTitle()
+                            + " at <strong>" + job.getCompany().getName() + "</strong>",
+                    app.getId()
+            );
+        }
     }
 
     @Transactional
