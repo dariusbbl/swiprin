@@ -102,12 +102,16 @@ export default function FeedPage() {
     loadingRef.current = true;
     setLoading(true);
     try {
-      const res   = await getJobFeed(pageRef.current, seniorityRef.current, locationRef.current);
-      const pd    = res.data;
-      const fresh = (pd.content ?? []).filter(j => !j.applied);
-      setCards(prev => [...prev, ...fresh]);
-      hasMoreRef.current = !pd.last;
-      pageRef.current   += 1;
+      let added = 0;
+      while (hasMoreRef.current && added === 0) {
+        const res   = await getJobFeed(pageRef.current, seniorityRef.current, locationRef.current);
+        const pd    = res.data;
+        const fresh = (pd.content ?? []).filter(j => !j.applied);
+        added += fresh.length;
+        if (fresh.length > 0) setCards(prev => [...prev, ...fresh]);
+        hasMoreRef.current = !pd.last;
+        pageRef.current   += 1;
+      }
     } finally {
       loadingRef.current = false;
       setLoading(false);
