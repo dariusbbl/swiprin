@@ -61,6 +61,14 @@ public class UserService {
     public UserResponse setStatus(Long id, UserStatus status) {
         User user = findOrThrow(id);
         user.setStatus(status);
+
+        if (status == UserStatus.ACTIVE
+                && user.getRole() == Role.RECRUITER
+                && user.getCompany() != null
+                && !Boolean.TRUE.equals(user.getCompany().getIsVerified())) {
+            user.getCompany().setIsVerified(true);
+        }
+
         return toResponse(userRepository.save(user));
     }
 

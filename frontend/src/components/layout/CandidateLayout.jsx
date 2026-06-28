@@ -28,13 +28,23 @@ export default function CandidateLayout() {
   const bellRef = useRef(null);
 
   const fetchUnread = useCallback(() => {
-    getUnreadCount().then(r => setUnread(r.data.count ?? 0)).catch(() => {});
+    return getUnreadCount().then(r => setUnread(r.data.count ?? 0)).catch(() => {});
   }, []);
 
   useEffect(() => {
     fetchUnread();
-    const id = setInterval(fetchUnread, 30000);
-    return () => clearInterval(id);
+    const id = setInterval(fetchUnread, 15000);
+
+    const onFocus = () => fetchUnread();
+    const onVisibility = () => { if (document.visibilityState === 'visible') fetchUnread(); };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      clearInterval(id);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, [fetchUnread]);
 
   useEffect(() => {
@@ -49,8 +59,11 @@ export default function CandidateLayout() {
     if (!open) {
       setLoading(true);
       try {
-        const r = await getNotifications(0, 20);
-        setNotifs(r.data.content ?? []);
+        const [listRes] = await Promise.all([
+          getNotifications(0, 20),
+          fetchUnread(),
+        ]);
+        setNotifs(listRes.data.content ?? []);
       } catch { /* ignore */ }
       finally { setLoading(false); }
     }
