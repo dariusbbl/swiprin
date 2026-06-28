@@ -44,12 +44,21 @@ public class UserService {
         return toResponse(user);
     }
 
-    public PageResponse<UserResponse> getAllByRole(Role role, String companyName, Pageable pageable) {
+    public PageResponse<UserResponse> getAllByRole(Role role, UserStatus status, String companyName, Pageable pageable) {
         Page<User> page;
-        if (role == Role.RECRUITER && companyName != null && !companyName.isBlank()) {
-            page = userRepository.findByRoleAndCompanyNameContainingIgnoreCase(Role.RECRUITER, companyName.trim(), pageable);
+        boolean hasCompany = role == Role.RECRUITER && companyName != null && !companyName.isBlank();
+        String company = hasCompany ? companyName.trim() : null;
+
+        if (hasCompany && status != null) {
+            page = userRepository.findByRoleAndStatusAndCompanyNameContainingIgnoreCase(Role.RECRUITER, status, company, pageable);
+        } else if (hasCompany) {
+            page = userRepository.findByRoleAndCompanyNameContainingIgnoreCase(Role.RECRUITER, company, pageable);
+        } else if (role != null && status != null) {
+            page = userRepository.findAllByRoleAndStatus(role, status, pageable);
         } else if (role != null) {
             page = userRepository.findAllByRole(role, pageable);
+        } else if (status != null) {
+            page = userRepository.findAllByStatus(status, pageable);
         } else {
             page = userRepository.findAll(pageable);
         }

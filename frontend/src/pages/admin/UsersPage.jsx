@@ -25,6 +25,7 @@ export default function UsersPage() {
   const [data, setData]           = useState(null);
   const [page, setPage]           = useState(0);
   const [role, setRole]           = useState('');
+  const [status, setStatus]       = useState('');
   const [nameInput, setNameInput] = useState('');
   const [name, setName]           = useState('');
   const [companySearch, setCompanySearch] = useState('');
@@ -38,19 +39,22 @@ export default function UsersPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getUsers(name ? 0 : page, role || undefined, companySearch || undefined, name ? 1000 : 10);
+      const res = await getUsers(name ? 0 : page, role || undefined, companySearch || undefined, name ? 1000 : 10, status || undefined);
       setData(res.data);
     } finally {
       setLoading(false);
     }
-  }, [page, role, companySearch, name]);
+  }, [page, role, companySearch, name, status]);
 
   useEffect(() => { load(); }, [load]);
 
   const handleRole = (val) => {
     setRole(val);
     setPage(0);
-    if (val !== 'RECRUITER') { setCompanySearch(''); setCompanyInput(''); }
+    if (val !== 'RECRUITER') {
+      setCompanySearch(''); setCompanyInput('');
+      setStatus('');
+    }
   };
 
   const applyCompanySearch = () => { setCompanySearch(companyInput); setPage(0); };
@@ -79,13 +83,35 @@ export default function UsersPage() {
           <h2 className={styles.title}>Users</h2>
           <p className={styles.sub}>Manage all platform users</p>
         </div>
-        <select className="form-select" style={{ width: 'auto' }}
-          value={role} onChange={e => handleRole(e.target.value)}>
-          <option value="">All roles</option>
-          {ROLES.filter(r => r).map(r => (
-            <option key={r} value={r}>{r.charAt(0) + r.slice(1).toLowerCase()}</option>
-          ))}
-        </select>
+        <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button
+            className={[styles.quickChip, role === 'RECRUITER' && status === 'PENDING_APPROVAL' ? styles.quickChipActive : ''].join(' ')}
+            onClick={() => {
+              const on = role === 'RECRUITER' && status === 'PENDING_APPROVAL';
+              if (on) { setRole(''); setStatus(''); }
+              else    { setRole('RECRUITER'); setStatus('PENDING_APPROVAL'); }
+              setPage(0);
+              setCompanySearch(''); setCompanyInput('');
+            }}>
+            Pending recruiter requests
+          </button>
+          <select className="form-select" style={{ width: 'auto' }}
+            value={role} onChange={e => handleRole(e.target.value)}>
+            <option value="">All roles</option>
+            {ROLES.filter(r => r).map(r => (
+              <option key={r} value={r}>{r.charAt(0) + r.slice(1).toLowerCase()}</option>
+            ))}
+          </select>
+          {role === 'RECRUITER' && (
+            <select className="form-select" style={{ width: 'auto' }}
+              value={status} onChange={e => { setStatus(e.target.value); setPage(0); }}>
+              <option value="">All statuses</option>
+              {Object.keys(STATUS_LABEL).map(s => (
+                <option key={s} value={s}>{STATUS_LABEL[s]}</option>
+              ))}
+            </select>
+          )}
+        </div>
       </div>
 
       <div className={styles.searchRow}>
