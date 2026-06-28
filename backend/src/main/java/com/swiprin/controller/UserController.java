@@ -93,13 +93,14 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "List all users (ADMIN only, filterable by role)")
+    @Operation(summary = "List all users (ADMIN only, filterable by role/status/company)")
     public ResponseEntity<PageResponse<UserResponse>> getAll(
             @RequestParam(required = false) Role role,
+            @RequestParam(required = false) UserStatus status,
             @RequestParam(required = false) String companyName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(userService.getAllByRole(role, companyName, PageRequest.of(page, size)));
+        return ResponseEntity.ok(userService.getAllByRole(role, status, companyName, PageRequest.of(page, size)));
     }
 
     @GetMapping("/{id}")

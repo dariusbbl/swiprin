@@ -43,6 +43,14 @@ public class ApplicationController {
                 .body(applicationService.apply(req, principal.getId()));
     }
 
+    @PostMapping("/recalculate-match")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Recompute matchPercent for every existing application (ADMIN only)")
+    public ResponseEntity<java.util.Map<String, Object>> recalculateMatch() {
+        int count = applicationService.recalculateAllMatchPercents();
+        return ResponseEntity.ok(java.util.Map.of("updated", count));
+    }
+
     @GetMapping("/me/counts")
     @PreAuthorize("hasRole('CANDIDATE')")
     @Operation(summary = "Get application counts grouped by status for the current candidate")

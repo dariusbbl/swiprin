@@ -25,6 +25,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@lombok.extern.slf4j.Slf4j
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
@@ -440,6 +441,27 @@ public class ApplicationService {
             );
         }
         return expired.size();
+    }
+
+    @Transactional
+    public int recalculateAllMatchPercents() {
+        java.util.List<Application> apps = applicationRepository.findAll();
+        int updated = 0;
+        for (Application app : apps) {
+            try {
+                int newPercent = matchingService.computeMatch(app.getUser(), app.getJob(), app.getCvDraft());
+                Integer oldPercent = app.getMatchPercent();
+                if (oldPercent == null || oldPercent != newPercent) {
+                    app.setMatchPercent(newPercent);
+                    applicationRepository.save(app);
+                    updated++;
+                }
+            } catch (Exception e) {
+                log.warn("Failed to recalculate match for application {}: {}", app.getId(), e.getMessage());
+            }
+        }
+        log.info("Recalculated match percent for {} of {} applications", updated, apps.size());
+        return updated;
     }
 
     private Application findOrThrow(Long id) {

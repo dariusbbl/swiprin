@@ -1,5 +1,17 @@
 .page { display: flex; flex-direction: column; gap: 1.5rem; }
 
+.quickChip {
+  padding: .4rem .85rem; border-radius: 99px;
+  border: 1.5px solid var(--border); background: var(--surface-2);
+  font-size: .82rem; font-weight: 600; color: var(--text-2);
+  cursor: pointer; white-space: nowrap; font-family: inherit;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.quickChip:hover { border-color: var(--accent); color: var(--accent); }
+.quickChipActive {
+  border-color: #d97706; background: #fff7ed; color: #c2410c;
+}
+
 .header {
   display: flex; align-items: flex-start; justify-content: space-between;
   flex-wrap: wrap; gap: 1rem;
